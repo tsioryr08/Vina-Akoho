@@ -14,22 +14,22 @@ Permettre à un employé de se connecter à l'application avec son email et son 
 
 ```
 src/main/java/mg/vinaAkoho/vina_akoho/
-├── controller/auth/
-│   └── AuthController.java          → expose POST /api/login
-├── service/auth/
-│   └── AuthService.java              → logique métier : vérification email/mdp, génération du token
-├── repository/auth/
+├── controller/login/
+│   └── LoginController.java          → expose POST /api/login
+├── service/login/
+│   └── LoginService.java             → logique métier : vérification email/mdp, génération du token
+├── repository/login/
 │   ├── EmployeRepository.java        → accès BDD table employe
 │   └── RoleRepository.java           → accès BDD table role
-├── entity/auth/
+├── entity/login/
 │   ├── Employe.java                  → mapping JPA table employe
 │   └── Role.java                     → mapping JPA table role
-├── dto/auth/
+├── dto/login/
 │   ├── LoginRequestDTO.java          → données reçues (email, mdp)
 │   └── LoginResponseDTO.java         → données renvoyées (token, infos employé)
 ├── dto/
 │   └── ApiResponse.java              → format de réponse standard du projet (PARTAGÉ, racine dto/)
-├── exception/auth/
+├── exception/login/
 │   ├── IdentifiantsInvalidesException.java
 │   └── TokenInvalideException.java
 ├── exception/
@@ -42,7 +42,7 @@ src/main/java/mg/vinaAkoho/vina_akoho/
     └── FilterConfig.java             → enregistrement explicite du filtre sur /api/*
 ```
 
-> Note : `dto/ApiResponse.java` et `exception/GlobalExceptionHandler.java` sont placés à la racine de leur couche (pas dans `auth/`) car ils sont conçus pour être réutilisés par tous les modules du projet, pas seulement le login.
+> Note : `dto/ApiResponse.java` et `exception/GlobalExceptionHandler.java` sont placés à la racine de leur couche (pas dans `login/`) car ils sont conçus pour être réutilisés par tous les modules du projet, pas seulement le login.
 
 ## 3. Dépendances ajoutées au pom.xml
 
@@ -55,7 +55,7 @@ Aucune dépendance Spring Security n'a été ajoutée (choix délibéré pour ga
 
 ## 4. Fonctions principales (signatures Java)
 
-### AuthService
+### LoginService
 ```java
 public LoginResponseDTO login(LoginRequestDTO requete)
 ```
@@ -86,8 +86,8 @@ S'exécute sur toutes les routes `/api/*` (sauf `/api/login`, déclarée publiqu
 ## 5. Logique métier expliquée
 
 1. Le frontend envoie `POST /api/login` avec `{ "email": "...", "mdp": "..." }`
-2. `AuthController` valide le format (Jakarta `@NotBlank`) et délègue à `AuthService`
-3. `AuthService` cherche l'employé par email dans `EmployeRepository`. Si absent → exception.
+2. `LoginController` valide le format (Jakarta `@NotBlank`) et délègue à `LoginService`
+3. `LoginService` cherche l'employé par email dans `EmployeRepository`. Si absent → exception.
 4. Le mot de passe envoyé en clair est comparé au hash stocké via `PasswordHasher.verifier()` (BCrypt re-hache avec le même salt et compare)
 5. Si correct, `JwtUtil.genererToken()` crée un token contenant : id employé (subject), rôle, prénom, date d'expiration — signé avec la clé secrète définie dans `application.properties` (`jwt.secret`)
 6. Le token est renvoyé au frontend dans `LoginResponseDTO`
@@ -104,9 +104,14 @@ S'exécute sur toutes les routes `/api/*` (sauf `/api/login`, déclarée publiqu
   ```
   Utile par exemple pour les futures règles d'autorisation par rôle (ex. seul l'Administrateur peut créer un compte — RG01), à implémenter dans chaque module concerné.
 
+## 7. Tests effectués
+
+- **Tests unitaires automatisés** (`mvn test`) : 14 tests, 0 échec — couvrant `LoginService`, `JwtUtil`, `PasswordHasher`.
+- **Tests manuels via curl** (voir `docs/cahiers-de-test/F0-NyAntema-Test.md`) : connexion valide, mot de passe incorrect, email inexistant, champs vides, et protection des routes par `JwtFilter` (sans token / token invalide / token valide), réalisés à l'aide d'un controller temporaire de test (`PingController`, supprimé avant la fin de la tâche).
 
 ## 8. Limites actuelles / pistes d'amélioration future
 
 - Pas encore de gestion des rôles/permissions au niveau du filtre (le filtre vérifie seulement "es-tu connecté", pas "as-tu le droit de faire CETTE action précise") — à ajouter module par module selon RO01–RO07.
 - Pas de endpoint de déconnexion explicite : avec un JWT stateless, la déconnexion se fait normalement côté frontend (suppression du token stocké), il n'y a rien à invalider côté serveur sauf si on ajoute une liste noire de tokens (non nécessaire pour ce sprint).
 - Pas encore d'endpoint pour qu'un Administrateur crée un compte employé (RG01 : "Seul l'administrateur peut créer, modifier ou supprimer des comptes utilisateurs") — à discuter si ça fait partie du périmètre F0 ou d'un module séparé de gestion des utilisateurs.
+- Incohérence à trancher en équipe entre `Regles_Backend_VINA-AKOHO.md` (base/utilisateur `vinakoho`) et `application.properties` actuel (base `vina_akoho`, utilisateur `postgres`) — voir `GUIDE.md` §2.4.
