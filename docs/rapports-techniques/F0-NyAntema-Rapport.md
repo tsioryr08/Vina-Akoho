@@ -15,7 +15,7 @@ Permettre à un employé de se connecter à l'application avec son email et son 
 ```
 src/main/java/mg/vinaAkoho/vina_akoho/
 ├── controller/auth/
-│   └── AuthController.java          → expose POST /api/auth/login
+│   └── AuthController.java          → expose POST /api/login
 ├── service/auth/
 │   └── AuthService.java              → logique métier : vérification email/mdp, génération du token
 ├── repository/auth/
@@ -81,11 +81,11 @@ Classe utilitaire statique (pas un bean Spring) pour le hachage BCrypt.
 ```java
 protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 ```
-S'exécute sur toutes les routes `/api/*` (sauf `/api/auth/login`, déclarée publique). Vérifie la présence et la validité de l'en-tête `Authorization: Bearer <token>`. Si valide, place `idEmploye` et `role` en attributs de la requête pour les controllers suivants. Sinon, renvoie directement une erreur 401 au format `ApiResponse` standard.
+S'exécute sur toutes les routes `/api/*` (sauf `/api/login`, déclarée publique). Vérifie la présence et la validité de l'en-tête `Authorization: Bearer <token>`. Si valide, place `idEmploye` et `role` en attributs de la requête pour les controllers suivants. Sinon, renvoie directement une erreur 401 au format `ApiResponse` standard.
 
 ## 5. Logique métier expliquée
 
-1. Le frontend envoie `POST /api/auth/login` avec `{ "email": "...", "mdp": "..." }`
+1. Le frontend envoie `POST /api/login` avec `{ "email": "...", "mdp": "..." }`
 2. `AuthController` valide le format (Jakarta `@NotBlank`) et délègue à `AuthService`
 3. `AuthService` cherche l'employé par email dans `EmployeRepository`. Si absent → exception.
 4. Le mot de passe envoyé en clair est comparé au hash stocké via `PasswordHasher.verifier()` (BCrypt re-hache avec le même salt et compare)
