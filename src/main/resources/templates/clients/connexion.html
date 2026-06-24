@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Client - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+</head>
+<body class="login-page">
+    <main class="login-card" aria-labelledby="titre-connexion-client">
+        <section class="login-brand">
+            <img class="brand-logo" th:src="@{/assets/VINA_AKOHO_LOGO.png}" alt="Logo VINA AKOHO">
+            <div>
+                <h1 id="titre-connexion-client">Espace Client</h1>
+                <p>Connexion client VINA AKOHO</p>
+            </div>
+        </section>
+
+        <form class="login-form" method="post" th:action="@{/clients/connexion}" th:object="${connexion}">
+            <div class="form-group">
+                <label for="idClient">Identifiant client</label>
+                <input
+                    class="form-control"
+                    id="idClient"
+                    th:field="*{idClient}"
+                    type="number"
+                    min="1"
+                    placeholder="Ex: 12"
+                    readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="numeroTelephone">Numero telephone</label>
+                <input
+                    class="form-control"
+                    id="numeroTelephone"
+                    th:field="*{numeroTelephone}"
+                    type="tel"
+                    maxlength="20"
+                    placeholder="Ex: 034 00 000 00"
+                    required>
+            </div>
+
+            <p class="login-error" aria-live="polite" th:text="${erreur}"></p>
+            <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
+
+            <button class="btn btn-primary btn-full" type="submit">Se connecter</button>
+            <a class="btn btn-white btn-full" th:href="@{/clients/nouveau}">Creer un nouveau compte</a>
+
+            <p class="login-note">
+                Entrez votre numero telephone: l'identifiant se remplit automatiquement si le compte existe.
+            </p>
+        </form>
+    </main>
+    <script>
+        const telephoneInput = document.getElementById('numeroTelephone');
+        const idInput = document.getElementById('idClient');
+        const erreur = document.querySelector('.login-error');
+
+        telephoneInput.addEventListener('blur', async () => {
+            const numeroTelephone = telephoneInput.value.trim();
+            idInput.value = '';
+
+            if (!numeroTelephone) {
+                return;
+            }
+
+            const response = await fetch(`/clients/recherche?numeroTelephone=${encodeURIComponent(numeroTelephone)}`);
+            const resultat = await response.json();
+
+            if (resultat.success) {
+                idInput.value = resultat.data.id;
+                erreur.textContent = '';
+            }
+        });
+    </script>
+</body>
+</html>
