@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Entrée en Stock</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+<section class="page-header">
+<div>
+<p class="eyebrow">RO03 - Gestionnaire de Stock</p>
+<h1>Entrée en Stock</h1>
+<p>Arrivée physique d’un lot de matière première au dépôt de Mahitsy.</p>
+</div>
+<span class="role-badge">RO03 - Gestionnaire de Stock</span>
+</section>
+
+<section class="form-card">
+<div class="alert-box warning">
+<span class="alert-label attention">RÈGLE DE GESTION</span> Le prix d’achat n’est plus modifiable à cette étape. Il est automatiquement récupéré depuis le coût unitaire défini lors de la création de la fiche technique d’origine.
+</div>
+
+<div class="form-section">
+<div class="form-section-heading">
+<span>1</span>
+<div>
+<h2>Arrivée du lot à Mahitsy</h2>
+<p>Enregistrement de la quantité reçue et du lot entrant.</p>
+</div>
+</div>
+
+<div class="form-grid">
+<div class="field field-full">
+<label for="selectedMaterial">Sélectionner la matière première</label>
+<select id="selectedMaterial" class="form-control" required>
+<option value="">Choisir une matière première</option>
+<option>MP-MAIS-01 — Maïs concassé</option>
+<option>MP-SOJA-04 — Tourteau de soja</option>
+<option>MP-POIS-04 — Farine de poisson</option>
+<option>MP-SON-01 — Son de riz</option>
+</select>
+</div>
+
+<div class="field">
+<label for="receivedQuantity">Quantité reçue (Kilos ou Sacs)</label>
+<input id="receivedQuantity" class="form-control" type="number" min="0" step="1" placeholder="500">
+</div>
+
+<div class="field">
+<label for="appliedUnitPrice">Prix unitaire appliqué (Ariary)</label>
+<input id="appliedUnitPrice" class="form-control" type="number" value="1200" disabled>
+<span class="field-help">Valeur récupérée depuis la fiche d’origine.</span>
+</div>
+
+<div class="field field-full">
+<label for="receptionDateTime">Date et heure de réception exacte</label>
+<input id="receptionDateTime" class="form-control" type="datetime-local">
+</div>
+</div>
+</div>
+
+<div class="card-actions form-actions">
+<a class="btn btn-ghost" href="gestionnaire-stock-suivi-stock.html">Annuler</a>
+<button class="btn btn-green" type="button">Valider l’entrée du Lot</button>
+</div>
+</section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

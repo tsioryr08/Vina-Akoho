@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enregistrer un Client - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .header-green-line {
+            border-bottom: 3px solid #16a34a;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .btn-success-green {
+            background-color: #16a34a;
+            color: white;
+            border: none;
+        }
+        .btn-success-green:hover {
+            background-color: #15803d;
+        }
+    </style>
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            
+            <div class="header-green-line">
+                <h1 style="margin: 0; color: #1e293b;">Responsable Commercial — Enregistrer un Client / Partenaire</h1>
+            </div>
+
+            <form action="#" method="POST" onsubmit="event.preventDefault(); alert('Client enregistré avec succès !');">
+                
+                <!-- Section 1 - Identification -->
+                <section class="form-section">
+                    <h2 style="color: #16a34a; margin-bottom: 20px;">Section 1 - Identification de l'Acheteur</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Code Client Unique</label>
+                            <input type="text" class="form-control" value="CLT-2026-XXXX" disabled style="background-color: #f1f5f9; cursor: not-allowed;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Profil du Client *</label>
+                            <select class="form-control" required>
+                                <option value="" selected disabled>Sélectionner la nature de l'acheteur</option>
+                                <option value="eleveur">Éleveur</option>
+                                <option value="revendeur">Revendeur</option>
+                                <option value="cooperative">Coopérative</option>
+                                <option value="ferme">Ferme Industrielle</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nom du Client / Raison Sociale *</label>
+                            <input type="text" class="form-control" placeholder="ex: Établissement Razafy" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Téléphone de Contact *</label>
+                            <input type="text" class="form-control" placeholder="034 XX XX XX X" required>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2 - Logistique & Services -->
+                <section class="form-section" style="margin-top: 30px;">
+                    <h2 style="color: #16a34a; margin-bottom: 20px;">Section 2 - Logistique & Services</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Zone / Axe de livraison principal *</label>
+                            <select class="form-control" required>
+                                <option value="mahitsy">Mahitsy Centre</option>
+                                <option value="ankazobe">Axe Ankazobe</option>
+                                <option value="tana">Antananarivo</option>
+                                <option value="autours">Périphérie Mahitsy</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Adresse ou Repère précis *</label>
+                            <input type="text" class="form-control" placeholder="ex: En face du bureau de la commune..." required>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">Services rattachés requis</label>
+                            <div style="display: flex; gap: 30px; margin-top: 10px;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" style="width: 18px; height: 18px;"> Achat produit
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" style="width: 18px; height: 18px;"> Formation
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">Conditions particulières</label>
+                        <textarea class="form-control" rows="4" placeholder="Notes sur les crédits autorisés ou prix négociés..."></textarea>
+                    </div>
+                </section>
+
+                <!-- Actions -->
+                <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px;">
+                    <button type="button" class="btn btn-ghost btn-large" onclick="history.back()" style="background: #94a3b8; color: white;">Annuler</button>
+                    <button type="submit" class="btn btn-large btn-success-green">Enregistrer le Client</button>
+                </div>
+            </form>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+    <script>window.VinaAkohoAuth.enforceModuleAccess('admin-clients-nouveau.html');</script>
+</body>
+</html>

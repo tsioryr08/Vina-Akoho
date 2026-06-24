@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enregistrer un Client - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">RESPONSABLE COMMERCIAL</p>
+                    <h1>Enregistrer un Client / Partenaire</h1>
+                    <div style="height: 2px; background: #16a34a; margin-top: 8px; width: 100px;"></div>
+                </div>
+            </section>
+
+            <form action="#" method="POST" onsubmit="event.preventDefault(); alert('Client enregistré avec succès !');">
+                <section class="form-section">
+                    <div class="form-section-heading">
+                        <h2>Section 1 - Identification de l'Acheteur</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Code Client Unique</label>
+                            <input type="text" class="form-control" value="CLT-2026-XXXX" disabled style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Profil du Client *</label>
+                            <select class="form-control" required>
+                                <option value="" selected disabled>Choisir un profil</option>
+                                <option value="eleveur">Éleveur</option>
+                                <option value="revendeur">Revendeur</option>
+                                <option value="cooperative">Coopérative</option>
+                                <option value="ferme">Ferme Industrielle</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nom du Client / Raison Sociale *</label>
+                            <input type="text" class="form-control" placeholder="ex: Établissement Razafy" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Téléphone de Contact *</label>
+                            <input type="tel" class="form-control" placeholder="034 XX XX XX X" required>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="form-section-heading">
+                        <h2>Section 2 - Logistique & Services</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Zone / Axe de livraison principal *</label>
+                            <select class="form-control" required>
+                                <option value="mahitsy" selected>Mahitsy Centre</option>
+                                <option value="peripherie">Périphérie</option>
+                                <option value="tana">Antananarivo Ville</option>
+                                <option value="ankazobe">Axe Ankazobe</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Adresse ou Repère précis *</label>
+                            <input type="text" class="form-control" placeholder="ex: En face du bureau de la commune..." required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label class="form-label">Services rattachés requis :</label>
+                        <div style="display: flex; gap: 20px; margin-top: 8px;">
+                            <label><input type="checkbox" name="services" value="achat"> Achat produit</label>
+                            <label><input type="checkbox" name="services" value="formation"> Formation</label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">Conditions particulières :</label>
+                        <textarea class="form-control" rows="4" placeholder="Notez ici les crédits ou prix négociés..."></textarea>
+                    </div>
+                </section>
+
+                <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+                    <button type="button" class="btn btn-ghost btn-large" onclick="history.back()">Annuler</button>
+                    <button type="submit" class="btn btn-primary btn-large" style="background-color: #16a34a; border-color: #16a34a;">Enregistrer le Client</button>
+                </div>
+            </form>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+    <script>window.VinaAkohoAuth.enforceModuleAccess('responsable-commercial-clients-nouveau.html');</script>
+</body>
+</html>

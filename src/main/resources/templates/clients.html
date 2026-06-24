@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Créances Clients - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
+                    <h1>Suivi des Créances Clients</h1>
+                    <p class="muted-text">Liste globale des clients et état de leurs comptes.</p>
+                </div>
+                <div class="header-actions">
+                  
+                    <button class="btn btn-white">Exporter PDF</button>
+                </div>
+              </section>
+
+            <!-- Résumé rapide -->
+            <div class="summary-mini-grid">
+                <div class="mini-card">
+                    <label>Total Créances</label>
+                    <div class="value txt-red">1 125 000 Ar</div>
+                </div>
+                <div class="mini-card" style="border-left-color: #3b82f6;">
+                    <label>Encaissement attendu (7j)</label>
+                    <div class="value">450 000 Ar</div>
+                </div>
+                <div class="mini-card" style="border-left-color: #f97316;">
+                    <label>Clients en retard</label>
+                    <div class="value">8</div>
+                </div>
+            </div>
+
+            <!-- Table des Clients -->
+            <div class="creance-table-container">
+                <div class="search-bar-container">
+                    <input type="text" class="search-input" placeholder="Rechercher un client (nom, ville)...">
+                    <div class="filters">
+                        <select class="search-input" style="width: auto;">
+                            <option>Tous les statuts</option>
+                            <option>En retard</option>
+                            <option>À jour</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Localisation</th>
+                                <th>Dernier Achat</th>
+                                <th>Total Achats</th>
+                                <th>Solde (Ar)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="row-link" onclick="window.location.href='clients-detail.html'">
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="avatar-circle" style="width: 32px; height: 32px; font-size: 12px;">RA</div>
+                                        <strong>Rakoto Andry</strong>
+                                    </div>
+                                </td>
+                                <td>Antsirabe</td>
+                                <td>03 juin 2025</td>
+                                <td>824 000 Ar</td>
+                                <td class="txt-red"><strong>-45 000 Ar</strong></td>
+                                <td><button class="btn btn-white btn-sm">Voir</button></td>
+                            </tr>
+                            <tr class="row-link" onclick="window.location.href='clients-detail.html'">
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="avatar-circle" style="width: 32px; height: 32px; font-size: 12px; background: #64748b;">FR</div>
+                                        <strong>Ferme Razafy</strong>
+                                    </div>
+                                </td>
+                                <td>Moramanga</td>
+                                <td>15 mai 2025</td>
+                                <td>1 250 000 Ar</td>
+                                <td class="txt-red"><strong>-150 000 Ar</strong></td>
+                                <td><button class="btn btn-white btn-sm">Voir</button></td>
+                            </tr>
+                            <tr class="row-link" onclick="window.location.href='clients-detail.html'">
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="avatar-circle" style="width: 32px; height: 32px; font-size: 12px; background: #16a34a;">SM</div>
+                                        <strong>Soa Mahefa</strong>
+                                    </div>
+                                </td>
+                                <td>Sambava</td>
+                                <td>28 mai 2025</td>
+                                <td>540 000 Ar</td>
+                                <td style="color: #16a34a;">0 Ar</td>
+                                <td><button class="btn btn-white btn-sm">Voir</button></td>
+                            </tr>
+                            <tr class="row-link" onclick="window.location.href='clients-detail.html'">
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="avatar-circle" style="width: 32px; height: 32px; font-size: 12px; background: #f97316;">TR</div>
+                                        <strong>Tsiry Ranaivo</strong>
+                                    </div>
+                                </td>
+                                <td>Tsaralalàna</td>
+                                <td>10 juin 2025</td>
+                                <td>410 000 Ar</td>
+                                <td class="txt-red"><strong>-12 000 Ar</strong></td>
+                                <td><button class="btn btn-white btn-sm">Voir</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="vina-footer"></div>
+        </div>
+
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+    </div>
+</body>
+</html>

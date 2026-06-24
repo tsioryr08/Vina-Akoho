@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier le Profil - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
+                    <h1>Modifier le Profil Client</h1>
+                    <p class="muted-text">Mise à jour des informations de Rakoto Andry (RA).</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-white" onclick="history.back()">Annuler</button>
+                    <button class="btn btn-green" onclick="alert('Modifications enregistrées !'); history.back();">Enregistrer les modifications</button>
+                </div>
+            </section>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Informations Générales</h2>
+                </div>
+                <div style="padding: 24px;">
+                    <form class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" class="form-control" value="Rakoto Andry">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Téléphone</label>
+                            <input type="text" class="form-control" value="+261 34 12 345 67">
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">Localisation / Adresse</label>
+                            <input type="text" class="form-control" value="Antsirabe, Vakinankaratra">
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="form-label">Notes & Observations</label>
+                            <textarea class="form-control" rows="4">Éleveur de 500 poulets de chair. Commande mensuelle régulière.</textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="vina-footer"></div>
+        </div>
+
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+    </div>
+</body>
+</html>

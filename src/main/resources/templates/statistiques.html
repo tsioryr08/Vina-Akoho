@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse & Performance - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        .nav-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: all 0.3s; }
+        .nav-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+        .nav-card .icon { width: 48px; height: 48px; border-radius: 12px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        
+        .filter-panel { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        .filter-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: transparent; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .filter-btn:hover { background: #f8fafc; }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        #empty-state { display: none; padding: 60px 20px; text-align: center; background: white; border-radius: 12px; border: 2px dashed var(--border); margin-bottom: 30px; }
+        
+        .validation-bar { margin-top: 30px; padding: 20px; background: white; border-radius: 16px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+        .export-actions { display: flex; gap: 12px; }
+    </style>
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">STATISTIQUES - VUE GLOBALE</p>
+                    <h1>Analyse & Performance Commerciale</h1>
+                    <p>Point d'entrée principal pour le pilotage de l'activité.</p>
+                </div>
+            </section>
+
+            <!-- Étape 1 : Le point d'entrée — La Vue Globale -->
+            <section style="margin-bottom: 32px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div class="nav-card">
+                        <div class="icon">🏭</div>
+                        <h3 class="card-title">Axe Production</h3>
+                        <p class="card-subtitle">Analyse des rendements et des pertes</p>
+                    </div>
+                    <div class="nav-card" style="border-color: var(--primary); background: rgba(5, 102, 141, 0.02);">
+                        <div class="icon" style="background: var(--primary); color: white;">📈</div>
+                        <h3 class="card-title">Axe Ventes</h3>
+                        <p class="card-subtitle">Étude des tendances et produits phares</p>
+                    </div>
+                    <div class="nav-card">
+                        <div class="icon">🌍</div>
+                        <h3 class="card-title">Axe Géographique</h3>
+                        <p class="card-subtitle">Cartographie zones et clients</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Étape 2 : L'application du Filtre de Période -->
+            <div class="filter-panel">
+                <div class="filter-group">
+                    <span style="font-weight: 700; font-size: 14px;">⏱️ Filtre Période :</span>
+                    <button class="filter-btn" onclick="applyFilters('jour', this)">Au jour</button>
+                    <button class="filter-btn" onclick="applyFilters('semaine', this)">À la semaine</button>
+                    <button class="filter-btn active" onclick="applyFilters('mois', this)">Au mois</button>
+                    <button class="filter-btn" onclick="applyFilters('libre', this)">Période libre</button>
+                </div>
+                <div id="date-range-display" style="font-size: 13px; color: var(--muted); font-weight: 500;">
+                    Période affichée : Juin 2026
+                </div>
+            </div>
+
+            <!-- Étape 3 : La condition de présence des Données -->
+            <div id="empty-state">
+                <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                <h3 style="color: var(--text);">Aucun résultat</h3>
+                <p style="color: var(--muted);">Scénario A : Aucune donnée disponible pour cette période et ce segment.</p>
+            </div>
+
+            <div id="data-content">
+                <!-- Scénario B : Présence de données -->
+                <section class="stats-grid">
+                    <article class="stat-card">
+                        <div class="stat-label">Production Totale</div>
+                        <div class="stat-value">12.8 Tons</div>
+                        <div class="stat-trend trend-positive">+4.2%</div>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-label">Ventes (CA)</div>
+                        <div class="stat-value">14.2M Ar</div>
+                        <div class="stat-trend trend-positive">+12.5%</div>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-label">Livraisons Effectuées</div>
+                        <div class="stat-value">245</div>
+                        <div class="stat-trend trend-info">Normal</div>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-label">Pertes de production</div>
+                        <div class="stat-value">1.2%</div>
+                        <div class="stat-trend trend-positive">-0.5%</div>
+                    </article>
+                </section>
+
+                <div class="grid-2">
+                    <section class="card" style="padding: 24px;">
+                        <h2 class="card-title">📉 Évolution des Performance</h2>
+                        <div style="height: 300px;"><canvas id="mainChart"></canvas></div>
+                    </section>
+                    <section class="card" style="padding: 24px;">
+                        <h2 class="card-title">🥧 Répartition par Segment</h2>
+                        <div style="height: 300px;"><canvas id="donutChart"></canvas></div>
+                    </section>
+                </div>
+
+                <!-- Étape 4 : L'action de Validation et d'Exportation -->
+                <section class="validation-bar">
+                    <div>
+                        <h3 style="font-size: 16px; margin-bottom: 4px;">✅ Rapport Prêt</h3>
+                        <p style="font-size: 12px; color: var(--muted);">Validez les graphiques pour débloquer les exports.</p>
+                    </div>
+                    <div class="export-actions">
+                        <button class="btn btn-purple" onclick="validateAndShowExport()">✓ Validation Générale</button>
+                        <div id="export-buttons" style="display: none; gap: 10px;">
+                            <button class="btn btn-red" onclick="alert('PDF Généré')">📥 Générer PDF</button>
+                            <button class="btn btn-green" onclick="alert('Excel Généré')">📥 Générer Excel</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="vina-footer"></div>
+        </div>
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+        <script>
+            let charts = {};
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                initCharts();
+            });
+
+            function initCharts() {
+                const ctxMain = document.getElementById('mainChart').getContext('2d');
+                charts.main = new Chart(ctxMain, {
+                    type: 'line',
+                    data: {
+                        labels: ['S1', 'S2', 'S3', 'S4'],
+                        datasets: [{
+                            label: 'CA (Mil Ar)',
+                            data: [3.2, 4.1, 3.5, 3.4],
+                            borderColor: '#05668d',
+                            tension: 0.4,
+                            fill: true,
+                            backgroundColor: 'rgba(5, 102, 141, 0.05)'
+                        }]
+                    },
+                    options: { maintainAspectRatio: false }
+                });
+
+                const ctxDonut = document.getElementById('donutChart').getContext('2d');
+                charts.donut = new Chart(ctxDonut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Poulet Chair', 'Pondeuses', 'Démarrage'],
+                        datasets: [{
+                            data: [45, 35, 20],
+                            backgroundColor: ['#05668d', '#a5be00', '#f97316']
+                        }]
+                    },
+                    options: { maintainAspectRatio: false }
+                });
+            }
+
+            function applyFilters(period, btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Simulation Scénario A (Jour) vs B (Reste)
+                const hasData = (period !== 'jour');
+                document.getElementById('data-content').style.display = hasData ? 'block' : 'none';
+                document.getElementById('empty-state').style.display = hasData ? 'none' : 'block';
+                
+                if(period === 'mois') {
+                    document.getElementById('date-range-display').textContent = 'Période affichée : Juin 2026';
+                } else if(period === 'semaine') {
+                    document.getElementById('date-range-display').textContent = 'Période affichée : Semaine 24, 2026';
+                }
+            }
+
+            function validateAndShowExport() {
+                const validateBtn = document.querySelector('.btn-purple');
+                const exportGroup = document.getElementById('export-buttons');
+                
+                validateBtn.style.display = 'none';
+                exportGroup.style.display = 'flex';
+                
+                alert('Rapport validé ! Les formats PDF et Excel sont maintenant disponibles.');
+            }
+        </script>
+    </div>
+</body>
+</html>

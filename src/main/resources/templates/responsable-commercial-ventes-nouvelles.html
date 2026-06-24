@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Nouvelle Vente</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+<section class="page-header">
+<div>
+<p class="eyebrow">RO04 - Responsable Commercial</p>
+<h1>Enregistrer une nouvelle vente</h1>
+<p>Formulaire dynamique de saisie d’une commande client avec calcul automatique du total.</p>
+</div>
+<span class="role-badge">RO04 - Responsable Commercial</span>
+</section>
+
+<section class="tab-list" role="tablist">
+<a class="tab-link" href="responsable-commercial-ventes.html">Liste des ventes</a>
+<a class="tab-link" href="responsable-commercial-ventes-historique.html">Historique</a>
+<a class="tab-link active" href="responsable-commercial-ventes-nouvelles.html">Nouvelle vente</a>
+</section>
+
+<section class="form-card">
+<div class="form-section">
+<div class="form-section-heading">
+<span>1</span>
+<div>
+<h2>Informations générales</h2>
+<p>Identification du client et date de la transaction.</p>
+</div>
+</div>
+
+<div class="form-grid">
+<div class="field field-full">
+<label for="saleClient">Client</label>
+<select id="saleClient" class="form-control" required>
+<option value="">Sélectionner un éleveur ou partenaire</option>
+<option>Rakoto Élevage - Mahitsy</option>
+<option>Jean RAZAFY - Itaosy</option>
+<option>Coopérative Poulet Bio - Ambohidratrimo</option>
+<option>Établissement Razafy - Antananarivo</option>
+</select>
+</div>
+
+<div class="field">
+<label for="saleDate">Date de vente</label>
+<input id="saleDate" class="form-control" type="date">
+</div>
+</div>
+</div>
+
+<div class="form-section">
+<div class="form-section-heading">
+<span>2</span>
+<div>
+<h2>Gestion des articles</h2>
+<p>Ajout de plusieurs lignes de produits avec calcul en temps réel.</p>
+</div>
+</div>
+
+<div class="table-wrap">
+<table id="saleLinesTable">
+<thead>
+<tr>
+<th>Produit</th>
+<th>Quantité (kg)</th>
+<th>Prix/kg (Ar)</th>
+<th>Total (Ar)</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="sale-line">
+<td>
+<select class="form-control product-select" data-price="2100">
+<option value="Aliment Croissance (P2)" selected data-price="2100">Aliment Croissance (P2)</option>
+<option value="Aliment Prêt à vendre (P3)" data-price="2300">Aliment Prêt à vendre (P3)</option>
+<option value="Aliment Poussin (P1)" data-price="1900">Aliment Poussin (P1)</option>
+</select>
+</td>
+<td><input class="form-control quantity-input" type="number" min="1" step="1" value="100"></td>
+<td><input class="form-control price-input" type="number" min="0" step="1" value="2100"></td>
+<td><strong class="line-total">210 000 Ar</strong></td>
+<td><button class="btn btn-red btn-small remove-line" type="button">X</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="card-actions">
+<button class="btn btn-ghost" id="addProductButton" type="button">+ Ajouter un produit</button>
+</div>
+</div>
+
+<div class="form-section">
+<div class="form-section-heading">
+<span>3</span>
+<div>
+<h2>Logistique et règlement</h2>
+<p>Mode de paiement et destination de livraison.</p>
+</div>
+</div>
+
+<div class="form-grid">
+<div class="field">
+<label for="paymentMode">Mode de paiement</label>
+<select id="paymentMode" class="form-control" required>
+<option>Espèces</option>
+<option>Mobile Money</option>
+<option>Virement bancaire</option>
+<option>Crédit client</option>
+</select>
+</div>
+
+<div class="field field-full">
+<label for="deliveryAddress">Adresse de livraison</label>
+<input id="deliveryAddress" class="form-control" type="text" placeholder="Itaosy, Antananarivo">
+</div>
+</div>
+</div>
+
+<div class="summary-card">
+<div>
+<span class="summary-label">Sous-total</span>
+<span class="summary-value" id="saleSubtotal">210 000 Ar</span>
+</div>
+<div class="card-actions">
+<a class="btn btn-ghost" href="responsable-commercial-ventes.html">Annuler</a>
+<button class="btn btn-green" type="button">Enregistrer la vente</button>
+</div>
+</div>
+</section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app-shell.js"></script>
+<script>
+(function () {
+const table = document.getElementById("saleLinesTable");
+const addButton = document.getElementById("addProductButton");
+const subtotal = document.getElementById("saleSubtotal");
+
+function formatCurrency(value) {
+return new Intl.NumberFormat("fr-MG").format(value) + " Ar";
+}
+
+function updateLine(row) {
+const product = row.querySelector(".product-select");
+const quantity = row.querySelector(".quantity-input");
+const price = row.querySelector(".price-input");
+const total = row.querySelector(".line-total");
+
+if (product) {
+const selectedOption = product.options[product.selectedIndex];
+const productPrice = selectedOption.getAttribute("data-price");
+
+if (productPrice) {
+price.value = productPrice;
+}
+}
+
+const quantityValue = Number(quantity.value) || 0;
+const priceValue = Number(price.value) || 0;
+const lineTotal = quantityValue * priceValue;
+
+total.textContent = formatCurrency(lineTotal);
+updateSubtotal();
+}
+
+function updateSubtotal() {
+let total = 0;
+
+document.querySelectorAll(".sale-line").forEach(function (row) {
+const quantity = Number(row.querySelector(".quantity-input").value) || 0;
+const price = Number(row.querySelector(".price-input").value) || 0;
+total += quantity * price;
+});
+
+subtotal.textContent = formatCurrency(total);
+}
+
+addButton.addEventListener("click", function () {
+const row = document.createElement("tr");
+row.className = "sale-line";
+row.innerHTML = '<td><select class="form-control product-select"><option value="Aliment Croissance (P2)" selected data-price="2100">Aliment Croissance (P2)</option><option value="Aliment Prêt à vendre (P3)" data-price="2300">Aliment Prêt à vendre (P3)</option><option value="Aliment Poussin (P1)" data-price="1900">Aliment Poussin (P1)</option></select></td><td><input class="form-control quantity-input" type="number" min="1" step="1" value="1"></td><td><input class="form-control price-input" type="number" min="0" step="1" value="2100"></td><td><strong class="line-total">2 100 Ar</strong></td><td><button class="btn btn-red btn-small remove-line" type="button">X</button></td>';
+table.querySelector("tbody").appendChild(row);
+updateLine(row);
+});
+
+table.addEventListener("input", function (event) {
+const row = event.target.closest(".sale-line");
+if (row) {
+updateLine(row);
+}
+});
+
+table.addEventListener("change", function (event) {
+const row = event.target.closest(".sale-line");
+if (row) {
+updateLine(row);
+}
+});
+
+table.addEventListener("click", function (event) {
+if (!event.target.classList.contains("remove-line")) {
+return;
+}
+
+const row = event.target.closest(".sale-line");
+row.remove();
+updateSubtotal();
+});
+})();
+</script>
+        </div>
+        <div id="vina-footer"></div>
+    </div>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+</body>
+</html>

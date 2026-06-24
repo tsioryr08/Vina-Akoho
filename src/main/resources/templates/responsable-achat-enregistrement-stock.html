@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enregistrement Stock - VINA AKOHO</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+<section class="page-header theme-blue">
+<div>
+<p class="eyebrow">PHASE 4 - CLÔTURE & STOCKAGE</p>
+<h1>📦 Enregistrement en Stock</h1>
+<p>Intégration officielle des matières premières dans le système de gestion des stocks.</p>
+</div>
+</section>
+
+<form id="enregistrementForm" class="form-page">
+<!-- Résumé Livraison -->
+<section class="card">
+<div class="info-grid">
+<div class="info-item">
+<div class="info-label">N° Bon de Commande</div>
+<div class="info-value">BC-2026-0045</div>
+</div>
+<div class="info-item">
+<div class="info-label">Fournisseur</div>
+<div class="info-value">Coopérative Agricole Mahitsy</div>
+</div>
+<div class="info-item">
+<div class="info-label">Date Réception</div>
+<div class="info-value">28/06/2026</div>
+</div>
+<div class="info-item">
+<div class="info-label">Status Vérification</div>
+<div class="info-value"><span class="badge badge-success">✓ ACCEPTÉE</span></div>
+</div>
+</div>
+</section>
+
+<!-- Articles à Enregistrer -->
+<section class="form-section">
+<h2>Articles à Enregistrer</h2>
+<div class="table-wrap">
+<table class="data-table">
+<thead>
+<tr>
+<th>Article</th>
+<th>Quantité (kg)</th>
+<th>Lot/Série</th>
+<th>Localisation Stock</th>
+<th>Statut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maïs en grain - Grade A</td>
+<td>2985 kg</td>
+<td><input type="text" class="form-control" value="COOP-MAH-062026-001" style="width: 150px;"></td>
+<td>
+<select class="form-control" style="width: 150px;">
+<option value="">-- Sélectionner --</option>
+<option value="a1" selected>Zone A1 - Grains</option>
+<option value="a2">Zone A2 - Grains</option>
+<option value="a3">Zone A3 - Grains</option>
+</select>
+</td>
+<td><span class="badge badge-success">✓ Prêt</span></td>
+</tr>
+<tr>
+<td>Tourteau de Soja - Certifié</td>
+<td>2000 kg</td>
+<td><input type="text" class="form-control" value="COOP-MAH-062026-002" style="width: 150px;"></td>
+<td>
+<select class="form-control" style="width: 150px;">
+<option value="">-- Sélectionner --</option>
+<option value="b1">Zone B1 - Concentrés</option>
+<option value="b2" selected>Zone B2 - Concentrés</option>
+<option value="b3">Zone B3 - Concentrés</option>
+</select>
+</td>
+<td><span class="badge badge-success">✓ Prêt</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- Informations d'Enregistrement -->
+<section class="form-section">
+<h2>Informations d'Enregistrement</h2>
+<div class="form-grid">
+<div class="form-group">
+<label for="warehouser" class="form-label">Responsable Magasin *</label>
+<input type="text" id="warehouser" name="warehouser" class="form-control" placeholder="Nom du gestionnaire de stock" required>
+</div>
+<div class="form-group">
+<label for="registrationDate" class="form-label">Date d'Enregistrement</label>
+<input type="date" id="registrationDate" name="registrationDate" class="form-control" value="2026-06-28">
+</div>
+<div class="form-group">
+<label for="expiryDate" class="form-label">Date d'Expiration (si applicable)</label>
+<input type="date" id="expiryDate" name="expiryDate" class="form-control" placeholder="AAAA-MM-JJ">
+</div>
+<div class="form-group">
+<label for="temperature" class="form-label">Condition de Stockage</label>
+<select id="temperature" name="temperature" class="form-control">
+<option value="ambient" selected>Ambiant (15-25°C)</option>
+<option value="frais">Frais (5-10°C)</option>
+<option value="conge">Congelé (-18°C)</option>
+</select>
+</div>
+</div>
+</section>
+
+<!-- Coûts & Financiers -->
+<section class="form-section">
+<h2>💰 Informations Financières</h2>
+<div class="form-grid">
+<div class="form-group">
+<label for="totalHT" class="form-label">Montant Total HT (Ar)</label>
+<input type="number" id="totalHT" name="totalHT" class="form-control" value="2450000" readonly>
+</div>
+<div class="form-group">
+<label for="costPrice" class="form-label">Coût Unitaire Moyen (Ar/kg)</label>
+<input type="number" id="costPrice" name="costPrice" class="form-control" value="490" step="0.01" readonly>
+</div>
+<div class="form-group">
+<label for="invoice" class="form-label">N° Facture Fournisseur</label>
+<input type="text" id="invoice" name="invoice" class="form-control" placeholder="INV-COOP-062026-0045">
+</div>
+</div>
+</section>
+
+<!-- Notes -->
+<section class="form-section">
+<h2>Observations Finales</h2>
+<div class="form-group">
+<label for="notes" class="form-label">Notes de Stockage</label>
+<textarea id="notes" name="notes" class="form-control" rows="4" placeholder="Informations additionnelles pour le gestionnaire de stock">Stock rangé et organisé par lot. Certificat de traçabilité archivé. Prêt pour production.</textarea>
+</div>
+</section>
+
+<!-- Actions -->
+<section class="form-section form-actions">
+<button type="submit" class="btn btn-primary btn-large">
+Enregistrer en Stock
+</button>
+<a href="responsable-achat-suggestions.html" class="btn btn-info btn-large">
+Voir Suggestions Réapprovisionnement
+</a>
+</section>
+</form>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

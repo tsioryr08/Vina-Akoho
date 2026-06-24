@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:if="${produitId == null}">Nouveau Produit - VINA AKOHO</title>
+    <title th:if="${produitId != null}">Modifier Produit - VINA AKOHO</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #e67e22;
+            outline: none;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group .error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .form-group .help-text {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn-primary {
+            background: #e67e22;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .btn-primary:hover {
+            background: #d35400;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .checkbox-group label {
+            cursor: pointer;
+            margin: 0;
+        }
+        .info-banner {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .info-banner.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info-banner.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body class="vina-body">
+<div id="vina-sidebar"></div>
+<div class="app-main-wrapper">
+    <div id="vina-header"></div>
+    <div id="vina-content">
+
+        <section class="page-header theme-orange">
+            <div>
+                <p class="eyebrow">ADMINISTRATION</p>
+                <h1 th:if="${produitId == null}">Nouveau Produit</h1>
+                <h1 th:if="${produitId != null}">Modifier le Produit</h1>
+                <p class="muted-text">Remplissez le formulaire ci-dessous pour
+                    <span th:if="${produitId == null}">ajouter un nouveau produit</span>
+                    <span th:if="${produitId != null}">modifier le produit</span>.
+                </p>
+            </div>
+        </section>
+
+        <!-- Messages flash -->
+        <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+        <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
+
+        <div class="form-container">
+            <form th:action="${produitId == null} ? @{/produits} : @{/produits/{id}(id=${produitId})}"
+                  th:method="${produitId == null} ? 'post' : 'post'"
+                  th:object="${produit}">
+
+                <!-- Référence -->
+                <div class="form-group">
+                    <label for="ref">Référence *</label>
+                    <input type="text" id="ref" th:field="*{ref}" placeholder="Ex: REF-001"
+                           th:classappend="${#fields.hasErrors('ref')} ? 'error' : ''">
+                    <div class="error" th:if="${#fields.hasErrors('ref')}" th:errors="*{ref}"></div>
+                    <div class="help-text">Code unique du produit</div>
+                </div>
+
+                <!-- Nom -->
+                <div class="form-group">
+                    <label for="nom">Désignation *</label>
+                    <input type="text" id="nom" th:field="*{nom}" placeholder="Ex: Aliment Démarrage Poulet 25kg"
+                           th:classappend="${#fields.hasErrors('nom')} ? 'error' : ''">
+                    <div class="error" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></div>
+                </div>
+
+                <!-- Catégorie -->
+                <div class="form-group">
+                    <label for="idCategorie">Catégorie *</label>
+                    <select id="idCategorie" th:field="*{idCategorie}"
+                            th:classappend="${#fields.hasErrors('idCategorie')} ? 'error' : ''">
+                        <option value="">-- Sélectionner une catégorie --</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.libelle}">
+                        </option>
+                    </select>
+                    <div class="error" th:if="${#fields.hasErrors('idCategorie')}" th:errors="*{idCategorie}"></div>
+                </div>
+
+                <!-- Prix de vente -->
+                <div class="form-group">
+                    <label for="prixVente">Prix de vente (Ar) *</label>
+                    <input type="number" id="prixVente" th:field="*{prixVente}"
+                           step="0.01" min="0" placeholder="Ex: 45000.00"
+                           th:classappend="${#fields.hasErrors('prixVente')} ? 'error' : ''">
+                    <div class="error" th:if="${#fields.hasErrors('prixVente')}" th:errors="*{prixVente}"></div>
+                </div>
+
+                <!-- Seuil d'alerte -->
+                <div class="form-group">
+                    <label for="seuilAlerte">Seuil d'alerte</label>
+                    <input type="number" id="seuilAlerte" th:field="*{seuilAlerte}"
+                           min="0" placeholder="Ex: 50"
+                           th:classappend="${#fields.hasErrors('seuilAlerte')} ? 'error' : ''">
+                    <div class="error" th:if="${#fields.hasErrors('seuilAlerte')}" th:errors="*{seuilAlerte}"></div>
+                    <div class="help-text">Quantité minimale avant alerte (optionnel)</div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" th:field="*{description}"
+                              placeholder="Description détaillée du produit..."
+                              th:classappend="${#fields.hasErrors('description')} ? 'error' : ''"></textarea>
+                    <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <!-- Statut actif (uniquement en modification) -->
+                <div class="form-group" th:if="${produitId != null}">
+                    <label>Statut</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="actif" th:field="*{actif}" />
+                        <label for="actif">Produit actif</label>
+                    </div>
+                    <div class="help-text">Décochez pour désactiver le produit (soft delete)</div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <span th:if="${produitId == null}">➕ Créer</span>
+                        <span th:if="${produitId != null}">💾 Mettre à jour</span>
+                    </button>
+                    <a th:href="@{/produits}" class="btn-secondary">↩️ Annuler</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="vina-footer"></div>
+    </div>
+
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

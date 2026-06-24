@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Plan d’Achat Matières Premières</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+
+<div id="vina-sidebar"></div>
+<div class="app-main-wrapper">
+<div id="vina-header"></div>
+<div id="vina-content">
+<section class="page-header">
+<div>
+<p class="eyebrow">RO02 - Responsable Production</p>
+<h1>Plan d’achat de matières premières</h1>
+<p>Commandes à passer auprès des fournisseurs pour couvrir la production visée de 8 400 kg.</p>
+</div>
+<span class="role-badge">RO02 - Responsable Production</span>
+</section>
+
+<section class="stats-grid">
+<article class="stat-card">
+<div class="stat-label">Articles à commander</div>
+<div class="stat-value">4</div>
+<div class="stat-trend trend-warning">Sur 6 matières premières</div>
+</article>
+<article class="stat-card">
+<div class="stat-label">Coût estimé total</div>
+<div class="stat-value">2 210 240 Ar</div>
+<div class="stat-trend trend-info">Calculé sur PAMP actuel</div>
+</article>
+<article class="stat-card">
+<div class="stat-label">Production couverte</div>
+<div class="stat-value">8 400 kg</div>
+<div class="stat-trend trend-positive">Objectif juin 2026</div>
+</article>
+<article class="stat-card">
+<div class="stat-label">Niveau de complexité</div>
+<div class="stat-value">Plan achat</div>
+<div class="stat-trend trend-info">Généré depuis /previsions</div>
+</article>
+</section>
+
+<section class="table-card">
+<div class="table-card-header">
+<div>
+<h2 class="card-title">Détail par matière première</h2>
+<p class="card-subtitle">Stock actuel, besoin prévu, quantité à commander, urgence et fournisseur associé.</p>
+</div>
+</div>
+
+<div class="table-wrap">
+<table class="data-table">
+<thead>
+<tr>
+<th>Matière première</th>
+<th>Stock actuel</th>
+<th>Besoin prévu</th>
+<th>À commander</th>
+<th>PAMP (Ar/kg)</th>
+<th>Coût estimé</th>
+<th>Urgence</th>
+<th>Fournisseur</th>
+</tr>
+</thead>
+<tbody>
+<tr class="danger-row">
+<td><strong>Maïs concassé</strong></td>
+<td>1 200 kg</td>
+<td>4 620 kg</td>
+<td>3 420 kg</td>
+<td>1 200 Ar</td>
+<td>4 104 000 Ar</td>
+<td><span class="badge badge-danger">Urgent</span></td>
+<td>Coopérative Mahitsy</td>
+</tr>
+<tr class="danger-row">
+<td><strong>Prémix vitamines</strong></td>
+<td>80 kg</td>
+<td>210 kg</td>
+<td>130 kg</td>
+<td>3 800 Ar</td>
+<td>494 000 Ar</td>
+<td><span class="badge badge-danger">Urgent</span></td>
+<td>AgriFourn Madagascar</td>
+</tr>
+<tr>
+<td><strong>Farine de poisson</strong></td>
+<td>180 kg</td>
+<td>420 kg</td>
+<td>240 kg</td>
+<td>2 400 Ar</td>
+<td>576 000 Ar</td>
+<td><span class="badge badge-warning">Modéré</span></td>
+<td>Socoopam</td>
+</tr>
+<tr>
+<td><strong>Sel + bicarbonate</strong></td>
+<td>140 kg</td>
+<td>260 kg</td>
+<td>120 kg</td>
+<td>650 Ar</td>
+<td>78 000 Ar</td>
+<td><span class="badge badge-warning">Modéré</span></td>
+<td>Fournisseur Local - Ankazobe</td>
+</tr>
+<tr>
+<td><strong>Son de blé</strong></td>
+<td>1 100 kg</td>
+<td>980 kg</td>
+<td>—</td>
+<td>650 Ar</td>
+<td>—</td>
+<td><span class="badge badge-success">OK</span></td>
+<td>Fournisseur Local</td>
+</tr>
+<tr>
+<td><strong>Tourteau de soja</strong></td>
+<td>720 kg</td>
+<td>700 kg</td>
+<td>—</td>
+<td>1 850 Ar</td>
+<td>—</td>
+<td><span class="badge badge-success">OK</span></td>
+<td>AgriFourn Madagascar</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section class="table-card">
+<div class="table-card-header">
+<div>
+<h2 class="card-title">Couverture Stock Actuel vs Besoin</h2>
+<p class="card-subtitle">Pourcentage de couverture par matière première.</p>
+</div>
+</div>
+
+<div class="progress-list">
+<div class="progress-row">
+<div class="progress-meta"><span>Maïs concassé — 26%</span><span>Critique</span></div>
+<div class="progress-track"><div class="progress-fill danger" style="width:26%"></div></div>
+</div>
+<div class="progress-row">
+<div class="progress-meta"><span>Prémix vitamines — 38%</span><span>Urgent</span></div>
+<div class="progress-track"><div class="progress-fill danger" style="width:38%"></div></div>
+</div>
+<div class="progress-row">
+<div class="progress-meta"><span>Farine de poisson — 43%</span><span>Modéré</span></div>
+<div class="progress-track"><div class="progress-fill warning" style="width:43%"></div></div>
+</div>
+<div class="progress-row">
+<div class="progress-meta"><span>Son de blé — 112%</span><span>Suffisant</span></div>
+<div class="progress-track"><div class="progress-fill success" style="width:100%"></div></div>
+</div>
+<div class="progress-row">
+<div class="progress-meta"><span>Tourteau de soja — 103%</span><span>Suffisant</span></div>
+<div class="progress-track"><div class="progress-fill success" style="width:100%"></div></div>
+</div>
+</div>
+</section>
+</div>
+<div id="vina-footer"></div>
+</div>
+</div>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

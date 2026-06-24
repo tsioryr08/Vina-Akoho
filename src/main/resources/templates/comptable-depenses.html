@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registre des Dépenses - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            
+            <section class="page-header theme-red">
+                <div>
+                    <p class="eyebrow">RO05 - COMPTABLE</p>
+                    <h1>Registre des Dépenses</h1>
+                    <p>Journal de saisie et de contrôle de toutes les sorties d’argent de l’entreprise.</p>
+                </div>
+                <div class="header-actions">
+                    <a class="btn btn-green" href="comptable-depenses-nouveau.html">+ Nouvelle dépense</a>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Total — Juin 2026</div>
+                    <div class="stat-value">2 517 112 Ar</div>
+                    <div class="stat-trend trend-info">8 opérations</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Charges fixes</div>
+                    <div class="stat-value">2 805 000 Ar</div>
+                    <div class="stat-trend trend-warning">Budget mensuel</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Matières premières</div>
+                    <div class="stat-value">107 200 Ar</div>
+                    <div class="stat-trend trend-info">Ce mois</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Livraison</div>
+                    <div class="stat-value">498 000 Ar</div>
+                    <div class="stat-trend trend-warning">Transport</div>
+                </article>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Filtres et Recherche</h2>
+                </div>
+                <div class="filter-bar" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; padding: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Mot-clé</label>
+                        <input class="form-control" type="text" placeholder="Rechercher...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Catégorie</label>
+                        <select class="form-control">
+                            <option>Toutes</option>
+                            <option>Charges fixes</option>
+                            <option>Matières premières</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Période (Du)</label>
+                        <input class="form-control" type="date">
+                    </div>
+                    <div style="display: flex; align-items: flex-end; gap: 8px;">
+                        <button class="btn btn-primary" onclick="alert('Filtrage en cours...')">Filtrer</button>
+                        <button class="btn btn-white" onclick="window.location.reload()">Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card" style="margin-top: 24px;">
+                <div class="card-header">
+                    <h2 class="card-title">Registre des Opérations</h2>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Référence</th>
+                                <th>Date</th>
+                                <th>Désignation</th>
+                                <th>Catégorie</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>REF-DEP-0626-001</td>
+                                <td>03/06/2026</td>
+                                <td>Maintenance broyeur</td>
+                                <td><span class="badge badge-info">Charges fixes</span></td>
+                                <td class="text-danger">450 000 Ar</td>
+                                <td><span class="badge badge-success">Réglé</span></td>
+                                <td><a href="comptable-depenses-nouveau.html" class="btn btn-small btn-ghost">✎</a></td>
+                            </tr>
+                            <tr>
+                                <td>REF-DEP-0626-003</td>
+                                <td>06/06/2026</td>
+                                <td>Achat maïs (26 sacs)</td>
+                                <td><span class="badge badge-orange">Matières premières</span></td>
+                                <td class="text-danger">1 248 000 Ar</td>
+                                <td><span class="badge badge-success">Réglé</span></td>
+                                <td><a href="comptable-depenses-nouveau.html" class="btn btn-small btn-ghost">✎</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div id="vina-footer"></div>
+        </div>
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+    </div>
+</body>
+</html>
