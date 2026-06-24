@@ -40,6 +40,10 @@ src/main/java/mg/vinaAkoho/vina_akoho/
 │   └── JwtFilter.java                → filtre qui protège les routes (le "filtre user" du Sprint1)
 └── config/
     └── FilterConfig.java             → enregistrement explicite du filtre sur /api/*
+
+Ajouts récents (intégration front-end) :
+- `controller/login/LoginViewController.java` → sert la page `index.html` sur `/`, `/login` et chemins historiques (`/index`, `/index.html`, `/index.php`).
+- Frontend : `src/main/resources/templates/index.html` + `static/assets/js/login.js` (script renommé depuis `auth.js`) — `login.js` gère la requête vers `/api/login`, stocke le token en `localStorage` et redirige selon le rôle.
 ```
 
 > Note : `dto/ApiResponse.java` et `exception/GlobalExceptionHandler.java` sont placés à la racine de leur couche (pas dans `login/`) car ils sont conçus pour être réutilisés par tous les modules du projet, pas seulement le login.
@@ -97,6 +101,8 @@ S'exécute sur toutes les routes `/api/*` (sauf `/api/login`, déclarée publiqu
 ## 6. Dépendances avec les autres modules
 
 - **Table `role`** : doit être pré-remplie avec les 7 rôles RO01–RO07 avant de pouvoir créer un employé (clé étrangère `id_role` obligatoire). Voir `GUIDE.md` §2.6.
+
+Configuration DB : Le fichier `application.properties` a été aligné sur la convention d'équipe (utilisateur et base `vinakoho`) — vérifiez que la base et l'utilisateur `vinakoho` existent en local ou en CI avant de lancer l'application.
 - **Tous les autres modules (F1 Produits, F2 Matières premières, F5 Clients, etc.)** : leurs controllers passeront automatiquement par `JwtFilter` puisqu'il est enregistré sur `/api/*`. Ils peuvent récupérer l'employé connecté et son rôle via :
   ```java
   Integer idEmploye = (Integer) request.getAttribute(JwtFilter.ATTRIBUT_ID_EMPLOYE);

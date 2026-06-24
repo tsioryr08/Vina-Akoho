@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Connexion</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="login-page">
+<section class="login-card">
+<div class="login-brand">
+<img src="assets/VINA_AKOHO_LOGO.png" alt="VINA AKOHO" class="brand-logo">
+<div>
+<h1>VINA AKOHO</h1>
+<p>Production et livraison d’aliments pour poulets</p>
+</div>
+</div>
+
+<form id="loginForm" class="login-form" autocomplete="off">
+<div class="form-group">
+<label for="emailInput">Email</label>
+<input id="emailInput" class="form-control" type="email" placeholder="admin@vinaakoho.mg" required>
+</div>
+
+<div class="form-group">
+<label for="passwordInput">Mot de passe</label>
+<input id="passwordInput" class="form-control" type="password" placeholder="123" required>
+</div>
+
+<p id="loginError" class="login-error" role="alert"></p>
+
+<button class="btn btn-primary btn-full" type="submit">Se connecter</button>
+
+<p class="login-note">Utilisez vos identifiants réels. Exemple de mot de passe : <strong>123</strong></p>
+</form>
+</section>
+
+<script src="assets/js/login.js"></script>
+<script>
+// Do not auto-redirect on page load; keep the login form visible so users
+// can enter credentials. Redirection happens after successful login.
+document.getElementById("loginForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById("emailInput").value;
+    const password = document.getElementById("passwordInput").value;
+    const result = await window.VinaAkohoAuth.login(email, password);
+
+    if (!result.ok) {
+        document.getElementById("loginError").textContent = result.message;
+        return;
+    }
+
+    const destination = window.VinaAkohoAuth.getLandingUrlForRole(result.data?.role);
+    window.location.href = destination;
+});
+</script>
+</body>
+</html>

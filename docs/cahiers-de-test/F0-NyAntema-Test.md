@@ -23,6 +23,8 @@ Statut :
 
 Commentaire : Authentification fonctionnelle et conforme.
 
+Front-end : La page de login `src/main/resources/templates/index.html` a été intégrée au projet. Le script d'authentification a été renommé `login.js` et réalise maintenant la redirection vers une page dépendant du rôle (ex: `/achats`, `/production`, `/comptabilite`, `/stock`, `/commercial`).
+
 ```
 curl -i -X POST http://localhost:8080/api/login \
   -H "Content-Type: application/json" \
