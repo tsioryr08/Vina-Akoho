@@ -137,7 +137,7 @@
         <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
 
         <div class="form-container">
-            <form th:action="${produitId == null} ? @{/produits} : @{/produits/{id}(id=${produitId})}"
+            <form th:action="${produitId == null} ? @{/api/produits} : @{/api/produits/{id}(id=${produitId})}"
                   th:method="${produitId == null} ? 'post' : 'post'"
                   th:object="${produit}">
 
@@ -216,7 +216,7 @@
                         <span th:if="${produitId == null}">➕ Créer</span>
                         <span th:if="${produitId != null}">💾 Mettre à jour</span>
                     </button>
-                    <a th:href="@{/produits}" class="btn-secondary">↩️ Annuler</a>
+                    <a th:href="@{/api/produits}" class="btn-secondary">↩️ Annuler</a>
                 </div>
             </form>
         </div>

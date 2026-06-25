@@ -264,11 +264,11 @@
 
         <!-- Barre de recherche -->
         <div class="filter-bar">
-            <form th:action="@{/categories}" method="get" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+            <form th:action="@{/api/categories}" method="get" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
                 <input type="text" name="search" th:value="${search != null ? search : ''}"
                        placeholder="🔍 Rechercher une catégorie..." style="flex: 1; min-width: 180px;">
                 <button type="submit" class="btn-filter">Filtrer</button>
-                <a th:href="@{/categories}" class="btn-reset">Réinitialiser</a>
+                <a th:href="@{/api/categories}" class="btn-reset">Réinitialiser</a>
             </form>
         </div>
 
@@ -281,7 +281,7 @@
                         catégorie(s) trouvée(s)
                     </p>
                 </div>
-                <button class="btn btn-black btn-small" onclick="window.location.href='/categories/nouveau'">+ Ajouter une catégorie</button>
+                <button class="btn btn-black btn-small" onclick="window.location.href='/api/categories/nouveau'">+ Ajouter une catégorie</button>
             </div>
             <div class="table-wrap">
                 <table class="data-table">
@@ -313,19 +313,19 @@
                         </td>
                         <td>
                             <div class="action-btns">
-                                <a th:href="@{/categories/{id}(id=${categorie.id})}"
+                                <a th:href="@{/api/categories/{id}(id=${categorie.id})}"
                                    class="btn-sm btn-view"
                                    title="Voir les détails">voir detail</a>
-                                <a th:href="@{/categories/{id}/modifier(id=${categorie.id})}"
+                                <a th:href="@{/api/categories/{id}/modifier(id=${categorie.id})}"
                                    class="btn-sm btn-edit"
                                    title="Modifier">modifier</a>
                                 <a th:if="${categorie.actif}"
-                                   th:href="@{/categories/{id}/supprimer(id=${categorie.id})}"
+                                   th:href="@{/api/categories/{id}/supprimer(id=${categorie.id})}"
                                    class="btn-sm btn-delete"
                                    title="Désactiver"
                                    onclick="return confirm('Êtes-vous sûr de vouloir désactiver cette catégorie ?')">🗑</a>
                                 <a th:unless="${categorie.actif}"
-                                   th:href="@{/categories/{id}/reactiver(id=${categorie.id})}"
+                                   th:href="@{/api/categories/{id}/reactiver(id=${categorie.id})}"
                                    class="btn-sm btn-reactiver"
                                    title="Réactiver"
                                    onclick="return confirm('Êtes-vous sûr de vouloir réactiver cette catégorie ?')"></a>
@@ -337,7 +337,7 @@
                             <div class="empty-state">
                                 <p style="font-size: 18px;">📦 Aucune catégorie trouvée</p>
                                 <p>Commencez par ajouter votre première catégorie.</p>
-                                <button class="btn btn-black btn-small" onclick="window.location.href='/categories/nouveau'" style="margin-top: 10px;">
+                                <button class="btn btn-black btn-small" onclick="window.location.href='/api/categories/nouveau'" style="margin-top: 10px;">
                                     + Ajouter une catégorie
                                 </button>
                             </div>
@@ -350,7 +350,7 @@
             <!-- Pagination -->
             <div th:if="${categories != null and categories.totalPages > 1}" class="pagination">
                 <span th:each="i : ${#numbers.sequence(0, categories.totalPages - 1)}">
-                    <a th:href="@{/categories(page=${i}, size=20, search=${search != null ? search : ''})}"
+                    <a th:href="@{/api/categories(page=${i}, size=20, search=${search != null ? search : ''})}"
                        th:text="${i + 1}"
                        th:class="${i == categories.number} ? 'active' : ''">
                     </a>

@@ -383,23 +383,23 @@
 
                 <!-- Actions -->
                 <div class="detail-actions">
-                    <a th:href="@{/categories/{id}/modifier(id=${categorie.id})}" class="btn-edit">Modifier</a>
+                    <a th:href="@{/api/categories/{id}/modifier(id=${categorie.id})}" class="btn-edit">Modifier</a>
 
                     <a th:if="${categorie.actif}"
-                       th:href="@{/categories/{id}/supprimer(id=${categorie.id})}"
+                       th:href="@{/api/categories/{id}/supprimer(id=${categorie.id})}"
                        class="btn-delete"
                        onclick="return confirm('Etes-vous sur de vouloir desactiver cette categorie ?')">
                         Desactiver
                     </a>
 
                     <a th:unless="${categorie.actif}"
-                       th:href="@{/categories/{id}/reactiver(id=${categorie.id})}"
+                       th:href="@{/api/categories/{id}/reactiver(id=${categorie.id})}"
                        class="btn-reactiver"
                        onclick="return confirm('Etes-vous sur de vouloir reactiver cette categorie ?')">
                         Reactiver
                     </a>
 
-                    <a th:href="@{/categories}" class="btn-back">Retour a la liste</a>
+                    <a th:href="@{/api/categories}" class="btn-back">Retour a la liste</a>
                 </div>
             </div>
         </div>
