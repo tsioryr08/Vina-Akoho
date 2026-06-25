@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer Fiche Matière - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+</head>
+<body class="vina-body">
+    <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
+    <div class="app-main-wrapper">
+        <header th:replace="~{layout/header :: header}"></header>
+        <div id="vina-content">
+
+            <section class="page-header theme-orange">
+                <div>
+                    <p class="eyebrow">MATIÈRES PREMIÈRES</p>
+                    <h1>1. Création de la Fiche Produit (Catalogue)</h1>
+                    <p style="color: #64748b; font-style: italic;">Enregistrez une nouvelle matière première avec son prix officiel.</p>
+                </div>
+            </section>
+
+            <!-- Sous-navigation interne -->
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small">Suivi Stock</a>
+                <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-ghost btn-small">Ajouter Matière</a>
+                <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-primary btn-small">Créer Fiche Produit</a>
+            </div>
+
+            <!-- Messages flash session -->
+            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
+
+            <div class="form-section" style="max-width: 720px;">
+                <h2>Informations de la Matière Première</h2>
+                <form method="post" th:action="@{/matieres-premieres/nouveau}">
+                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Nom de la matière première <span style="color:#ef4444;">*</span></label>
+                            <input type="text" name="nom" class="form-control" placeholder="ex: Maïs concassé" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fournisseur principal <span style="color:#ef4444;">*</span></label>
+                            <select name="idFournisseur" class="form-control" required>
+                                <option value="">-- Choisir le fournisseur --</option>
+                                <option th:each="f : ${fournisseurs}" th:value="${f.id}" th:text="${f.nom}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Coût unitaire officiel (Ariary) <span style="color:#ef4444;">*</span></label>
+                            <input type="number" name="coutUnitaire" class="form-control"
+                                   placeholder="ex: 1200 (Prix bloqué pour les futurs lots)"
+                                   min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unité de mesure <span style="color:#ef4444;">*</span></label>
+                            <select name="idUnite" class="form-control" required>
+                                <option th:each="u : ${unites}" th:value="${u.id}" th:text="${u.libelle}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Seuil minimum d'alerte</label>
+                            <input type="number" name="seuilMinimum" class="form-control"
+                                   placeholder="ex: 500 (optionnel)" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 32px;">
+                        <a th:href="@{/matieres-premieres}" class="btn btn-ghost">Annuler</a>
+                        <button type="submit" class="btn btn-primary">Enregistrer la référence</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
