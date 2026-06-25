@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Gestion des Commandes & Clients</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">DASHBOARD</p>
+                    <h1>Gestion des Commandes & Clients</h1>
+                    <p>Validation des commandes avant préparation, suivi logistique et répartition partenaires.</p>
+                </div>
+            </section>
+
+<section class="grid-2">
+<div class="card">
+<div class="card-header">
+<div>
+<h2 class="card-title">Commandes Clients à traiter</h2>
+<p class="card-subtitle">Validation avant préparation et affectation livreur.</p>
+</div>
+</div>
+
+<div class="table-wrap">
+<table class="data-table">
+<thead>
+<tr>
+<th>N° Commande</th>
+<th>Nom du Client / Profil</th>
+<th>Achat Prévu</th>
+<th>Zone de Livraison</th>
+<th>État Logistique</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CMD-2026-045</td>
+<td>Ferme Avicole de Mahitsy (Ferme)</td>
+<td>20 Sacs Croissance 50kg</td>
+<td>Mahitsy Centre</td>
+<td><span class="badge badge-orange">En attente Livreur</span></td>
+</tr>
+<tr>
+<td>CMD-2026-046</td>
+<td>Établissement Razafy (Revendeur)</td>
+<td>10 Sacs Démarrage 10kg</td>
+<td>Axe Ankazobe</td>
+<td><span class="badge badge-yellow">À préparer en stock</span></td>
+</tr>
+<tr>
+<td>CMD-2026-044</td>
+<td>Mme Rova (Éleveur familial)</td>
+<td>2 Sacs Finition 30kg</td>
+<td>Mahitsy Périphérie</td>
+<td><span class="badge badge-light-green">Livré et Clôturé</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header">
+<div>
+<h2 class="card-title">Répartition Partenaires</h2>
+<p class="card-subtitle">Statistiques clients enregistrés par catégorie.</p>
+</div>
+</div>
+
+<ul class="stats-list">
+<li><strong>Éleveurs Directs :</strong> 24 enregistrés</li>
+<li><strong>Revendeurs / Épiceries :</strong> 8 enregistrés</li>
+<li><strong>Grossistes / Coopératives :</strong> 3 enregistrés</li>
+</ul>
+</div>
+</section>
+        </div>
+        <div id="vina-footer"></div>
+    </div>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+</body>
+</html>

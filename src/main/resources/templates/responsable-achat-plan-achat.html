@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Commande Matières Premières - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+
+            <section class="page-header theme-orange">
+                <div>
+                    <p class="eyebrow">APPROVISIONNEMENT</p>
+                    <h1>3. Plan de Commande Matières Premières</h1>
+                    <p style="color: #64748b; font-style: italic;">Étape : Réception physique de la marchandise.</p>
+                </div>
+            </section>
+
+            <!-- Cartes de Synthèse (KPI) -->
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Matières à commander</div>
+                    <div class="stat-value">4 / 6</div>
+                    <div class="stat-trend trend-warning">Articles requis</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Coût estimé total</div>
+                    <div class="stat-value" style="font-size: 24px;">2 210 240 Ar</div>
+                    <div class="stat-trend trend-info">Basé sur PAMP actuel</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Production visée</div>
+                    <div class="stat-value">8 400 kg</div>
+                    <div class="stat-trend trend-neutral">Prévision Juin 2026</div>
+                </article>
+            </section>
+
+            <!-- Tableau de Détail par Matière Première -->
+            <section class="form-section">
+                <h2>Besoins et Commandes à Effectuer</h2>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"><input type="checkbox" id="select-all"></th>
+                                <th>Matière première</th>
+                                <th>À commander</th>
+                                <th>PAMP (Ar/kg)</th>
+                                <th>Coût estimé (Ar)</th>
+                                <th>Urgence</th>
+                                <th>Fournisseur</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" checked></td>
+                                <td><strong>Maïs concassé</strong></td>
+                                <td style="color: #ef4444; font-weight: 700;">3 420 kg</td>
+                                <td>468</td>
+                                <td>1 600 560</td>
+                                <td><span class="badge badge-danger">Urgent</span></td>
+                                <td>
+                                    <select class="form-control" style="padding: 4px 8px; font-size: 13px; height: auto; min-width: 140px;">
+                                        <option selected>Rakoto Agri</option>
+                                        <option>Coopérative Mahitsy</option>
+                                        <option>Grossiste Tana</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-small btn-primary" onclick="alert('Commande passée pour Maïs concassé auprès de Rakoto Agri')">Commander</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" checked></td>
+                                <td><strong>Prémix vitamines</strong></td>
+                                <td style="color: #ef4444; font-weight: 700;">192 kg</td>
+                                <td>1 250</td>
+                                <td>240 000</td>
+                                <td><span class="badge badge-danger">Urgent</span></td>
+                                <td>
+                                    <select class="form-control" style="padding: 4px 8px; font-size: 13px; height: auto; min-width: 140px;">
+                                        <option selected>VetMada</option>
+                                        <option>Bio-Nutri</option>
+                                        <option>Pharmacie Vétérinaire</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-small btn-primary" onclick="alert('Commande passée pour Prémix vitamines')">Commander</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" checked></td>
+                                <td><strong>Farine de poisson</strong></td>
+                                <td style="color: #f97316; font-weight: 700;">384 kg</td>
+                                <td>900</td>
+                                <td>345 600</td>
+                                <td><span class="badge badge-warning">Modéré</span></td>
+                                <td>
+                                    <select class="form-control" style="padding: 4px 8px; font-size: 13px; height: auto; min-width: 140px;">
+                                        <option selected>Côte Est</option>
+                                        <option>Pêcheries du Sud</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-small btn-primary" onclick="alert('Commande passée pour Farine de poisson')">Commander</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" checked></td>
+                                <td><strong>Sel + bicarbonate</strong></td>
+                                <td style="color: #f97316; font-weight: 700;">86 kg</td>
+                                <td>280</td>
+                                <td>24 080</td>
+                                <td><span class="badge badge-warning">Modéré</span></td>
+                                <td>
+                                    <select class="form-control" style="padding: 4px 8px; font-size: 13px; height: auto; min-width: 140px;">
+                                        <option selected>Épicerie Centrale</option>
+                                        <option>Magasin Général</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-small btn-primary" onclick="alert('Commande passée pour Sel + bicarbonate')">Commander</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>Son de blé</td>
+                                <td style="color: #94a3b8;">-</td>
+                                <td>320</td>
+                                <td>0</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                                <td>
+                                    <select class="form-control" style="padding: 4px 8px; font-size: 13px; height: auto; min-width: 140px;">
+                                        <option selected>Sifaka S.A.</option>
+                                        <option>Meunerie du Nord</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-small btn-ghost" disabled>RAS</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>Tourteau de soja</td>
+                                <td style="color: #94a3b8;">-</td>
+                                <td>1 100</td>
+                                <td>0</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                                <td>
+                                    <select class="form-control" style="padding: 4px 8px; font-size: 13px; height: auto; min-width: 140px;">
+                                        <option selected>Bio-Nutri</option>
+                                        <option>Grain Madagascar</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn btn-small btn-ghost" disabled>RAS</button></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="4" style="text-align: right; padding-right: 30px;">COÛT GLOBAL ESTIMÉ</td>
+                                <td colspan="4" style="color: #05668d; font-weight: 800;">2 210 240 Ar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section Basse : Couverture Stock Actuel vs Besoin -->
+            <section class="form-section">
+                <h2>Couverture Stock Actuel vs Besoin</h2>
+                <div class="coverage-grid">
+                    <div class="coverage-card">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <strong>Maïs</strong>
+                            <span style="color: #ef4444;">26%</span>
+                        </div>
+                        <div class="jauge-container">
+                            <div class="jauge-fill jauge-red" style="width: 26%;"></div>
+                        </div>
+                    </div>
+                    <div class="coverage-card">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <strong>Poisson</strong>
+                            <span style="color: #f97316;">24%</span>
+                        </div>
+                        <div class="jauge-container">
+                            <div class="jauge-fill jauge-orange" style="width: 24%;"></div>
+                        </div>
+                    </div>
+                    <div class="coverage-card">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <strong>Vitamines</strong>
+                            <span style="color: #ef4444;">8%</span>
+                        </div>
+                        <div class="jauge-container">
+                            <div class="jauge-fill jauge-red" style="width: 8%;"></div>
+                        </div>
+                    </div>
+                    <div class="coverage-card">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <strong>Sel+Bicar</strong>
+                            <span style="color: #f97316;">31%</span>
+                        </div>
+                        <div class="jauge-container">
+                            <div class="jauge-fill jauge-orange" style="width: 31%;"></div>
+                        </div>
+                    </div>
+                    <div class="coverage-card">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <strong>Son de blé</strong>
+                            <span style="color: #16a34a;">100%+</span>
+                        </div>
+                        <div class="jauge-container">
+                            <div class="jauge-fill jauge-green" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="coverage-card">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                            <strong>Soja</strong>
+                            <span style="color: #16a34a;">100%+</span>
+                        </div>
+                        <div class="jauge-container">
+                            <div class="jauge-fill jauge-green" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="form-actions" style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 30px;">
+                <button class="btn btn-black btn-large" onclick="alert('Bons de commande générés pour les matières sélectionnées auprès des fournisseurs choisis.')">
+                    Générer les Bons de Commande
+                </button>
+                <a href="responsable-achat-dashboard.html" class="btn btn-white btn-large">Retour Dashboard</a>
+            </section>
+
+            <div id="vina-footer"></div>
+        </div>
+
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+        <script>
+            document.getElementById('select-all')?.addEventListener('change', function(e) {
+                const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = e.target.checked);
+            });
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saisie de Dépense - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            
+            <section class="page-header theme-red">
+                <div>
+                    <p class="eyebrow">COMPTABILITÉ ET FINANCES</p>
+                    <h1>Enregistrer une nouvelle dépense</h1>
+                    <p>Saisissez les détails de la sortie de fonds pour le suivi financier.</p>
+                </div>
+            </section>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Détails de la transaction</h2>
+                </div>
+                <div style="padding: 24px;">
+                    <form onsubmit="event.preventDefault(); alert('La dépense a été enregistrée avec succès !'); window.location.href='comptable-depenses.html';">
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Désignation / Libellé *</label>
+                                <input type="text" class="form-control" placeholder="ex: Achat de maïs, Facture Jirama..." required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Catégorie *</label>
+                                <select class="form-control" required>
+                                    <option value="" selected disabled>Choisir une catégorie</option>
+                                    <option value="charges_fixes">Charges fixes</option>
+                                    <option value="matieres_premieres">Matières premières</option>
+                                    <option value="transport">Transport & livraison</option>
+                                    <option value="energie">Énergie</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Montant (Ar) *</label>
+                                <input type="number" class="form-control" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Date *</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phase de production concernée</label>
+                                <select class="form-control">
+                                    <option value="none">Aucune / Hors production</option>
+                                    <option value="phase1">Phase 1 - Préparation</option>
+                                    <option value="phase2">Phase 2 - Broyage/Mélange</option>
+                                    <option value="phase3">Phase 3 - Conditionnement</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Statut du paiement</label>
+                                <select class="form-control">
+                                    <option value="regle">Réglé</option>
+                                    <option value="attente">En attente</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label">Notes complémentaires</label>
+                            <textarea class="form-control" style="height: 100px;" placeholder="Notes sur le fournisseur, conditions de paiement..."></textarea>
+                        </div>
+
+                        <div class="form-actions" style="margin-top: 32px;">
+                            <button type="button" class="btn btn-white" onclick="history.back()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" style="background: var(--red);">Confirmer la dépense</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="vina-footer"></div>
+        </div>
+
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+    </div>
+</body>
+</html>

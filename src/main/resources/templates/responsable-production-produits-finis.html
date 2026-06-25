@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi Produits Finis - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">STOCKS DE PRODUCTION</p>
+                    <h1>Suivi Produits Finis</h1>
+                    <p>Supervisez l'état global des produits finis prêts à être commercialisés ou expédiés.</p>
+                </div>
+            </section>
+
+            <!-- KPIs -->
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Stock Total Produits</div>
+                    <div class="stat-value">12,450 kg</div>
+                    <div class="stat-trend trend-positive">En stock</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Valeur Stock</div>
+                    <div class="stat-value">3,230,000 Ar</div>
+                    <div class="stat-trend trend-info">Estimation</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Lots Prêts</div>
+                    <div class="stat-value">24</div>
+                    <div class="stat-trend trend-warning">À expédier</div>
+                </article>
+            </section>
+
+            <!-- Table -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Inventaire des Produits Finis</h2>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Code Lot</th>
+                                <th>Quantité</th>
+                                <th>Date Production</th>
+                                <th>Statut</th>
+                                <th>Responsable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Aliment Croissance Premium</td>
+                                <td>LOT-CRP-001</td>
+                                <td>500 kg</td>
+                                <td>15/06/2026</td>
+                                <td><span class="badge badge-success">Prêt</span></td>
+                                <td>Andry R.</td>
+                            </tr>
+                            <tr>
+                                <td>Aliment Démarrage Fortifié</td>
+                                <td>LOT-DEM-045</td>
+                                <td>800 kg</td>
+                                <td>18/06/2026</td>
+                                <td><span class="badge badge-success">Prêt</span></td>
+                                <td>Pierre L.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="form-actions" style="margin-top: 24px;">
+                <a href="responsable-production-matieres-suivi.html" class="btn btn-white">Retour Matières Premières</a>
+                <a href="responsable-production-dashboard.html" class="btn btn-white">Dashboard Production</a>
+                <button class="btn btn-green" onclick="alert('Rapport généré avec succès !')">Générer Rapport</button>
+            </section>
+
+            <div id="vina-footer"></div>
+        </div>
+
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>État des Stocks - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+
+            <section class="page-header theme-orange">
+                <div>
+                    <p class="eyebrow">RO01 - GESTION DES STOCKS</p>
+                    <h1>État Général des Stocks</h1>
+                    <p class="muted-text">Contrôle des quantités disponibles, des seuils critiques et des mouvements de stock en temps réel.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-white" onclick="window.location.href='gestionnaire-stock-ajout-stock.html'">+ Entrée Stock</button>
+                    <button class="btn btn-orange" onclick="window.location.href='gestionnaire-stock-suivi-stock.html'">Sortie Stock</button>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Produits finis (Total)</div>
+                    <div class="stat-value">3 280 kg</div>
+                    <div class="stat-trend trend-positive">Stock sain</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Matières premières</div>
+                    <div class="stat-value">4 920 kg</div>
+                    <div class="stat-trend trend-warning">Seuil bas (Maïs)</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Valeur du stock estimée</div>
+                    <div class="stat-value">5 240 000 Ar</div>
+                    <div class="stat-trend trend-info">Prix de revient</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Alertes critiques</div>
+                    <div class="stat-value" style="color: #ef4444;">2</div>
+                    <div class="stat-trend trend-danger">Action requise</div>
+                </article>
+            </section>
+
+            <div class="simulation-grid">
+                <!-- Filtres -->
+                <aside class="side-panel">
+                    <div class="side-panel-heading">
+                        <h2>Filtres Stock</h2>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type d'article</label>
+                        <select class="form-control">
+                            <option>Tout</option>
+                            <option>Produit fini</option>
+                            <option>Matière première</option>
+                            <option>Emballage</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Entrepôt</label>
+                        <select class="form-control">
+                            <option>Entrepôt A - Principal</option>
+                            <option>Entrepôt B - Matières</option>
+                            <option>Zone Quarantaine</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Niveau de stock</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                                <input type="checkbox"> Alertes seulement
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                                <input type="checkbox"> Stocks dormants
+                            </label>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Tableau -->
+                <main>
+                    <div class="table-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Inventaire Automatisé</h2>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Article</th>
+                                        <th>Catégorie</th>
+                                        <th style="width: 150px;">Quantité</th>
+                                        <th>Dernier Mvt</th>
+                                        <th>Seuil Alerte</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Aliment Croissance 50kg</strong></td>
+                                        <td>Produit fini</td>
+                                        <td>1 180 kg</td>
+                                        <td>13/06/2026</td>
+                                        <td>500 kg</td>
+                                        <td><span class="badge badge-success">OK</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Maïs Local</strong></td>
+                                        <td>Matière première</td>
+                                        <td>
+                                            <div style="color: #ef4444; font-weight: bold;">1 240 kg</div>
+                                            <div class="jauge-container"><div class="jauge-fill jauge-red" style="width: 12%;"></div></div>
+                                        </td>
+                                        <td>11/06/2026</td>
+                                        <td>10 000 kg</td>
+                                        <td><span class="badge badge-warning">Bas</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Premix Croissance</strong></td>
+                                        <td>Matière première</td>
+                                        <td>
+                                            <div style="color: #ef4444; font-weight: bold;">310 kg</div>
+                                            <div class="jauge-container"><div class="jauge-fill jauge-red" style="width: 5%;"></div></div>
+                                        </td>
+                                        <td>10/06/2026</td>
+                                        <td>1 000 kg</td>
+                                        <td><span class="badge badge-danger">Critique</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Aliment Finition 50kg</strong></td>
+                                        <td>Produit fini</td>
+                                        <td>8 200 kg</td>
+                                        <td>12/06/2026</td>
+                                        <td>1 000 kg</td>
+                                        <td><span class="badge badge-success">Sain</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                            <div id="vina-footer"></div>
+        </div>
+    </div>
+</body>
+</html>

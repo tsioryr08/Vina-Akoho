@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Rapports financiers</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+<section class="page-header">
+<div>
+<p class="eyebrow">RO05 - Comptable</p>
+<h1>Rapports financiers</h1>
+<p>Tableau de bord comptable pour piloter la rentabilité sur une période donnée.</p>
+</div>
+<div class="card-actions">
+<a class="btn btn-primary" href="#">Exporter PDF</a>
+<a class="btn btn-blue-dark" href="#">Exporter Excel</a>
+</div>
+</section>
+
+<section class="card">
+<div class="card-header">
+<div>
+<h2 class="card-title">Contrôles et filtres</h2>
+<p class="card-subtitle">Périodicité, plage de dates et exportation.</p>
+</div>
+</div>
+
+<div class="tab-list">
+<a class="tab-link active" href="#">Mensuel</a>
+<a class="tab-link" href="#">Trimestriel</a>
+<a class="tab-link" href="#">Annuel</a>
+<a class="tab-link" href="#">Personnalisé</a>
+</div>
+
+<div class="filter-bar">
+<div class="field">
+<label for="reportFrom">Début</label>
+<input class="form-control" id="reportFrom" type="text" value="2025-12">
+</div>
+<div class="field">
+<label for="reportTo">Fin</label>
+<input class="form-control" id="reportTo" type="text" value="2026-05">
+</div>
+<div class="toolbar-actions">
+<button class="btn btn-primary" type="button">Appliquer</button>
+<button class="btn btn-ghost" type="button">Réinitialiser</button>
+</div>
+</div>
+</section>
+
+<section class="stats-grid">
+<article class="stat-card">
+<div class="stat-label">Chiffre d’affaires</div>
+<div class="stat-value">4 820 000 Ar</div>
+<div class="stat-trend trend-positive">+12% vs mois préc.</div>
+</article>
+<article class="stat-card">
+<div class="stat-label">Total dépenses</div>
+<div class="stat-value">2 930 000 Ar</div>
+<div class="stat-trend trend-warning">+5%</div>
+</article>
+<article class="stat-card">
+<div class="stat-label">Bénéfice net</div>
+<div class="stat-value">1 890 000 Ar</div>
+<div class="stat-trend trend-positive">+18%</div>
+</article>
+<article class="stat-card">
+<div class="stat-label">Marge nette</div>
+<div class="stat-value">39,2%</div>
+<div class="stat-trend trend-positive">+2,1 pts</div>
+</article>
+</section>
+
+<section class="table-card">
+<div class="table-card-header">
+<div>
+<h2 class="card-title">Évolution CA et bénéfice net</h2>
+<p class="card-subtitle">Zone graphique sur les 6 derniers mois.</p>
+</div>
+</div>
+
+<div class="chart-placeholder">Graphique combiné : barres CA mensuel + courbe bénéfice net</div>
+</section>
+
+<section class="table-card">
+<div class="table-card-header">
+<div>
+<h2 class="card-title">Compte de résultat simplifié — Mai 2026</h2>
+<p class="card-subtitle">Revenus, dépenses, pertes et bénéfice net.</p>
+</div>
+</div>
+
+<div class="table-wrap">
+<table class="data-table">
+<thead>
+<tr>
+<th>Catégorie</th>
+<th>Libellé</th>
+<th>Montant</th>
+<th>État</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="badge badge-success">Revenus</span></td>
+<td>Ventes aliment démarrage</td>
+<td><span class="text-success">+2 840 000 Ar</span></td>
+<td>Encaissé</td>
+</tr>
+<tr>
+<td><span class="badge badge-success">Revenus</span></td>
+<td>Ventes aliment croissance</td>
+<td><span class="text-success">+1 980 000 Ar</span></td>
+<td>Encaissé</td>
+</tr>
+<tr>
+<td><span class="badge badge-orange">Dépenses</span></td>
+<td>Matières premières</td>
+<td><span class="text-danger">-1 650 000 Ar</span></td>
+<td>Payé</td>
+</tr>
+<tr>
+<td><span class="badge badge-orange">Dépenses</span></td>
+<td>Transport & livraisons</td>
+<td><span class="text-danger">-380 000 Ar</span></td>
+<td>Payé</td>
+</tr>
+<tr>
+<td><span class="badge badge-orange">Dépenses</span></td>
+<td>Charges fixes</td>
+<td><span class="text-danger">-420 000 Ar</span></td>
+<td>En attente</td>
+</tr>
+<tr>
+<td><span class="badge badge-danger">Pertes</span></td>
+<td>Lots périmés invendus</td>
+<td><span class="text-danger">-480 000 Ar</span></td>
+<td>Perte</td>
+</tr>
+<tr>
+<td><strong>Bénéfice net</strong></td>
+<td>Total Mai 2026</td>
+<td><strong>1 890 000 Ar</strong></td>
+<td><span class="badge badge-success">Calculé</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

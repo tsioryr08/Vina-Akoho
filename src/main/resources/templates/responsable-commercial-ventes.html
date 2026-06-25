@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Ventes - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
+                    <h1>Gestion des Ventes</h1>
+                    <p class="muted-text">Suivi des commandes clients, facturation et coordination avec le service livraison.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-green" onclick="window.location.href='responsable-commercial-ventes-nouvelles.html'">+ Nouvelle Vente</button>
+                    <button class="btn btn-white">Exporter Excel</button>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Ventes du jour</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-trend trend-positive">+4 vs hier</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Chiffre d'affaires (Mois)</div>
+                    <div class="stat-value">45 280 000 Ar</div>
+                    <div class="stat-trend trend-positive">Objectif 75%</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Commandes en attente</div>
+                    <div class="stat-value">5</div>
+                    <div class="stat-trend trend-warning">À valider</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Taux de conversion</div>
+                    <div class="stat-value">68%</div>
+                    <div class="stat-trend trend-info">Stable</div>
+                </article>
+            </section>
+
+            <div class="simulation-grid" style="grid-template-columns: 300px 1fr;">
+                <aside class="side-panel">
+                    <div class="side-panel-heading">
+                        <h2>Filtres avancés</h2>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client</label>
+                        <input type="text" class="form-control" placeholder="Nom du client...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Statut commande</label>
+                        <select class="form-control">
+                            <option>Tous</option>
+                            <option>Validée</option>
+                            <option>En attente de paiement</option>
+                            <option>Annulée</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Période</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="date" class="form-control">
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-actions" style="margin-top: 20px;">
+                        <button class="btn btn-white w-100">Réinitialiser</button>
+                    </div>
+                </aside>
+
+                <main>
+                    <div class="table-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Flux des Ventes</h2>
+                            <div class="card-badge" style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;">24 Ventes affichées</div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Produit(s)</th>
+                                        <th>Total (Ar)</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="code-ref">V-000124</span></td>
+                                        <td><strong>Ferme Mandroso</strong><br><small class="muted-text">Zone : Itaosy</small></td>
+                                        <td>26 Juin 2026</td>
+                                        <td>20x Croissance 50kg</td>
+                                        <td><strong>3 200 000 Ar</strong></td>
+                                        <td><span class="badge badge-success">Payée</span></td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px;">
+                                                <button class="btn-icon">👁️</button>
+                                                <button class="btn-icon">📄</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-ref">V-000123</span></td>
+                                        <td><strong>Coopérative Avicole</strong><br><small class="muted-text">Zone : Ambohidratrimo</small></td>
+                                        <td>25 Juin 2026</td>
+                                        <td>10x Démarrage 10kg</td>
+                                        <td><strong>850 000 Ar</strong></td>
+                                        <td><span class="badge badge-warning">Attente</span></td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px;">
+                                                <button class="btn-icon">👁️</button>
+                                                <button class="btn-icon">📄</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="code-ref">V-000122</span></td>
+                                        <td><strong>Ets RAZAFY</strong><br><small class="muted-text">Zone : Analakely</small></td>
+                                        <td>24 Juin 2026</td>
+                                        <td>50x Finition 50kg</td>
+                                        <td><strong>7 600 000 Ar</strong></td>
+                                        <td><span class="badge badge-success">Payée</span></td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px;">
+                                                <button class="btn-icon">👁️</button>
+                                                <button class="btn-icon">📄</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <div id="vina-footer"></div>
+    </div>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+</body>
+</html>

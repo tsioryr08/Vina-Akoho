@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Liste des livraisons</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+<section class="page-header">
+<div>
+<p class="eyebrow">RO07 - Livreur</p>
+<h1>Liste des livraisons</h1>
+<p>Registre principal pour suivre et administrer l'ensemble des expéditions de l'entreprise.</p>
+</div>
+<a class="btn btn-primary" href="livraison-nouvelle.html">Nouvelle livraison +</a>
+</section>
+
+<section class="card">
+<div class="filter-bar">
+<div class="search-block">
+<label for="deliverySearch" class="toolbar-label">Rechercher</label>
+<input id="deliverySearch" class="form-control search-input" type="search" placeholder="Référence livraison ou commande...">
+</div>
+
+<div class="field">
+<label for="deliveryStatus">Statut</label>
+<select id="deliveryStatus" class="form-control">
+<option>Tous</option>
+<option>Livrée</option>
+<option>Annulée</option>
+<option>En cours</option>
+</select>
+</div>
+
+<div class="toolbar-actions filter-actions">
+<button class="btn btn-ghost" type="button">Rechercher</button>
+<button class="btn btn-green" type="button">Filtrer</button>
+</div>
+
+<div class="toolbar-actions filter-actions">
+<a class="btn btn-primary" href="livraison-nouvelle.html">Nouvelle livraison +</a>
+</div>
+</div>
+</section>
+
+<section class="table-card">
+<div class="table-card-header">
+<div>
+<h2 class="card-title">Tableau des livraisons</h2>
+<p class="card-subtitle">Liste des commandes à expédier avec statuts, zone et accès aux détails.</p>
+</div>
+<span class="badge badge-light-green">3 livraisons</span>
+</div>
+
+<div class="table-wrap">
+<table class="data-table">
+<thead>
+<tr>
+<th>Référence livraison</th>
+<th>Référence commande</th>
+<th>Livreur</th>
+<th>Date livraison</th>
+<th>Zone</th>
+<th>Statut</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>L0021</strong></td>
+<td>C004</td>
+<td>Jean</td>
+<td>26/06/2026</td>
+<td>Itaosy</td>
+<td><span class="badge badge-light-green">Livrée</span></td>
+<td><a class="btn btn-ghost btn-small" href="livraison-detail.html?id=L0021">Voir détails</a></td>
+</tr>
+<tr>
+<td><strong>L0041</strong></td>
+<td>C007</td>
+<td>Jean</td>
+<td>26/06/2026</td>
+<td>Itaosy</td>
+<td><span class="badge badge-danger">Annulée</span></td>
+<td><a class="btn btn-ghost btn-small" href="livraison-detail.html?id=L0041">Voir détails</a></td>
+</tr>
+<tr>
+<td><strong>L0052</strong></td>
+<td>C006</td>
+<td>Jean</td>
+<td>26/06/2026</td>
+<td>Itaosy</td>
+<td><span class="badge badge-info">En cours</span></td>
+<td><a class="btn btn-ghost btn-small" href="livraison-detail.html?id=L0052">Voir détails</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="pagination centered">
+<a class="btn btn-ghost btn-small active" href="#">1</a>
+<a class="btn btn-ghost btn-small" href="#">2</a>
+<a class="btn btn-ghost btn-small" href="#">3</a>
+<a class="btn btn-ghost btn-small" href="#">4</a>
+</div>
+</section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

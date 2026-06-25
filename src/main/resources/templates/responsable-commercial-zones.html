@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VINA AKOHO - Zone à forte demande</title>
+<link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+<section class="zone-header">
+<div class="zone-header-text">
+<p class="eyebrow">RO04 - Responsable Commercial</p>
+<h1>Zone à forte demande</h1>
+<p>
+Liste des zones de livraison classées selon le volume de
+commandes sur la période sélectionnée, avec le détail des
+produits les plus demandés.
+</p>
+</div>
+<div class="zone-header-meta">
+<span class="badge badge-info">12 zones suivies</span>
+<span class="badge badge-success">À jour</span>
+</div>
+</section>
+
+<section class="zone-card">
+<div class="zone-card-title">
+<span class="icon-dot" aria-hidden="true">📅</span>
+Période
+</div>
+<div class="period-row">
+<div class="field">
+<label for="date1">Date début</label>
+<div class="date-input">
+<input
+type="text"
+id="date1"
+placeholder="Date 1"
+value="01/05/2026"
+/>
+<span class="cal-icon" aria-hidden="true">📆</span>
+</div>
+</div>
+<div class="field">
+<label for="date2">Date fin</label>
+<div class="date-input">
+<input
+type="text"
+id="date2"
+placeholder="Date 2"
+value="19/06/2026"
+/>
+<span class="cal-icon" aria-hidden="true">📆</span>
+</div>
+</div>
+<div class="field">
+<button class="btn btn-primary" type="button">Filtrer</button>
+</div>
+</div>
+</section>
+
+<section class="zone-table-card">
+<div class="zone-table-header">
+<div>
+<h2 class="card-title">Communes à forte demande</h2>
+<p class="card-subtitle">
+Classement basé sur le nombre de livraisons effectuées sur la
+période
+</p>
+</div>
+</div>
+
+<div class="zone-table-wrap">
+<table class="data-table">
+<thead>
+<tr>
+<th>Commune</th>
+<th>District</th>
+<th>Région</th>
+<th class="num">Nombres livraisons</th>
+<th>Niveau demande</th>
+<th>Produits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="zone-commune-cell">
+<strong>Amboatavo</strong><span>Zone urbaine</span>
+</td>
+<td>Andava</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">122</td>
+<td>
+<span class="zone-demand-pill high">Élevée</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge poulet"
+>Aliment poulet prêt à vendre</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Ambohimangakely</strong><span>Périurbain</span>
+</td>
+<td>Avaradrano</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">98</td>
+<td>
+<span class="zone-demand-pill high">Élevée</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge poulet"
+>Aliment poulet prêt à vendre</span
+>
+<span class="zone-product-badge croissance"
+>Aliment croissance</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Talatamaty</strong><span>Périurbain</span>
+</td>
+<td>Ambohidratrimo</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">87</td>
+<td>
+<span class="zone-demand-pill medium">Moyenne</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge croissance"
+>Aliment croissance</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Ivato</strong><span>Zone aéroportuaire</span>
+</td>
+<td>Ambohidratrimo</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">76</td>
+<td>
+<span class="zone-demand-pill medium">Moyenne</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge poulet"
+>Aliment poulet prêt à vendre</span
+>
+<span class="zone-product-badge poussin"
+>Aliment poussin</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Alasora</strong><span>Périurbain</span>
+</td>
+<td>Antananarivo Avaradrano</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">65</td>
+<td>
+<span class="zone-demand-pill medium">Moyenne</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge croissance"
+>Aliment croissance</span
+>
+<span class="zone-product-badge poussin"
+>Aliment poussin</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Ambohijanaka</strong><span>Zone rurale</span>
+</td>
+<td>Andramasina</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">54</td>
+<td>
+<span class="zone-demand-pill normal">Normale</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge poussin"
+>Aliment poussin</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Anosiala</strong><span>Zone rurale</span>
+</td>
+<td>Ambohidratrimo</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">47</td>
+<td>
+<span class="zone-demand-pill normal">Normale</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge poulet"
+>Aliment poulet prêt à vendre</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Sabotsy Namehana</strong><span>Périurbain</span>
+</td>
+<td>Avaradrano</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">41</td>
+<td>
+<span class="zone-demand-pill normal">Normale</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge croissance"
+>Aliment croissance</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Ambatofotsy</strong><span>Zone rurale</span>
+</td>
+<td>Antananarivo Atsimondrano</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">33</td>
+<td>
+<span class="zone-demand-pill normal">Normale</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge poussin"
+>Aliment poussin</span
+>
+</div>
+</td>
+</tr>
+<tr>
+<td class="zone-commune-cell">
+<strong>Manandriana</strong><span>Zone rurale</span>
+</td>
+<td>Antananarivo Atsimondrano</td>
+<td><span class="zone-region-tag">Analamanga</span></td>
+<td class="num zone-num-strong">28</td>
+<td>
+<span class="zone-demand-pill normal">Normale</span>
+</td>
+<td>
+<div class="zone-product-cell">
+<span class="zone-product-badge poulet"
+>Aliment poulet prêt à vendre</span
+>
+<span class="zone-product-badge croissance"
+>Aliment croissance</span
+>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="zone-table-footer">
+<span class="muted-text"
+>Affichage de 10 communes sur 12 résultats</span
+>
+<div class="zone-pagination">
+<span class="page-btn active">1</span>
+<span class="page-btn">2</span>
+</div>
+</div>
+</section>
+
+<section class="zone-actions">
+<a class="btn btn-green" href="#">Voir carte</a>
+<a class="btn btn-blue-dark" href="responsable-commercial-dashboard.html"
+>Revenir</a
+>
+</section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

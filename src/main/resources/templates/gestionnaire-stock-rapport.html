@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport & Clôture - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">CLÔTURE JOURNALIÈRE</p>
+                    <h1>Stocks Réconciliés & Rapport Quotidien</h1>
+                    <p>Validation finale des stocks et génération des rapports de fin de journée.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <i class="icon-print"></i> Imprimer la vue
+                    </button>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Valeur du Stock</div>
+                    <div class="stat-value">8.5M <small>Ar</small></div>
+                    <div class="stat-trend trend-info">Total valorisé</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Mouvements/Jour</div>
+                    <div class="stat-value">34</div>
+                    <div class="stat-trend trend-positive">+12% vs hier</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Alertes Actives</div>
+                    <div class="stat-value">02</div>
+                    <div class="stat-trend trend-warning">À surveiller</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Précis. Inventaire</div>
+                    <div class="stat-value">99.2%</div>
+                    <div class="stat-trend trend-positive">Excellent</div>
+                </article>
+            </section>
+
+            <div class="split-layout">
+                <div class="main-content">
+                    <section class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">1. Clôture Journalière</h2>
+                        </div>
+                        <div class="p-20">
+                            <div class="checklist">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" checked>
+                                    <span class="checkmark"></span>
+                                    Tous les bons d'entrée sont validés
+                                </label>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" checked>
+                                    <span class="checkmark"></span>
+                                    Sorties de production enregistrées
+                                </label>
+                                <label class="checkbox-container">
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                    Inventaire tournant vérifié (Optionnel)
+                                </label>
+                            </div>
+
+                            <div class="form-group mt-20">
+                                <label class="form-label">Note de fin de journée</label>
+                                <textarea class="form-control" rows="3" placeholder="Événements marquants, avaries détectées..."></textarea>
+                            </div>
+
+                            <div class="mt-20">
+                                <button class="btn btn-primary btn-large w-full" onclick="executeCloture()">
+                                    EXÉCUTER LA CLÔTURE DU 21/06
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">2. Stocks Réconciliés</h2>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Référence</th>
+                                        <th>Désignation</th>
+                                        <th>Ouverture</th>
+                                        <th>Mouvements</th>
+                                        <th>Clôture</th>
+                                        <th>Valeur (Ar)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>REF-001</strong></td>
+                                        <td>Maïs Jaune</td>
+                                        <td>1 200kg</td>
+                                        <td>+500kg</td>
+                                        <td><strong>1 700kg</strong></td>
+                                        <td>340 000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>REF-004</strong></td>
+                                        <td>Tourteau de Soja</td>
+                                        <td>850kg</td>
+                                        <td>-150kg</td>
+                                        <td><strong>700kg</strong></td>
+                                        <td>210 000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="side-panel">
+                    <section class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Rapport Quotidien</h2>
+                        </div>
+                        <div class="p-20">
+                            <div class="report-list">
+                                <div class="report-item">
+                                    <div class="report-info">
+                                        <strong>Rapport Stock Quotidien</strong>
+                                        <span>PDF • 1.2 MB</span>
+                                    </div>
+                                    <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">Export</button>
+                                </div>
+                                <div class="report-item">
+                                    <div class="report-info">
+                                        <strong>Journal des Mouvements</strong>
+                                        <span>XLSX • 850 KB</span>
+                                    </div>
+                                    <button class="btn btn-ghost btn-sm">Export</button>
+                                </div>
+                                <div class="report-item">
+                                    <div class="report-info">
+                                        <strong>État de Valorisation</strong>
+                                        <span>PDF • 400 KB</span>
+                                    </div>
+                                    <button class="btn btn-ghost btn-sm">Export</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card mt-20">
+                        <div class="card-header">
+                            <h2 class="card-title">Historique Récent</h2>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>20/06</td>
+                                        <td><span class="badge badge-success">Validé</span></td>
+                                        <td><a href="#">PDF</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>19/06</td>
+                                        <td><span class="badge badge-success">Validé</span></td>
+                                        <td><a href="#">PDF</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>18/06</td>
+                                        <td><span class="badge badge-success">Validé</span></td>
+                                        <td><a href="#">PDF</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+        <div id="vina-footer"></div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+    <script>
+        function executeCloture() {
+            if(confirm('Confirmer la clôture journalière ? Les stocks seront verrouillés pour cette date.')) {
+                alert('Clôture réussie. Les rapports ont été envoyés à la direction.');
+                window.location.reload();
+            }
+        }
+
+        function downloadPDF() {
+            alert('Génération du rapport PDF en cours...');
+        }
+
+        window.VinaAkohoAuth.enforceModuleAccess('gestionnaire-stock-rapport.html');
+    </script>
+</body>
+</html>

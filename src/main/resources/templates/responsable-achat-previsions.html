@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prévisions d'Approvisionnement - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            
+            <section class="page-header theme-blue">
+                <div>
+                    <p class="eyebrow">PHASE 1 - ANALYSE & BESOINS</p>
+                    <h1>Prévisions d'Approvisionnement</h1>
+                    <p>Calcul des besoins en matières premières basés sur la production prévisionnelle.</p>
+                </div>
+            </section>
+
+            <!-- Cartes d'Indicateurs Clés (KPI) -->
+            <section class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <article class="stat-card">
+                    <div class="stat-label">Production prévisionnelle</div>
+                    <div class="stat-value">8 400 kg</div>
+                    <div class="stat-trend trend-info">Pour juin 2026</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Matières 1ères nécessaires</div>
+                    <div class="stat-value">8 820 kg</div>
+                    <div class="stat-trend trend-info">PAMP estimé inclus</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Seuil de rentabilité</div>
+                    <div class="stat-value">5 200 kg</div>
+                    <div class="stat-trend trend-positive">Atteint ✓</div>
+                </article>
+            </section>
+
+            <div class="grid-2" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-top: 24px;">
+                <!-- Bloc de Gauche : Quantités prévisionnelles -->
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Quantités prévisionnelles par produit</h2>
+                            <p class="card-subtitle">Comparaison vs mois précédent (en kg)</p>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prév. Juin</th>
+                                    <th>Mois préc.</th>
+                                    <th>Écart</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Aliment démarrage</strong></td>
+                                    <td>3 200</td>
+                                    <td>2 900</td>
+                                    <td><span class="badge badge-success">+300</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Aliment croissance</strong></td>
+                                    <td>2 800</td>
+                                    <td>2 600</td>
+                                    <td><span class="badge badge-success">+200</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Aliment finition</strong></td>
+                                    <td>1 600</td>
+                                    <td>1 400</td>
+                                    <td><span class="badge badge-success">+200</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Aliment ponte</strong></td>
+                                    <td>800</td>
+                                    <td>750</td>
+                                    <td><span class="badge badge-success">+50</span></td>
+                                </tr>
+                                <tr style="background: #f8fafc; font-weight: 800;">
+                                    <td>TOTAL</td>
+                                    <td>8 400</td>
+                                    <td>7 650</td>
+                                    <td><span class="badge badge-blue">+750</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Bloc de Droite : Alertes & Recommandations -->
+                <aside class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Alertes & Recommandations</h2>
+                    </div>
+                    <div style="padding: 0 20px 20px;">
+                        <div class="alert-box danger" style="border-left: 4px solid var(--red); background: #fff5f5; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                            <strong style="color: var(--red); display: block; margin-bottom: 4px;">⚠️ Stock maïs insuffisant</strong>
+                            <p style="font-size: 13px; margin: 0;">Disponible : 1 200 kg · Nécessaire : 4 620 kg</p>
+                        </div>
+                        
+                        <div class="alert-box warning" style="border-left: 4px solid var(--orange); background: #fffaf0; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                            <strong style="color: var(--orange); display: block; margin-bottom: 4px;">⚠️ Prémix vitamines à commander</strong>
+                            <p style="font-size: 13px; margin: 0;">Stock actuel proche du seuil minimum.</p>
+                        </div>
+
+                        <div class="alert-box success" style="border-left: 4px solid var(--green); background: #f0fff4; padding: 15px; margin-bottom: 24px; border-radius: 8px;">
+                            <strong style="color: var(--green); display: block; margin-bottom: 4px;">✓ Son de blé suffisant</strong>
+                            <p style="font-size: 13px; margin: 0;">Stock couvre 6 semaines de production.</p>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="responsable-achat-plan-achat.html" class="btn btn-black" style="justify-content: center; background: #111827; color: white;">Générer plan d'achat</a>
+                            <a href="responsable-production-simulation.html" class="btn btn-white" style="justify-content: center;">Voir simulation</a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <div id="vina-footer"></div>
+        </div>
+
+        <script src="../assets/js/auth.js"></script>
+        <script src="../assets/js/app-shell.js"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertes de Seuil - VINA AKOHO</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            <section class="page-header theme-orange">
+                <div>
+                    <p class="eyebrow">MONITORING RÉACTIF</p>
+                    <h1>Alertes & Seuils</h1>
+                    <p>Surveillance automatisée des niveaux de stock et autonomie restante.</p>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Ruptures Imminentes</div>
+                    <div class="stat-value">03</div>
+                    <div class="stat-trend trend-danger">Actions urgentes</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Stock de Sécurité</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-trend trend-info">Zones tampons OK</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Moyenne Autonomie</div>
+                    <div class="stat-value">14 <small>Jours</small></div>
+                    <div class="stat-trend trend-positive">+2j vs sem. dern</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Réappro. en cours</div>
+                    <div class="stat-value">05</div>
+                    <div class="stat-trend trend-info">Bons émis</div>
+                </article>
+            </section>
+
+            <div class="split-layout">
+                <div class="main-content">
+                    <section class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Alertes Actives</h2>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Niveau</th>
+                                        <th>Seuil</th>
+                                        <th>Urgence</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Maïs Jaune</strong></td>
+                                        <td>150kg</td>
+                                        <td>500kg</td>
+                                        <td><span class="badge badge-danger">CRITIQUE</span></td>
+                                        <td><button class="btn btn-primary btn-sm" onclick="triggerPurchase()">Acheter</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Soja</strong></td>
+                                        <td>320kg</td>
+                                        <td>300kg</td>
+                                        <td><span class="badge badge-warning">ATTENTION</span></td>
+                                        <td><button class="btn btn-ghost btn-sm" onclick="triggerPurchase()">Prévoir</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">État des Stocks Surveillés</h2>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Actuel</th>
+                                        <th>Autonomie</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Calcaire</td>
+                                        <td>1 200kg</td>
+                                        <td>90 jours</td>
+                                        <td><span class="badge badge-success">OPTIMAL</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sel Minéral</td>
+                                        <td>450kg</td>
+                                        <td>45 jours</td>
+                                        <td><span class="badge badge-success">OK</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="side-panel">
+                    <section class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Config. des Seuils</h2>
+                        </div>
+                        <div class="p-20">
+                            <div class="form-group">
+                                <label class="form-label">Produit</label>
+                                <select class="form-control">
+                                    <option>Sélectionner...</option>
+                                    <option>Maïs Jaune</option>
+                                    <option>Soja</option>
+                                </select>
+                            </div>
+                            <div class="form-grid mt-10" style="grid-template-columns: 1fr 1fr;">
+                                <div class="form-group">
+                                    <label class="form-label">Min (Alerte)</label>
+                                    <input type="number" class="form-control" value="500">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Max (Plein)</label>
+                                    <input type="number" class="form-control" value="2000">
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary w-full mt-20">Mettre à jour</button>
+                        </div>
+                    </section>
+
+                    <section class="card mt-20">
+                        <div class="card-header">
+                            <h2 class="card-title">Dernières Notifications</h2>
+                        </div>
+                        <div class="p-20">
+                            <div class="timeline-compact">
+                                <div class="timeline-item">
+                                    <span class="time">10:45</span>
+                                    <p>Alerte critique: Farine de Poisson</p>
+                                </div>
+                                <div class="timeline-item">
+                                    <span class="time">Hier</span>
+                                    <p>Seuil atteint: Sel Minéral</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+        <div id="vina-footer"></div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+    <script>
+        function triggerPurchase() {
+            alert('Suggestion d\'achat transmise au service Achat (Previsionnel).');
+        }
+        window.VinaAkohoAuth.enforceModuleAccess('gestionnaire-stock-alertes.html');
+    </script>
+</body>
+</html>
