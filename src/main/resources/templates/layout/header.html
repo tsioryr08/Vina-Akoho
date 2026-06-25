@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-<header th:fragment="header" class="topbar">
-    <div class="topbar-left">
-        <div class="breadcrumb">Matières Premières</div>
-    </div>
-    <div class="topbar-right">
-        <span class="role-pill">Responsable Production</span>
-    </div>
+<header class="topbar">
+<div class="topbar-left">
+<button type="button" class="menu-button" id="vina-menu-button">Menu</button>
+<div class="breadcrumb" id="vina-breadcrumb">VINA AKOHO</div>
+</div>
+
+<div class="topbar-actions">
+<span class="role-pill" id="vina-role-pill">Rôle</span>
+<button type="button" class="btn btn-ghost btn-small" id="vina-logout-button">Déconnexion</button>
+</div>
 </header>
-</body>
-</html>
