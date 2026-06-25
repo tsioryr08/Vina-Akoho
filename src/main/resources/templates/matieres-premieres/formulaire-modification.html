@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Modifier — ' + ${fiche.nom} + ' - VINA AKOHO'">Modifier matière première</title>
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+</head>
+<body class="vina-body">
+    <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
+    <div class="app-main-wrapper">
+        <header th:replace="~{layout/header :: header}"></header>
+        <div id="vina-content">
+
+            <section class="page-header theme-orange" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <p class="eyebrow">MATIÈRES PREMIÈRES</p>
+                    <h1 th:text="'Modifier : ' + ${fiche.nom}">Modifier matière première</h1>
+                    <p style="color: #64748b; font-style: italic;">Modifiez les informations de la fiche produit.</p>
+                </div>
+                <span class="badge badge-warning" style="font-size: 1rem; padding: 8px 16px; align-self: center;" th:text="${fiche.code}"></span>
+            </section>
+
+            <!-- Sous-navigation interne -->
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                <a th:href="@{/matieres-premieres/{id}(id=${fiche.id})}" class="btn btn-ghost btn-small">← Retour à la fiche</a>
+                <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small">Suivi Stock</a>
+                <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-ghost btn-small">Ajouter Matière</a>
+            </div>
+
+            <!-- Messages flash session -->
+            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
+
+            <div class="form-section" style="max-width: 720px;">
+                <h2>Informations de la Matière Première</h2>
+                <form method="post" th:action="@{/matieres-premieres/{id}/modifier(id=${fiche.id})}">
+                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Nom de la matière première <span style="color:#ef4444;">*</span></label>
+                            <input type="text" name="nom" class="form-control"
+                                   th:value="${fiche.nom}"
+                                   placeholder="ex: Maïs concassé" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fournisseur principal <span style="color:#ef4444;">*</span></label>
+                            <select name="idFournisseur" class="form-control" required>
+                                <option value="">-- Choisir le fournisseur --</option>
+                                <option th:each="f : ${fournisseurs}"
+                                        th:value="${f.id}"
+                                        th:text="${f.nom}"
+                                        th:selected="${f.id == fiche.fournisseurId}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Coût unitaire officiel (Ariary) <span style="color:#ef4444;">*</span></label>
+                            <input type="number" name="coutUnitaire" class="form-control"
+                                   th:value="${fiche.coutUnitaire}"
+                                   min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unité de mesure <span style="color:#ef4444;">*</span></label>
+                            <select name="idUnite" class="form-control" required>
+                                <option th:each="u : ${unites}"
+                                        th:value="${u.id}"
+                                        th:text="${u.libelle}"
+                                        th:selected="${u.id == fiche.uniteId}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Seuil minimum d'alerte</label>
+                            <input type="number" name="seuilMinimum" class="form-control"
+                                   th:value="${fiche.seuilMinimum}"
+                                   placeholder="ex: 500 (optionnel)" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 32px;">
+                        <a th:href="@{/matieres-premieres/{id}(id=${fiche.id})}" class="btn btn-ghost">Annuler</a>
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Zone de suppression -->
+            <div class="form-section" style="max-width: 720px; margin-top: 24px;">
+                <h2 style="color: #dc2626;">Zone Dangereuse</h2>
+                <div class="alert-box danger" style="margin-bottom: 20px;">
+                    <strong>Attention :</strong> La suppression est définitive et irréversible.
+                    Elle n'est possible que si la matière première n'a aucun lot en stock ni mouvement enregistré.
+                </div>
+                <form method="post" th:action="@{/matieres-premieres/{id}/supprimer(id=${fiche.id})}"
+                      onsubmit="return confirm('Supprimer définitivement ' + document.title.split(' — ')[1].split(' -')[0] + ' ?');">
+                    <button type="submit" class="btn btn-red">Supprimer cette matière première</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
