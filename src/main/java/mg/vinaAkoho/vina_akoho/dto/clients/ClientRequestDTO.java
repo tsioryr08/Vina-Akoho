@@ -21,6 +21,7 @@ public class ClientRequestDTO {
 
     private Boolean isActif;
 
+    @NotBlank(message = "Le numero telephone est obligatoire")
     @Size(max = 20, message = "Le numero telephone ne doit pas depasser 20 caracteres")
     private String numeroTelephone;
 
