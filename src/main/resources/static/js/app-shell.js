@@ -1,9 +1,20 @@
 (function () {
   "use strict";
 
-  const role = window.VinaAkohoAuth.requireRole();
+  function getDefaultRoleForCurrentPage() {
+    const path = window.location.pathname;
+
+    if (path.indexOf("/clients") === 0 || path.indexOf("/layout") === 0) {
+      return "responsableCommercial";
+    }
+
+    return null;
+  }
+
+  const role = window.VinaAkohoAuth.getRole() || getDefaultRoleForCurrentPage();
 
   if (!role) {
+    window.location.href = window.VinaAkohoAuth.projectRelativeUrl("index.html");
     return;
   }
 
@@ -210,14 +221,17 @@
   function getProjectRootUrl() {
     const scripts = document.getElementsByTagName("script");
     const appShellScript = Array.from(scripts).find(function (script) {
-      return script.src && script.src.indexOf("/assets/js/app-shell.js") !== -1;
+      return script.src &&
+        (script.src.indexOf("/assets/js/app-shell.js") !== -1 || script.src.indexOf("/static/js/app-shell.js") !== -1);
     });
 
     if (!appShellScript) {
       return window.VinaAkohoAuth.projectRelativeUrl("");
     }
 
-    return appShellScript.src.replace("/assets/js/app-shell.js", "/");
+    return appShellScript.src
+      .replace("/assets/js/app-shell.js", "/")
+      .replace("/static/js/app-shell.js", "/");
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -225,7 +239,7 @@
 
     Promise.all([
       loadPartial(rootUrl + "layout/header.html"),
-      loadPartial(rootUrl + "sidebar/" + role + ".html"),
+      loadPartial(rootUrl + "layout/" + role + ".html"),
       loadPartial(rootUrl + "layout/footer.html")
     ])
       .then(function (results) {
@@ -240,11 +254,7 @@
         setupMobileMenu();
       })
       .catch(function (error) {
-        const content = document.getElementById("vina-content");
-
-        if (content) {
-          content.innerHTML = '<div class="empty-state"><div>' + error.message + "</div></div>";
-        }
+        console.warn(error.message);
       });
   });
 })();
