@@ -14,4 +14,8 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
     Optional<Client> findByIdAndNumeroTelephoneAndActifTrueAndEstSupprimerFalse(Integer id, String numeroTelephone);
 
     Optional<Client> findByNumeroTelephoneAndActifTrueAndEstSupprimerFalse(String numeroTelephone);
+
+    boolean existsByNumeroTelephoneAndEstSupprimerFalse(String numeroTelephone);
+
+    boolean existsByNumeroTelephoneAndEstSupprimerFalseAndIdNot(String numeroTelephone, Integer id);
 }

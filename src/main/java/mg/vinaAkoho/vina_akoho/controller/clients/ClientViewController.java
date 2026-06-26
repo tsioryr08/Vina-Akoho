@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -102,7 +103,14 @@ public class ClientViewController {
             return "clients/responsable-commercial-clients-nouveau";
         }
 
-        ClientGestionDTO client = clientService.createClient(inscription);
+        ClientGestionDTO client;
+        try {
+            client = clientService.createClient(inscription);
+        } catch (ResponseStatusException exception) {
+            model.addAttribute("erreur", exception.getReason());
+            return "clients/responsable-commercial-clients-nouveau";
+        }
+
         model.addAttribute("client", client);
         model.addAttribute("succes", "Compte client enregistre. Votre identifiant est " + client.getId());
         return "clients/responsable-commercial-clients-nouveau";
@@ -135,7 +143,15 @@ public class ClientViewController {
             return "clients/clients-detail-edit";
         }
 
-        ClientGestionDTO client = clientService.updateClient(id, inscription);
+        ClientGestionDTO client;
+        try {
+            client = clientService.updateClient(id, inscription);
+        } catch (ResponseStatusException exception) {
+            model.addAttribute("client", clientService.getClientById(id));
+            model.addAttribute("erreur", exception.getReason());
+            return "clients/clients-detail-edit";
+        }
+
         model.addAttribute("client", client);
         model.addAttribute("succes", "Client modifie avec succes.");
         return "clients/clients-detail";

@@ -77,6 +77,8 @@ public class ClientService {
 
     @Transactional
     public ClientGestionDTO createClient(ClientRequestDTO dto) {
+        verifierClientDejaInscrit(dto.getNumeroTelephone(), null);
+
         ServiceClient service = findService(dto.getIdService());
         TypeClient typeClient = findTypeClient(dto.getIdTypeClient());
 
@@ -114,6 +116,7 @@ public class ClientService {
     @Transactional
     public ClientGestionDTO updateClient(Integer id, ClientRequestDTO dto) {
         Client client = findActiveClient(id);
+        verifierClientDejaInscrit(dto.getNumeroTelephone(), id);
         ServiceClient service = findService(dto.getIdService());
         TypeClient typeClient = findTypeClient(dto.getIdTypeClient());
 
@@ -155,6 +158,20 @@ public class ClientService {
     private TypeClient findTypeClient(Integer id) {
         return typeClientRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Type client introuvable"));
+    }
+
+    private void verifierClientDejaInscrit(String numeroTelephone, Integer idClientAutorise) {
+        if (numeroTelephone == null || numeroTelephone.isBlank()) {
+            return;
+        }
+
+        boolean existeDeja = idClientAutorise == null
+                ? clientRepository.existsByNumeroTelephoneAndEstSupprimerFalse(numeroTelephone)
+                : clientRepository.existsByNumeroTelephoneAndEstSupprimerFalseAndIdNot(numeroTelephone, idClientAutorise);
+
+        if (existeDeja) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ce client est deja inscrit avec ce numero telephone");
+        }
     }
 
     private ServiceClient getOrCreateServiceClient() {
