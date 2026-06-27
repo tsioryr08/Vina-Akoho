@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,8 +18,12 @@
 
 <form id="loginForm" class="login-form" action="api/login" method="post" autocomplete="off">
 <div class="form-group">
-<label for="emailInput">Email</label>
-<input id="emailInput" name="email" class="form-control" type="email" placeholder="admin@vinaakoho.mg" required>
+  <label for="employeSelect">Employé</label>
+  <select id="employeSelect" name="email" class="form-control" required>
+    <option value="" disabled selected>-- Sélectionner votre nom --</option>
+    <option th:each="e : ${employes}" th:value="${e.email}" th:text="${e.nom + ' ' + e.prenom}">
+    </option>
+  </select>
 </div>
 
 <div class="form-group">
