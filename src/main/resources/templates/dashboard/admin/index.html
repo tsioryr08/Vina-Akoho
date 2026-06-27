@@ -1,10 +1,271 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Administrateur - VINA AKOHO</title>
-</head>
-<body>
-    <h1>Hello c'est Administrateur</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Panneau d'Administration</title>
+    <link rel="stylesheet" href="/assets/css/style.css" />
+  </head>
+  <body>
+    <aside class="sidebar" id="vina-sidebar">
+      <div class="sidebar-brand">
+        <img
+          src="/assets/VINA_AKOHO_LOGO.png"
+          alt="VINA AKOHO"
+          class="brand-mark"
+        />
+        <div>
+          <div class="brand-title">VINA AKOHO</div>
+          <div class="brand-subtitle">RO01 - Administrateur</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a class="sidebar-link active" href="#"
+          >Dashboard <span class="sidebar-code">A1</span></a
+        >
+
+        <div class="sidebar-section">Utilisateurs</div>
+        <a class="sidebar-link" href="#"
+          >Gestion des comptes <span class="sidebar-code">A2</span></a
+        >
+
+        <div class="sidebar-section">Finances</div>
+        <a class="sidebar-link" href="#"
+          >Rapports & Trésorerie <span class="sidebar-code">A3</span></a
+        >
+
+        <div class="sidebar-section">Statistiques</div>
+        <a class="sidebar-link" href="#"
+          >Vue globale & Analytics <span class="sidebar-code">A4</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Production <span class="sidebar-code">A4a</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Ventes <span class="sidebar-code">A4b</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Géographie <span class="sidebar-code">A4c</span></a
+        >
+
+        <div class="sidebar-section">Configuration</div>
+        <a class="sidebar-link" href="#"
+          >Paramètres système <span class="sidebar-code">A5</span></a
+        >
+
+        <div class="sidebar-section">Prévisions</div>
+        <a class="sidebar-link" href="#"
+          >Prévisions <span class="sidebar-code">A6</span></a
+        >
+      </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="vina-menu-button" type="button">
+            ☰
+          </button>
+          <span class="breadcrumb">Dashboard</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="role-pill">RO01 - Administrateur</span>
+          <button
+            class="btn btn-ghost btn-small"
+            id="vina-logout-button"
+            type="button"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow">RO01 - Administrateur</p>
+            <h1>Panneau d'Administration Système & Paramètres</h1>
+            <p>
+              Gestion des utilisateurs, rôles assignés, journal d'activité et
+              validations de clôture.
+            </p>
+          </div>
+          <span class="role-badge">RO01 - Administrateur</span>
+        </section>
+
+        <section class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Utilisateurs actifs & Rôles assignés</h2>
+                <p class="card-subtitle">
+                  RG01 — Suivi des comptes actifs et permissions par rôle
+                  organisationnel.
+                </p>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Utilisateur (ID)</th>
+                    <th>Rôle Organigramme</th>
+                    <th>Dernier Accès</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Andry</td>
+                    <td>Responsable Production (RO02)</td>
+                    <td>Il y a 10 min</td>
+                    <td>
+                      <a class="btn btn-ghost btn-small" href="#"
+                        >Permissions</a
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Mpiaro</td>
+                    <td>Responsable Commercial (RO04)</td>
+                    <td>En ligne</td>
+                    <td>
+                      <a class="btn btn-ghost btn-small" href="#"
+                        >Permissions</a
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Nekena</td>
+                    <td>Comptable (RO05)</td>
+                    <td>Hier</td>
+                    <td>
+                      <a class="btn btn-ghost btn-small" href="#"
+                        >Permissions</a
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card-actions" style="margin-top: 16px">
+              <a class="btn btn-purple" href="#">+ Créer un nouveau compte</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Approbations de Clôture en attente</h2>
+                <p class="card-subtitle">
+                  Validation administrative avant clôture mensuelle.
+                </p>
+              </div>
+            </div>
+
+            <div class="alert-box danger">
+              Le rapport financier mensuel de Mai 2026 a été généré par le
+              Comptable et attend votre validation.
+            </div>
+
+            <div class="card-actions">
+              <a class="btn btn-green" href="#">Valider et Clôturer le Mois</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-bottom: 28px">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Pages d'administration métier</h2>
+              <p class="card-subtitle">
+                Accès rapide aux formulaires et listes demandés pour le
+                commercial et le stock/production.
+              </p>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="delivery-card">
+              <div class="delivery-card-header">
+                <div>
+                  <h2>Commercial — Clients</h2>
+                  <p class="card-subtitle">
+                    Enregistrement et base de données clients.
+                  </p>
+                </div>
+                <span class="badge badge-light-green">Vert</span>
+              </div>
+              <div class="card-actions">
+                <a class="btn btn-green" href="#">Enregistrer un Client</a>
+                <a class="btn btn-ghost" href="#">Base Clients</a>
+              </div>
+            </div>
+            <div class="delivery-card">
+              <div class="delivery-card-header">
+                <div>
+                  <h2>Stock & Production — Catalogue</h2>
+                  <p class="card-subtitle">
+                    Création d'article et suivi du stock.
+                  </p>
+                </div>
+                <span class="badge badge-orange">Orange</span>
+              </div>
+              <div class="card-actions">
+                <a class="btn btn-orange" href="#">Nouvel Article</a>
+                <a class="btn btn-ghost" href="#">Catalogue Stocks</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Journal d'activité Général</h2>
+              <p class="card-subtitle">
+                Audit Trail - RG01 — Liste chronologique des actions sensibles.
+              </p>
+            </div>
+          </div>
+
+          <div class="log-list">
+            <div class="log-item">
+              <div class="log-time">[09/06 20:12]</div>
+              <div class="log-action">
+                RO02 (Andry) a validé la production du LOT-CROIS-50-A.
+              </div>
+            </div>
+            <div class="log-item">
+              <div class="log-time">[09/06 18:45]</div>
+              <div class="log-action">
+                RO05 (Nekena) a modifié la fiche créance de Agro-Distribution.
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div
+        class="app-footer"
+        style="
+          padding: 16px 24px;
+          border-top: 1px solid var(--border);
+          background: #fff;
+          color: var(--muted);
+          font-size: 12px;
+          text-align: center;
+        "
+      >
+        VINA AKOHO — Panneau d'Administration
+      </div>
+    </div>
+
+    <script src="/assets/js/script_content.js"></script>
+  </body>
 </html>

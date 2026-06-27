@@ -1,10 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestionnaire de stock - VINA AKOHO</title>
-</head>
-<body>
-    <h1>Hello c'est Gestionnaire de stock</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Gestion des Approvisionnements & Stocks</title>
+    <link rel="stylesheet" href="/assets/css/style.css" />
+  </head>
+  <body>
+    <aside class="sidebar" id="vina-sidebar">
+      <div class="sidebar-brand">
+        <img
+          src="/assets/VINA_AKOHO_LOGO.png"
+          alt="VINA AKOHO"
+          class="brand-mark"
+        />
+        <div>
+          <div class="brand-title">VINA AKOHO</div>
+          <div class="brand-subtitle">RO03 - Gestionnaire de Stock</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a class="sidebar-link active" href="#"
+          >Dashboard <span class="sidebar-code">F9</span></a
+        >
+
+        <div class="sidebar-section">Mouvements et Lots</div>
+        <a class="sidebar-link" href="#"
+          >Mouvements Stocks <span class="sidebar-code">S1</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Gestion Lots & Péremptions <span class="sidebar-code">S2</span></a
+        >
+
+        <div class="sidebar-section">Surveillance</div>
+        <a class="sidebar-link" href="#"
+          >Alertes de Seuil <span class="sidebar-code">S3</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Inventaire Périodique <span class="sidebar-code">S4</span></a
+        >
+
+        <div class="sidebar-section">Reporting</div>
+        <a class="sidebar-link" href="#"
+          >Rapport de Stock <span class="sidebar-code">S5</span></a
+        >
+        <a class="sidebar-link" href="#">Suggestions Promotions</a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="vina-menu-button" type="button">
+            ☰
+          </button>
+          <span class="breadcrumb">Dashboard Stock</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="role-pill">RO03 - Gestionnaire de Stock</span>
+          <button
+            class="btn btn-ghost btn-small"
+            id="vina-logout-button"
+            type="button"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="page-header theme-blue">
+          <div>
+            <p class="eyebrow">DASHBOARD</p>
+            <h1>Gestion des Approvisionnements & Stocks</h1>
+            <p>
+              Contrôle des seuils critiques, expirations FIFO et état des stocks
+              réels.
+            </p>
+          </div>
+        </section>
+
+        <section class="grid-2">
+          <div class="card" style="margin-bottom: 0">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Seuils Critiques Minimums</h2>
+                <p class="card-subtitle">
+                  RG03 — Alertes sur les matières premières sous seuil.
+                </p>
+              </div>
+            </div>
+
+            <div class="alert-box danger">
+              <span class="alert-label critical">CRITIQUE</span> Maïs Concassé
+              (MP-MAIS-01) : Reste 150 kg (Seuil alerte : 500 kg).
+            </div>
+            <div class="alert-box warning">
+              <span class="alert-label attention">ATTENTION</span> Farine de
+              Poisson (MP-POIS-04) : Reste 80 kg (Seuil alerte : 100 kg).
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 0">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">
+                  Suivi des Expirations et Traitement FIFO
+                </h2>
+                <p class="card-subtitle">
+                  RG08 — Priorisation des lots proches de l'expiration.
+                </p>
+              </div>
+            </div>
+
+            <div class="alert-box info">
+              Lot MP-SOJA-044 (Tourteau de Soja) : Expire dans 5 jours. Règle :
+              À utiliser impérativement sur la prochaine session de production.
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">
+                État des Stocks Réels — Aliments Ensachés
+              </h2>
+              <p class="card-subtitle">
+                Produits finis disponibles et statut d'alerte.
+              </p>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Article</th>
+                  <th>Format</th>
+                  <th>Stock Dispo</th>
+                  <th>Statut Alerte</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Vina Démarrage</td>
+                  <td>Sac 10 kg</td>
+                  <td>4 Sacs</td>
+                  <td>
+                    <span class="badge badge-light-red">Seuil Atteint</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Vina Croissance</td>
+                  <td>Sac 30 kg</td>
+                  <td>85 Sacs</td>
+                  <td><span class="badge badge-light-green">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>Vina Finition</td>
+                  <td>Sac 50 kg</td>
+                  <td>0 Sac</td>
+                  <td><span class="badge badge-danger">Rupture</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-footer">
+        VINA AKOHO — Gestion des Approvisionnements & Stocks
+      </div>
+    </div>
+
+    <script src="/assets/js/script_content.js"></script>
+  </body>
 </html>
