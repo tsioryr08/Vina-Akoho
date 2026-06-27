@@ -12,11 +12,11 @@
 <img src="assets/VINA_AKOHO_LOGO.png" alt="VINA AKOHO" class="brand-logo">
 <div>
 <h1>VINA AKOHO</h1>
-<p>Production et livraison d’aliments pour poulets</p>
+<p>Production et livraison d'aliments pour poulets</p>
 </div>
 </div>
 
-<form id="loginForm" class="login-form" action="api/login" method="post" autocomplete="off">
+<form id="loginForm" class="login-form" action="/api/login" method="post" autocomplete="off">
 <div class="form-group">
   <label for="employeSelect">Employé</label>
   <select id="employeSelect" name="email" class="form-control" required>
@@ -31,14 +31,13 @@
 <input id="passwordInput" name="mdp" class="form-control" type="password" placeholder="123" required>
 </div>
 
-<p id="loginError" class="login-error" role="alert"></p>
+<p id="loginError" class="login-error" role="alert" th:text="${erreur}"></p>
 
 <button class="btn btn-primary btn-full" type="submit">Se connecter</button>
 
-<p class="login-note">Utilisez vos identifiants réels. Exemple de mot de passe : <strong>123</strong></p>
+<p class="login-note">Utilisez vos identifiants réels.</p>
 </form>
 </section>
 
-<script src="assets/js/login.js"></script>
 </body>
 </html>
