@@ -1,12 +1,5 @@
 package mg.vinaAkoho.vina_akoho.dto.login;
 
-/**
- * DTO renvoyé au frontend après une connexion réussie.
- * Contient le token JWT que le frontend doit renvoyer dans l'en-tête
- * "Authorization: Bearer <token>" pour chaque requête future,
- * ainsi que quelques infos utilisateur utiles pour l'affichage
- * (nom, rôle) sans devoir refaire une requête.
- */
 public class LoginResponseDTO {
 
     private String token;

@@ -18,16 +18,13 @@ window.VinaAkohoAuth = {
                 };
             }
 
-            if (body.data && body.data.token) {
-                localStorage.setItem('vinaAkohoToken', body.data.token);
-                localStorage.setItem('vinaAkohoUser', JSON.stringify({
-                    idEmploye: body.data.idEmploye,
-                    nom: body.data.nom,
-                    prenom: body.data.prenom,
-                    email: body.data.email,
-                    role: body.data.role
-                }));
-            }
+            sessionStorage.setItem('vinaAkohoUser', JSON.stringify({
+                idEmploye: body.data.idEmploye,
+                nom: body.data.nom,
+                prenom: body.data.prenom,
+                email: body.data.email,
+                role: body.data.role
+            }));
 
             return {
                 ok: true,
@@ -48,7 +45,6 @@ window.VinaAkohoAuth = {
             .toUpperCase()
             .replace(/\s+/g, '_')
             .replace(/[-]/g, '_');
-        // Role -> landing route mapping. Update routes as modules are implemented.
         const routes = {
             'ADMIN': '/admin',
             'ADMINISTRATEUR': '/admin',
@@ -60,23 +56,20 @@ window.VinaAkohoAuth = {
             'LIVREUR': '/livraison'
         };
 
-        // Fallback to a safe default page when role is unknown
         return routes[normalizedRole] || '/matieres-premieres';
     },
 
     redirectIfAuthenticated: function () {
-        const token = localStorage.getItem('vinaAkohoToken');
-        const user = JSON.parse(localStorage.getItem('vinaAkohoUser') || 'null');
+        const user = JSON.parse(sessionStorage.getItem('vinaAkohoUser') || 'null');
 
-        if (token) {
-            const destination = this.getLandingUrlForRole(user?.role);
+        if (user && user.role) {
+            const destination = this.getLandingUrlForRole(user.role);
             window.location.href = destination;
         }
     },
 
     logout: function () {
-        localStorage.removeItem('vinaAkohoToken');
-        localStorage.removeItem('vinaAkohoUser');
+        sessionStorage.removeItem('vinaAkohoUser');
         window.location.href = '/';
     }
 };

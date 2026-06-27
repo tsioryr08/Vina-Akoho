@@ -5,36 +5,22 @@ import mg.vinaAkoho.vina_akoho.dto.login.LoginResponseDTO;
 import mg.vinaAkoho.vina_akoho.entity.login.Employe;
 import mg.vinaAkoho.vina_akoho.exception.login.IdentifiantsInvalidesException;
 import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
-import mg.vinaAkoho.vina_akoho.security.JwtUtil;
 import mg.vinaAkoho.vina_akoho.security.PasswordHasher;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Contient toute la LOGIQUE MÉTIER du login. 
- */
 @Service
 public class LoginService {
 
     private final EmployeRepository employeRepository;
-    private final JwtUtil jwtUtil;
 
     @Autowired
-    public LoginService(EmployeRepository employeRepository, JwtUtil jwtUtil) {
+    public LoginService(EmployeRepository employeRepository) {
         this.employeRepository = employeRepository;
-        this.jwtUtil = jwtUtil;
     }
 
-    /**
-     * Tente de connecter un utilisateur :
-     *  1. On cherche l'employé par email
-     *  2. On vérifie le mot de passe avec BCrypt
-     *  3. Si tout est correct, on génère un token JWT
-     *
-     * RG01 : "Chaque utilisateur doit utiliser ses propres identifiants
-     * de connexion" — d'où la vérification stricte email + mot de passe.
-     */
-    public LoginResponseDTO login(LoginRequestDTO requete) {
+    public LoginResponseDTO login(LoginRequestDTO requete, HttpSession session) {
         Employe employe = employeRepository.findByEmail(requete.getEmail())
                 .orElseThrow(() -> new IdentifiantsInvalidesException(
                         "Email ou mot de passe incorrect"));
@@ -45,14 +31,14 @@ public class LoginService {
             throw new IdentifiantsInvalidesException("Email ou mot de passe incorrect");
         }
 
-        String token = jwtUtil.genererToken(
-                employe.getId(),
-                employe.getRole().getPoste(),
-                employe.getPrenom()
-        );
+        session.setAttribute("idEmploye", employe.getId());
+        session.setAttribute("role", employe.getRole().getPoste());
+        session.setAttribute("nom", employe.getNom());
+        session.setAttribute("prenom", employe.getPrenom());
+        session.setAttribute("email", employe.getEmail());
 
         return new LoginResponseDTO(
-                token,
+                null,
                 employe.getId(),
                 employe.getNom(),
                 employe.getPrenom(),

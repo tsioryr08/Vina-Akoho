@@ -5,33 +5,23 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import mg.vinaAkoho.vina_akoho.security.JwtFilter;
+import mg.vinaAkoho.vina_akoho.security.SessionFilter;
 
-/**
- * Enregistre explicitement JwtFilter comme filtre Servlet sur toutes
- * les routes de l'application ("/*").
- *
- * Remarque : comme JwtFilter est déjà annote @Component, Spring Boot
- * l'enregistrerait probablement déjà automatiquement. On le déclare
- * ici explicitement pour deux raisons :
- *  - Avoir un contrôle total et visible sur quelles URLs sont filtrées
- *  - Définir un "order" precis si on ajoute d'autres filtres plus tard
- */
 @Configuration
 public class FilterConfig {
 
-    private final JwtFilter jwtFilter;
+    private final SessionFilter sessionFilter;
 
     @Autowired
-    public FilterConfig(JwtFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
+    public FilterConfig(SessionFilter sessionFilter) {
+        this.sessionFilter = sessionFilter;
     }
 
     @Bean
-    public FilterRegistrationBean<JwtFilter> jwtFilterRegistration() {
-        FilterRegistrationBean<JwtFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(jwtFilter);
-        registration.addUrlPatterns("/api/*");
+    public FilterRegistrationBean<SessionFilter> sessionFilterRegistration() {
+        FilterRegistrationBean<SessionFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(sessionFilter);
+        registration.addUrlPatterns("/*");
         registration.setOrder(1);
         return registration;
     }
