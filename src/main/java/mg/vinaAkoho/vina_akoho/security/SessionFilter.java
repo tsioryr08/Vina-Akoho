@@ -22,10 +22,7 @@ public class SessionFilter extends OncePerRequestFilter {
             "/index.html",
             "/index.php",
             "/assets/",
-            "/css/",
-            "/js/",
-            "/images/",
-            "/webjars/"
+            "/static/"
     );
 
     public static final String ATTRIBUT_ID_EMPLOYE = "idEmploye";

@@ -16,44 +16,29 @@
 </div>
 </div>
 
-<form id="loginForm" class="login-form" autocomplete="off">
+<form id="loginForm" class="login-form" action="/api/login" method="post" autocomplete="off">
 <div class="form-group">
-<label for="emailInput">Email</label>
-<input id="emailInput" class="form-control" type="email" placeholder="admin@vinaakoho.mg" required>
+  <label for="employeSelect">Employe</label>
+  <select id="employeSelect" name="email" class="form-control" required>
+    <option value="" disabled selected> choisis qui es-tu ? </option>
+    <option th:each="e : ${employes}" th:value="${e.email}" th:text="${e.nom + ' ' + e.prenom}">
+    </option>
+  </select>
 </div>
 
 <div class="form-group">
 <label for="passwordInput">Mot de passe</label>
-<input id="passwordInput" class="form-control" type="password" placeholder="123" required>
+<input id="passwordInput" name="mdp" class="form-control" type="password" placeholder="md[123" required>
 </div>
 
-<p id="loginError" class="login-error" role="alert"></p>
+<p id="loginError" class="login-error" role="alert" th:text="${erreur}"></p>
 
 <button class="btn btn-primary btn-full" type="submit">Se connecter</button>
 
-<p class="login-note">Utilisez vos identifiants réels. Exemple de mot de passe : <strong>123</strong></p>
+<p class="login-note">Utilisez vos identifiants réels.</p>
 </form>
 </section>
 
 <script th:src="@{/static/assets/js/login.js}"></script>
-<script>
-// Do not auto-redirect on page load; keep the login form visible so users
-// can enter credentials. Redirection happens after successful login.
-document.getElementById("loginForm").addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    const email = document.getElementById("emailInput").value;
-    const password = document.getElementById("passwordInput").value;
-    const result = await window.VinaAkohoAuth.login(email, password);
-
-    if (!result.ok) {
-        document.getElementById("loginError").textContent = result.message;
-        return;
-    }
-
-    const destination = window.VinaAkohoAuth.getLandingUrlForRole(result.data?.role);
-    window.location.href = destination;
-});
-</script>
 </body>
 </html>
