@@ -1,20 +1,26 @@
 package mg.vinaAkoho.vina_akoho.controller.clients;
 
 import jakarta.validation.Valid;
-import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
+import java.util.Map;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientConnexionDTO;
-import mg.vinaAkoho.vina_akoho.dto.clients.ClientInscriptionDTO;
+import mg.vinaAkoho.vina_akoho.dto.clients.ClientGestionDTO;
+import mg.vinaAkoho.vina_akoho.dto.clients.ClientRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientResumeDTO;
+import mg.vinaAkoho.vina_akoho.repository.clients.ServiceClientRepository;
+import mg.vinaAkoho.vina_akoho.repository.clients.TypeClientRepository;
 import mg.vinaAkoho.vina_akoho.service.clients.ClientService;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -22,15 +28,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ClientViewController {
 
     private final ClientService clientService;
+    private final ServiceClientRepository serviceClientRepository;
+    private final TypeClientRepository typeClientRepository;
 
-    public ClientViewController(ClientService clientService) {
+    public ClientViewController(ClientService clientService,
+                                ServiceClientRepository serviceClientRepository,
+                                TypeClientRepository typeClientRepository) {
         this.clientService = clientService;
+        this.serviceClientRepository = serviceClientRepository;
+        this.typeClientRepository = typeClientRepository;
     }
 
-    @GetMapping("/connexion")
+    @GetMapping(value = "/connexion", produces = MediaType.TEXT_HTML_VALUE)
     public String connexion(Model model) {
-        model.addAttribute("connexion", new ClientConnexionDTO());
-        return "clients/connexion";
+        return "redirect:/clients/nouveau";
+    }
+
+    @GetMapping(value = {"", "/"}, produces = MediaType.TEXT_HTML_VALUE)
+    public String index(Model model) {
+        return espace(model);
     }
 
     @PostMapping("/connexion")
@@ -40,7 +56,9 @@ public class ClientViewController {
                             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("erreur", bindingResult.getFieldErrors().get(0).getDefaultMessage());
-            return "clients/connexion";
+            model.addAttribute("inscription", creerClientExemple());
+            ajouterReferences(model);
+            return "clients/responsable-commercial-clients-nouveau";
         }
 
         return clientService.connecter(connexion)
@@ -50,44 +68,151 @@ public class ClientViewController {
                 })
                 .orElseGet(() -> {
                     model.addAttribute("erreur", "Identifiant client ou numero telephone incorrect");
-                    return "clients/connexion";
+                    model.addAttribute("inscription", creerClientExemple());
+                    ajouterReferences(model);
+                    return "clients/responsable-commercial-clients-nouveau";
                 });
     }
 
-    @GetMapping("/espace")
+    @GetMapping(value = "/espace", produces = MediaType.TEXT_HTML_VALUE)
     public String espace(Model model) {
-        if (!model.containsAttribute("client")) {
-            return "redirect:/clients/connexion";
-        }
-        return "clients/espace";
+        model.addAttribute("clients", clientService.getAllClients());
+        ajouterReferences(model);
+        return "clients/responsable-commercial-clients-liste";
     }
 
-    @GetMapping("/nouveau")
+    @GetMapping(value = {"/liste", "/responsable-commercial-clients-liste.html"}, produces = MediaType.TEXT_HTML_VALUE)
+    public String liste(Model model) {
+        return espace(model);
+    }
+
+    @GetMapping(value = {"/nouveau", "/responsable-commercial-clients-nouveau.html"}, produces = MediaType.TEXT_HTML_VALUE)
     public String nouveau(Model model) {
-        model.addAttribute("inscription", new ClientInscriptionDTO());
-        return "clients/nouveau";
+        model.addAttribute("inscription", creerClientExemple());
+        ajouterReferences(model);
+        return "clients/responsable-commercial-clients-nouveau";
     }
 
     @PostMapping("/nouveau")
-    public String inscrire(@Valid @ModelAttribute("inscription") ClientInscriptionDTO inscription,
+    public String inscrire(@Valid @ModelAttribute("inscription") ClientRequestDTO inscription,
                            BindingResult bindingResult,
                            Model model) {
+        ajouterReferences(model);
         if (bindingResult.hasErrors()) {
             model.addAttribute("erreur", bindingResult.getFieldErrors().get(0).getDefaultMessage());
-            return "clients/nouveau";
+            return "clients/responsable-commercial-clients-nouveau";
         }
 
-        var client = clientService.inscrire(inscription);
-        model.addAttribute("client", new ClientResumeDTO(client));
+        ClientGestionDTO client;
+        try {
+            client = clientService.createClient(inscription);
+        } catch (ResponseStatusException exception) {
+            model.addAttribute("erreur", exception.getReason());
+            return "clients/responsable-commercial-clients-nouveau";
+        }
+
+        model.addAttribute("client", client);
         model.addAttribute("succes", "Compte client enregistre. Votre identifiant est " + client.getId());
-        return "clients/nouveau";
+        return "clients/responsable-commercial-clients-nouveau";
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.TEXT_HTML_VALUE)
+    public String detail(@PathVariable Integer id, Model model) {
+        model.addAttribute("client", clientService.getClientById(id));
+        return "clients/clients-detail";
+    }
+
+    @GetMapping(value = "/{id}/modifier", produces = MediaType.TEXT_HTML_VALUE)
+    public String modifier(@PathVariable Integer id, Model model) {
+        ClientGestionDTO client = clientService.getClientById(id);
+        model.addAttribute("client", client);
+        model.addAttribute("inscription", creerDepuisClient(client));
+        ajouterReferences(model);
+        return "clients/clients-detail-edit";
+    }
+
+    @PostMapping("/{id}/modifier")
+    public String enregistrerModification(@PathVariable Integer id,
+                                          @Valid @ModelAttribute("inscription") ClientRequestDTO inscription,
+                                          BindingResult bindingResult,
+                                          Model model) {
+        ajouterReferences(model);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("client", clientService.getClientById(id));
+            model.addAttribute("erreur", bindingResult.getFieldErrors().get(0).getDefaultMessage());
+            return "clients/clients-detail-edit";
+        }
+
+        ClientGestionDTO client;
+        try {
+            client = clientService.updateClient(id, inscription);
+        } catch (ResponseStatusException exception) {
+            model.addAttribute("client", clientService.getClientById(id));
+            model.addAttribute("erreur", exception.getReason());
+            return "clients/clients-detail-edit";
+        }
+
+        model.addAttribute("client", client);
+        model.addAttribute("succes", "Client modifie avec succes.");
+        return "clients/clients-detail";
+    }
+
+    @PostMapping("/{id}/supprimer")
+    public String supprimer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        clientService.deleteClient(id);
+        redirectAttributes.addFlashAttribute("succes", "Client supprime de la liste.");
+        return "redirect:/clients/espace";
     }
 
     @GetMapping("/recherche")
     @ResponseBody
-    public ApiResponse<ClientResumeDTO> rechercher(@RequestParam String numeroTelephone) {
+    public Map<String, Object> rechercher(@RequestParam String numeroTelephone) {
         return clientService.rechercherParTelephone(numeroTelephone)
-                .map(client -> ApiResponse.success("Client trouve", new ClientResumeDTO(client)))
-                .orElseGet(() -> ApiResponse.error("Aucun client avec ce numero"));
+                .<Map<String, Object>>map(client -> Map.of(
+                        "success", true,
+                        "message", "Client trouve",
+                        "data", new ClientResumeDTO(client)
+                ))
+                .orElseGet(() -> Map.of(
+                        "success", false,
+                        "message", "Aucun client avec ce numero"
+                ));
+    }
+
+    private void ajouterReferences(Model model) {
+        model.addAttribute("services", serviceClientRepository.findAll());
+        model.addAttribute("typesClient", typeClientRepository.findAll());
+    }
+
+    private ClientRequestDTO creerClientExemple() {
+        ClientRequestDTO inscription = new ClientRequestDTO();
+        inscription.setNom("Rakoto");
+        inscription.setPrenom("Jean Claude");
+        inscription.setNumeroTelephone("0341111111");
+        inscription.setAdresse("Antananarivo");
+        inscription.setIdLocalite("LOC002");
+        inscription.setIdZoneLivraison("ZONE002");
+        inscription.setNotes("Client modifie");
+        inscription.setIdService(1);
+        inscription.setIdTypeClient(2);
+        inscription.setTailleCheptel(40);
+        inscription.setIsActif(true);
+        return inscription;
+    }
+
+    private ClientRequestDTO creerDepuisClient(ClientGestionDTO client) {
+        ClientRequestDTO inscription = new ClientRequestDTO();
+        inscription.setNom(client.getNom());
+        inscription.setPrenom(client.getPrenom());
+        inscription.setNumeroTelephone(client.getNumeroTelephone());
+        inscription.setAdresse(client.getAdresse());
+        inscription.setIdLocalite(client.getIdLocalite());
+        inscription.setIdZoneLivraison(client.getIdZoneLivraison());
+        inscription.setNotes(client.getNotes());
+        inscription.setIdService(client.getIdService());
+        inscription.setIdTypeClient(client.getIdTypeClient());
+        inscription.setTailleCheptel(client.getTailleCheptel());
+        inscription.setIsActif(client.getIsActif());
+        return inscription;
     }
 }

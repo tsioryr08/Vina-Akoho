@@ -1,0 +1,334 @@
+<!-- src/main/resources/templates/produit/list.html -->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Produits - VINA AKOHO</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            align-items: center;
+        }
+        .filter-bar input, .filter-bar select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .filter-bar input:focus, .filter-bar select:focus {
+            border-color: #e67e22;
+            outline: none;
+        }
+        .filter-bar input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+        .filter-bar input[type="number"] {
+            width: 120px;
+        }
+        .btn-filter {
+            background: #e67e22;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-filter:hover {
+            background: #d35400;
+        }
+        .btn-reset {
+            background: #95a5a6;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-reset:hover {
+            background: #7f8c8d;
+        }
+        .code-ref {
+            font-weight: 600;
+            color: #e67e22;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .action-btns {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: opacity 0.2s;
+        }
+        .btn-sm:hover {
+            opacity: 0.8;
+        }
+        .btn-view { background: #17a2b8; color: white; }
+        .btn-edit { background: #ffc107; color: #212529; }
+        .btn-delete { background: #dc3545; color: white; }
+        .btn-sm-action { background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 2px 6px; }
+        .btn-sm-action:hover { opacity: 0.7; }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .product-count {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 0;
+        }
+        .info-banner {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .info-banner.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info-banner.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .pagination {
+            display: flex;
+            gap: 5px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .pagination a {
+            padding: 6px 14px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #e67e22;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .pagination a:hover {
+            background: #e67e22;
+            color: white;
+            border-color: #e67e22;
+        }
+        .pagination a.active {
+            background: #e67e22;
+            color: white;
+            border-color: #e67e22;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+        .empty-state p {
+            margin-bottom: 15px;
+        }
+        .btn-black {
+            background: #2c3e50;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .btn-black:hover {
+            background: #1a252f;
+        }
+        .btn-small {
+            font-size: 13px;
+            padding: 6px 16px;
+        }
+        .filter-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-right: 2px;
+        }
+    </style>
+</head>
+<body class="vina-body">
+<div id="vina-sidebar"></div>
+<div class="app-main-wrapper">
+    <div id="vina-header"></div>
+    <div id="vina-content">
+
+        <section class="page-header theme-orange">
+            <div>
+                <p class="eyebrow">ADMINISTRATION</p>
+                <h1>Gestion des Produits</h1>
+                <p class="muted-text">Vue administrative pour la configuration des prix et des références du catalogue.</p>
+            </div>
+        </section>
+
+        <!-- Messages flash -->
+        <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+        <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
+
+        <!-- Barre de recherche et filtres -->
+        <div class="filter-bar">
+            <form th:action="@{/api/produits/recherche}" method="get" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+                <input type="text" name="q" th:value="${q != null ? q : ''}"
+                       placeholder="🔍 Rechercher un produit..." style="flex: 1; min-width: 180px;">
+
+                <select name="idCategorie">
+                    <option value="">Toutes les catégories</option>
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.libelle}"
+                            th:selected="${idCategorie != null and idCategorie == cat.id}">
+                    </option>
+                </select>
+
+                <input type="number" name="prixMin" th:value="${prixMin != null ? prixMin : ''}"
+                       placeholder="Prix min" step="0.01" style="width: 100px;">
+                <input type="number" name="prixMax" th:value="${prixMax != null ? prixMax : ''}"
+                       placeholder="Prix max" step="0.01" style="width: 100px;">
+
+                <button type="submit" class="btn-filter">Filtrer</button>
+                <a th:href="@{/api/produits}" class="btn-reset">Réinitialiser</a>
+            </form>
+        </div>
+
+        <div class="table-card">
+            <div class="card-header">
+                <div class="card-header-left">
+                    <h2 class="card-title">Base de données Produits</h2>
+                    <p class="product-count">
+                        <span th:text="${produits != null ? produits.totalElements : 0}">0</span>
+                        produit(s) trouvé(s)
+                    </p>
+                </div>
+                <button class="btn btn-black btn-small" onclick="window.location.href='/api/produits/nouveau'">+ Ajouter une référence</button>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Référence</th>
+                        <th>Désignation</th>
+                        <th>Catégorie</th>
+                        <th>Prix Public</th>
+                        <th>Marge</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="produit : ${produits}">
+                        <td><span class="code-ref" th:text="${produit.ref}"></span></td>
+                        <td><strong th:text="${produit.nom}"></strong></td>
+                        <td th:text="${produit.libelleCategorie}"></td>
+                        <td><strong th:text="'Ar ' + ${#numbers.formatDecimal(produit.prixVente, 0, 0)}"></strong></td>
+                        <!-- Pour la marge, vous devez la calculer ou l'ajouter dans votre DTO -->
+                        <td th:text="${produit.margePourcentage != null ? produit.margePourcentage + '%' : 'N/A'}"></td>
+                        <td>
+                            <span th:if="${produit.actif}" class="badge badge-success">Actif</span>
+                            <span th:unless="${produit.actif}" class="badge badge-danger">Inactif</span>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <a th:href="@{/api/produits/{id}(id=${produit.id})}"
+                                   class="btn-sm btn-view"
+                                   title="Voir les détails">voir plus</a>
+                                <a th:href="@{/api/produits/{id}/modifier(id=${produit.id})}"
+                                   class="btn-sm btn-edit"
+                                   title="Modifier">modifier</a>
+                                <a th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}"
+                                   class="btn-sm btn-delete"
+                                   title="Supprimer"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.')">🗑️</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${produits == null or produits.isEmpty()}">
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <p style="font-size: 18px;">📦 Aucun produit trouvé</p>
+                                <p>Commencez par ajouter votre premier produit au catalogue.</p>
+                                <button class="btn btn-black btn-small" onclick="window.location.href='/api/produits/nouveau'" style="margin-top: 10px;">
+                                    + Ajouter une référence
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div th:if="${produits != null and produits.totalPages > 1}" class="pagination">
+                <span th:each="i : ${#numbers.sequence(0, produits.totalPages - 1)}">
+                    <a th:href="@{/api/produits/recherche(page=${i}, size=20, q=${q != null ? q : ''}, idCategorie=${idCategorie != null ? idCategorie : ''}, prixMin=${prixMin != null ? prixMin : ''}, prixMax=${prixMax != null ? prixMax : ''})}"
+                       th:text="${i + 1}"
+                       th:class="${i == produits.number} ? 'active' : ''">
+                    </a>
+                </span>
+            </div>
+        </div>
+
+        <div id="vina-footer"></div>
+    </div>
+
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

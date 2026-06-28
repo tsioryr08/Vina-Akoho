@@ -26,6 +26,10 @@
                 <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-ghost btn-small">Créer Fiche Produit</a>
             </div>
 
+            <!-- Messages flash session -->
+            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
+
             <section class="form-section" style="max-width: 800px; padding: 40px; border-radius: 16px; box-shadow: var(--shadow-sm);">
                 <div class="alert-box alert-warning" style="margin-bottom: 24px;">
                     <strong>Règle de Gestion :</strong> Le prix d'achat n'est plus modifiable ici.

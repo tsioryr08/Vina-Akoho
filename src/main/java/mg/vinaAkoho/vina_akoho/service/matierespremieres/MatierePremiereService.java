@@ -172,8 +172,10 @@ public class MatierePremiereService {
             }
             lotsDTO.add(new LotDTO(lot.getId(), lot.getDateAchat(), lot.getQuantiteRestante(), statutLot));
         }
-        return new FicheDetailDTO(mp.getId(), mp.getCode(), mp.getNom(), mp.getFournisseur().getNom(),
-                mp.getUnite().getLibelle(), mp.getCoutUnitaire(), mp.getSeuilMinimum(), stock,
+        return new FicheDetailDTO(mp.getId(), mp.getCode(), mp.getNom(),
+                mp.getFournisseur().getId(), mp.getFournisseur().getNom(),
+                mp.getUnite().getId(), mp.getUnite().getLibelle(),
+                mp.getCoutUnitaire(), mp.getSeuilMinimum(), stock,
                 mp.getCoutUnitaire(), lotsDTO);
     }
 

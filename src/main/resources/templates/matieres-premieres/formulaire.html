@@ -27,6 +27,10 @@
                 <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-primary btn-small">Créer Fiche Produit</a>
             </div>
 
+            <!-- Messages flash session -->
+            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
+
             <div class="form-section" style="max-width: 720px;">
                 <h2>Informations de la Matière Première</h2>
                 <form method="post" th:action="@{/matieres-premieres/nouveau}">

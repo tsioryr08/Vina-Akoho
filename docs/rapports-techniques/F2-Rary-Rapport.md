@@ -35,7 +35,7 @@ src/main/java/mg/vinaAkoho/vina_akoho/
 │   └── MouvementStockMp.java
 │
 ├── dto/
-│   ├── ApiResponse.java                    — partagé avec tous les modules
+│   ├── ApiResponse.java                    — partagé avec tous les modules ( efa navadika session de tsy ilaina tsony )
 │   └── matierespremieres/
 │       ├── MatierePremiereRequestDTO.java
 │       ├── MatierePremiereListDTO.java

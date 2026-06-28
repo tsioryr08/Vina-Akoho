@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:if="${categorieId == null}">Nouvelle Catégorie - VINA AKOHO</title>
+    <title th:if="${categorieId != null}">Modifier Catégorie - VINA AKOHO</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .form-group label .required {
+            color: #dc3545;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #e67e22;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group .error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .form-group .help-text {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .form-group input.error, .form-group select.error, .form-group textarea.error {
+            border-color: #dc3545;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .btn-primary {
+            background: #e67e22;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+        .btn-primary:hover {
+            background: #d35400;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .checkbox-group label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+        }
+        .info-banner {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .info-banner.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info-banner.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .page-header {
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        .page-header .eyebrow {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #e67e22;
+            font-weight: 600;
+            margin: 0;
+        }
+        .page-header h1 {
+            margin: 5px 0;
+            font-size: 28px;
+            color: #2c3e50;
+        }
+        .page-header .muted-text {
+            color: #7f8c8d;
+            margin: 0;
+        }
+        .theme-orange {
+            border-left: 4px solid #e67e22;
+            padding-left: 15px;
+        }
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body class="vina-body">
+<div id="vina-sidebar"></div>
+<div class="app-main-wrapper">
+    <div id="vina-header"></div>
+    <div id="vina-content">
+
+        <section class="page-header theme-orange">
+            <div>
+                <p class="eyebrow">ADMINISTRATION</p>
+                <h1 th:if="${categorieId == null}">Nouvelle Catégorie</h1>
+                <h1 th:if="${categorieId != null}">Modifier la Catégorie</h1>
+                <p class="muted-text">Remplissez le formulaire ci-dessous pour
+                    <span th:if="${categorieId == null}">ajouter une nouvelle catégorie</span>
+                    <span th:if="${categorieId != null}">modifier la catégorie</span>.
+                </p>
+            </div>
+        </section>
+
+        <!-- Messages flash -->
+        <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+        <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
+
+        <div class="form-container">
+            <form th:action="${categorieId == null} ? @{/api/categories} : @{/api/categories/{id}(id=${categorieId})}"
+                  th:method="${categorieId == null} ? 'post' : 'post'"
+                  th:object="${categorie}">
+
+                <!-- Libellé -->
+                <div class="form-group">
+                    <label for="libelle">Libellé <span class="required">*</span></label>
+                    <input type="text" id="libelle" th:field="*{libelle}"
+                           placeholder="Ex: Aliment Démarrage"
+                           th:classappend="${#fields.hasErrors('libelle')} ? 'error' : ''">
+                    <div class="error" th:if="${#fields.hasErrors('libelle')}" th:errors="*{libelle}"></div>
+                    <div class="help-text">Nom unique de la catégorie</div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" th:field="*{description}"
+                              placeholder="Description détaillée de la catégorie..."
+                              th:classappend="${#fields.hasErrors('description')} ? 'error' : ''"></textarea>
+                    <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                </div>
+
+                <!-- Grille pour les pourcentages -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pourcentageProteine">Protéines (%)</label>
+                        <input type="number" id="pourcentageProteine" th:field="*{pourcentageProteine}"
+                               step="0.01" min="0" max="100" placeholder="Ex: 22"
+                               th:classappend="${#fields.hasErrors('pourcentageProteine')} ? 'error' : ''">
+                        <div class="error" th:if="${#fields.hasErrors('pourcentageProteine')}" th:errors="*{pourcentageProteine}"></div>
+                        <div class="help-text">Pourcentage de protéines (0-100%)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pourcentageMatiereGrasses">Matières grasses (%)</label>
+                        <input type="number" id="pourcentageMatiereGrasses" th:field="*{pourcentageMatiereGrasses}"
+                               step="0.01" min="0" max="100" placeholder="Ex: 5"
+                               th:classappend="${#fields.hasErrors('pourcentageMatiereGrasses')} ? 'error' : ''">
+                        <div class="error" th:if="${#fields.hasErrors('pourcentageMatiereGrasses')}" th:errors="*{pourcentageMatiereGrasses}"></div>
+                        <div class="help-text">Pourcentage de matières grasses (0-100%)</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pourcentageHumiditeMax">Humidité max (%)</label>
+                        <input type="number" id="pourcentageHumiditeMax" th:field="*{pourcentageHumiditeMax}"
+                               step="0.01" min="0" max="100" placeholder="Ex: 12"
+                               th:classappend="${#fields.hasErrors('pourcentageHumiditeMax')} ? 'error' : ''">
+                        <div class="error" th:if="${#fields.hasErrors('pourcentageHumiditeMax')}" th:errors="*{pourcentageHumiditeMax}"></div>
+                        <div class="help-text">Pourcentage d'humidité maximum (0-100%)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="margePourcentage">Marge (%) <span class="required">*</span></label>
+                        <input type="number" id="margePourcentage" th:field="*{margePourcentage}"
+                               step="0.01" min="0" placeholder="Ex: 25"
+                               th:classappend="${#fields.hasErrors('margePourcentage')} ? 'error' : ''">
+                        <div class="error" th:if="${#fields.hasErrors('margePourcentage')}" th:errors="*{margePourcentage}"></div>
+                        <div class="help-text">Marge appliquée sur les produits de cette catégorie</div>
+                    </div>
+                </div>
+
+                <!-- Statut actif (uniquement en modification) -->
+                <div class="form-group" th:if="${categorieId != null}">
+                    <label>Statut</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="actif" th:field="*{actif}" />
+                        <label for="actif">Catégorie active</label>
+                    </div>
+                    <div class="help-text">Décochez pour désactiver la catégorie (soft delete)</div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <span th:if="${categorieId == null}">➕ Créer</span>
+                        <span th:if="${categorieId != null}">💾 Mettre à jour</span>
+                    </button>
+                    <a th:href="@{/api/categories}" class="btn-secondary">↩️ Annuler</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="vina-footer"></div>
+    </div>
+
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/app-shell.js"></script>
+</div>
+</body>
+</html>

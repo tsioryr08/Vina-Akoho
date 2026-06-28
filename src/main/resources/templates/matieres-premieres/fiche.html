@@ -24,9 +24,14 @@
             <!-- Sous-navigation interne -->
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
                 <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small">← Retour à la liste</a>
+                <a th:href="@{/matieres-premieres/{id}/modifier(id=${fiche.id})}" class="btn btn-ghost btn-small">Modifier</a>
                 <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-primary btn-small">Ajouter Matière</a>
                 <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-ghost btn-small">Créer Fiche Produit</a>
             </div>
+
+            <!-- Messages flash session -->
+            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
 
             <!-- KPIs -->
             <section class="stats-grid">

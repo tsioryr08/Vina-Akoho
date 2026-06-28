@@ -351,6 +351,7 @@ CREATE TABLE client (
     id_service INTEGER NOT NULL,
     id_typeClient INTEGER NOT NULL,
     taille_cheptel INTEGER CHECK (taille_cheptel IS NULL OR taille_cheptel >= 0),
+    est_supprimer BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_service) REFERENCES service(id) ON DELETE RESTRICT,
@@ -542,5 +543,4 @@ CREATE TABLE depense_lot (
 CREATE INDEX idx_depense_lot_depense ON depense_lot(id_depense);
 CREATE INDEX idx_depense_lot_lot_produit ON depense_lot(id_lot_produit);
 CREATE INDEX idx_depense_lot_lot_mp ON depense_lot(id_lot_mp);
-
 
