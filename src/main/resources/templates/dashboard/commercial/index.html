@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Gestion des Commandes & Clients</title>
+    <!-- <link rel="stylesheet" th:href="@{/static/css/style.css}"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+  </head>
+  <body>
+    <aside class="sidebar" id="vina-sidebar">
+      <div class="sidebar-brand">
+        <!-- <img
+          th:src="@{/static/VINA_AKOHO_LOGO.png}"
+          alt="VINA AKOHO"
+          class="brand-mark"
+        /> -->
+        <img th:src="@{/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark">
+
+        <div>
+          <div class="brand-title">VINA AKOHO</div>
+          <div class="brand-subtitle">RO04 - Responsable Commercial</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Ventes</div>
+        <a class="sidebar-link" href="#"
+          >Liste des Ventes <span class="sidebar-code">C1</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Ajout Vente <span class="sidebar-code">C2</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Historique Ventes <span class="sidebar-code">C4</span></a
+        >
+
+        <div class="sidebar-section">Clients</div>
+        <a class="sidebar-link" href="#"
+          >Enregistrer Client <span class="sidebar-code">A1</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Base Clients <span class="sidebar-code">A2</span></a
+        >
+
+        <div class="sidebar-section">Livraisons</div>
+        <a class="sidebar-link" href="#"
+          >Zones à forte demande <span class="sidebar-code">L2</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Liste livraisons <span class="sidebar-code">L2</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Nouvelle livraison <span class="sidebar-code">L1</span></a
+        >
+      </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="vina-menu-button" type="button">
+            ☰
+          </button>
+          <span class="breadcrumb">Dashboard Commercial</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="role-pill">RO04 - Responsable Commercial</span>
+          <button
+            class="btn btn-ghost btn-small"
+            id="vina-logout-button" onclick="window.location.href='/'"
+            type="button"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="page-header theme-green">
+          <div>
+            <p class="eyebrow">DASHBOARD</p>
+            <h1>Gestion des Commandes & Clients</h1>
+            <p>
+              Validation des commandes avant préparation, suivi logistique et
+              répartition partenaires.
+            </p>
+          </div>
+        </section>
+
+        <section class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Commandes Clients à traiter</h2>
+                <p class="card-subtitle">
+                  Validation avant préparation et affectation livreur.
+                </p>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>N° Commande</th>
+                    <th>Nom du Client / Profil</th>
+                    <th>Achat Prévu</th>
+                    <th>Zone de Livraison</th>
+                    <th>État Logistique</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>CMD-2026-045</td>
+                    <td>Ferme Avicole de Mahitsy (Ferme)</td>
+                    <td>20 Sacs Croissance 50kg</td>
+                    <td>Mahitsy Centre</td>
+                    <td>
+                      <span class="badge badge-orange">En attente Livreur</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CMD-2026-046</td>
+                    <td>Établissement Razafy (Revendeur)</td>
+                    <td>10 Sacs Démarrage 10kg</td>
+                    <td>Axe Ankazobe</td>
+                    <td>
+                      <span class="badge badge-yellow"
+                        >À préparer en stock</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CMD-2026-044</td>
+                    <td>Mme Rova (Éleveur familial)</td>
+                    <td>2 Sacs Finition 30kg</td>
+                    <td>Mahitsy Périphérie</td>
+                    <td>
+                      <span class="badge badge-light-green"
+                        >Livré et Clôturé</span
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Répartition Partenaires</h2>
+                <p class="card-subtitle">
+                  Statistiques clients enregistrés par catégorie.
+                </p>
+              </div>
+            </div>
+
+            <ul class="stats-list">
+              <li><strong>Éleveurs Directs :</strong> 24 enregistrés</li>
+              <li><strong>Revendeurs / Épiceries :</strong> 8 enregistrés</li>
+              <li>
+                <strong>Grossistes / Coopératives :</strong> 3 enregistrés
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-footer">VINA AKOHO — Gestion des Commandes & Clients</div>
+    </div>
+
+    <script src="/assets/js/script_content.js"></script>
+  </body>
+</html>

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détail du Produit - VINA AKOHO</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- <link rel="stylesheet" href="/static/css/style.css"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         .detail-container {
             max-width: 900px;
@@ -320,23 +321,23 @@
                 </div>
 
                 <div class="detail-actions">
-                    <a th:href="@{/produits/{id}/modifier(id=${produit.id})}" class="btn-edit">✏️ Modifier</a>
+                    <a th:href="@{/api/produits/{id}/modifier(id=${produit.id})}" class="btn-edit">✏️ Modifier</a>
 
                     <a th:if="${produit.actif}"
-                       th:href="@{/produits/{id}/supprimer(id=${produit.id})}"
+                       th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}"
                        class="btn-delete"
                        onclick="return confirm('Êtes-vous sûr de vouloir désactiver ce produit ?')">
                         Désactiver
                     </a>
 
                     <a th:unless="${produit.actif}"
-                       th:href="@{/produits/{id}/reactiver(id=${produit.id})}"
+                       th:href="@{/api/produits/{id}/reactiver(id=${produit.id})}"
                        class="btn-reactiver"
                        onclick="return confirm('Êtes-vous sûr de vouloir réactiver ce produit ?')">
                         Réactiver
                     </a>
 
-                    <a th:href="@{/produits}" class="btn-back">Retour à la liste</a>
+                    <a th:href="@{/api/produits}" class="btn-back">Retour à la liste</a>
                 </div>
             </div>
         </div>

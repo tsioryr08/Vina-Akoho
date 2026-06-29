@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Comptabilité & Encaissements</title>
+    <!-- <link rel="stylesheet" th:href="@{/static/css/style.css}"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+  </head>
+  <body>
+    <aside class="sidebar" id="vina-sidebar">
+      <div class="sidebar-brand">
+        <!-- <img
+          th:src="@{/static/VINA_AKOHO_LOGO.png}"
+          alt="VINA AKOHO"
+          class="brand-mark"
+        /> -->
+        <img th:src="@{/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark">
+
+        <div>
+          <div class="brand-title">VINA AKOHO</div>
+          <div class="brand-subtitle">RO05 - Comptable</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a class="sidebar-link active" href="#"
+          >Dashboard <span class="sidebar-code">F9</span></a
+        >
+
+        <div class="sidebar-section">Finance</div>
+        <a class="sidebar-link" href="#"
+          >Vue d'ensemble financière <span class="sidebar-code">F1</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Registre des Dépenses <span class="sidebar-code">F2</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Coût de revient <span class="sidebar-code">F3</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Rapports financiers <span class="sidebar-code">F5</span></a
+        >
+        <a class="sidebar-link" href="#"
+          >Voir créances <span class="sidebar-code">F5</span></a
+        >
+      </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="vina-menu-button" type="button">
+            ☰
+          </button>
+          <span class="breadcrumb">Dashboard Comptable</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="role-pill">RO05 - Comptable</span>
+          <button
+            class="btn btn-ghost btn-small"
+            id="vina-logout-button" onclick="window.location.href='/'"
+            type="button"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="page-header theme-blue">
+          <div>
+            <p class="eyebrow">DASHBOARD</p>
+            <h1>Comptabilité & Encaissements</h1>
+            <p>
+              Suivi des ventes à crédit, des en-cours clients et de la
+              trésorerie du mois en cours.
+            </p>
+          </div>
+        </section>
+
+        <section class="grid-2">
+          <article class="card" style="margin-bottom: 0">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Vue d'ensemble financière</h2>
+                <p class="card-subtitle">
+                  Trésorerie, flux récents, projections par phase et bilan
+                  estimatif.
+                </p>
+              </div>
+            </div>
+            <ul class="stats-list">
+              <li><strong>Recettes du mois :</strong> 18 604 138 Ar</li>
+              <li><strong>Dépenses du mois :</strong> 5 790 789 Ar</li>
+              <li><strong>Bénéfice net :</strong> 12 813 349 Ar</li>
+              <li><strong>Trésorerie disponible :</strong> 9 128 560 Ar</li>
+            </ul>
+            <div class="card-actions">
+              <a class="btn btn-primary" href="#">Ouvrir finances</a>
+              <a class="btn btn-blue-dark" href="#">Voir les rapports</a>
+            </div>
+          </article>
+
+          <article class="card" style="margin-bottom: 0">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Coût de revient & dépenses</h2>
+                <p class="card-subtitle">
+                  Journal des sorties, registre des charges et calcul analytique
+                  par sac.
+                </p>
+              </div>
+            </div>
+            <ul class="stats-list">
+              <li><strong>Total dépenses Juin :</strong> 2 517 112 Ar</li>
+              <li><strong>Charges fixes / mois :</strong> 2 805 000 Ar</li>
+              <li><strong>Coût de revient / Sac :</strong> 218 575 Ar</li>
+              <li><strong>Prix minimum recommandé :</strong> ≥ 260 000 Ar</li>
+            </ul>
+            <div class="card-actions">
+              <a class="btn btn-green" href="#">Dépenses</a>
+              <a class="btn btn-ghost" href="#">Coût de revient</a>
+            </div>
+          </article>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">
+                Suivi des Ventes à Crédit et En-cours Clients
+              </h2>
+              <p class="card-subtitle">
+                Indicateur visuel rouge pour les créances restant dues.
+              </p>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Débiteur (Client)</th>
+                  <th>Profil</th>
+                  <th>Reste dû (Ar)</th>
+                  <th>Date Limite de Règlement</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Agro-Distribution Madagascar</td>
+                  <td>Grossiste</td>
+                  <td><span class="text-danger">850 000 Ar</span></td>
+                  <td>
+                    15 Juin 2026
+                    <span class="badge badge-warning">Dans 6 jours</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Ferme Avicole de Mahitsy</td>
+                  <td>Ferme Avicole</td>
+                  <td><span class="text-danger">350 000 Ar</span></td>
+                  <td>22 Juin 2026</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Total Encaissé</div>
+            <div class="stat-value">
+              <span class="text-success">+ 4 850 000 Ar</span>
+            </div>
+            <div class="stat-trend trend-positive">Mois en cours</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Total Dépenses</div>
+            <div class="stat-value">
+              <span class="text-danger">- 2 100 000 Ar</span>
+            </div>
+            <div class="stat-trend trend-negative">Achats et charges</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Trésorerie Actuelle</div>
+            <div class="stat-value">
+              <span class="text-success">2 750 000 Ar</span>
+            </div>
+            <div class="stat-trend trend-positive">Solde disponible</div>
+          </article>
+        </section>
+      </div>
+
+      <div class="app-footer">VINA AKOHO — Comptabilité & Encaissements</div>
+    </div>
+
+    <script src="/assets/js/script_content.js"></script>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enregistrer un Client - VINA AKOHO</title>
+    <!-- <link rel="stylesheet" th:href="@{/static/css/style.css}"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">RESPONSABLE COMMERCIAL</p>
+                    <h1>Enregistrer un Client / Partenaire</h1>
+                    <div style="height: 2px; background: #16a34a; margin-top: 8px; width: 100px;"></div>
+                </div>
+            </section>
+
+            <form method="post" th:action="@{/clients/nouveau}" th:object="${inscription}">
+                <section class="form-section">
+                    <div class="form-section-heading">
+                        <h2>Section 1 - Identification de l'Acheteur</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Code Client Unique</label>
+                            <input type="text" class="form-control" value="CLT-2026-XXXX" disabled style="background: #e9ecef;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="idTypeClient">Profil du Client *</label>
+                            <select class="form-control" id="idTypeClient" th:field="*{idTypeClient}" required>
+                                <option value="" disabled>Choisir un profil</option>
+                                <option th:each="typeClient : ${typesClient}" th:value="${typeClient.id}" th:text="${typeClient.libelle}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="nom">Nom du Client / Raison Sociale *</label>
+                            <input type="text" class="form-control" id="nom" th:field="*{nom}" placeholder="ex: Etablissement Razafy" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="prenom">Prenom / Contact *</label>
+                            <input type="text" class="form-control" id="prenom" th:field="*{prenom}" placeholder="ex: Jean Claude" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="numeroTelephone">Telephone de Contact *</label>
+                            <input type="tel" class="form-control" id="numeroTelephone" th:field="*{numeroTelephone}" placeholder="034 XX XX XX X" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tailleCheptel">Taille cheptel</label>
+                            <input type="number" class="form-control" id="tailleCheptel" th:field="*{tailleCheptel}" min="0" placeholder="ex: 40">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section">
+                    <div class="form-section-heading">
+                        <h2>Section 2 - Logistique & Services</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="idZoneLivraison">Zone / Axe de livraison principal *</label>
+                            <select class="form-control" id="idZoneLivraison" th:field="*{idZoneLivraison}" required>
+                                <option value="ZONE001">Mahitsy Centre</option>
+                                <option value="ZONE002">Peripherie</option>
+                                <option value="ZONE003">Antananarivo Ville</option>
+                                <option value="ZONE004">Axe Ankazobe</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="idLocalite">Localite</label>
+                            <input type="text" class="form-control" id="idLocalite" th:field="*{idLocalite}" placeholder="ex: LOC002">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="adresse">Adresse ou Repere precis *</label>
+                            <input type="text" class="form-control" id="adresse" th:field="*{adresse}" placeholder="ex: En face du bureau de la commune..." required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="idService">Service rattache *</label>
+                            <select class="form-control" id="idService" th:field="*{idService}" required>
+                                <option value="" disabled>Choisir un service</option>
+                                <option th:each="service : ${services}" th:value="${service.id}" th:text="${service.libelle}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label class="form-label" for="isActif">Compte actif</label>
+                        <select class="form-control" id="isActif" th:field="*{isActif}">
+                            <option th:value="true">Oui</option>
+                            <option th:value="false">Non</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label" for="notes">Conditions particulieres :</label>
+                        <textarea class="form-control" id="notes" th:field="*{notes}" rows="4" placeholder="Notez ici les credits ou prix negocies..."></textarea>
+                    </div>
+                </section>
+
+                <p class="login-error" aria-live="polite" th:text="${erreur}"></p>
+                <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
+
+                <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+                    <button type="button" class="btn btn-ghost btn-large" onclick="history.back()">Annuler</button>
+                    <button type="submit" class="btn btn-primary btn-large" style="background-color: #16a34a; border-color: #16a34a;">Enregistrer le Client</button>
+                </div>
+            </form>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+    <script th:src="@{/static/js/auth.js}"></script>
+    <script th:src="@{/static/js/app-shell.js}"></script>
+</body>
+</html>

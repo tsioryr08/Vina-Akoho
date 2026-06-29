@@ -92,14 +92,17 @@
   function getProjectRootUrl() {
     const scripts = document.getElementsByTagName("script");
     const authScript = Array.from(scripts).find(function (script) {
-      return script.src && script.src.indexOf("/assets/js/auth.js") !== -1;
+      return script.src &&
+        (script.src.indexOf("/assets/js/auth.js") !== -1 || script.src.indexOf("/static/js/auth.js") !== -1);
     });
 
     if (!authScript) {
-      return new URL("../", window.location.href).href;
+      return new URL("/", window.location.href).href;
     }
 
-    return authScript.src.replace("/assets/js/auth.js", "/");
+    return authScript.src
+      .replace("/assets/js/auth.js", "/")
+      .replace("/static/js/auth.js", "/");
   }
 
   function projectRelativeUrl(relativePath) {

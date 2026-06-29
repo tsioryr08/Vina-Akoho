@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:if="${categorieId == null}">Nouvelle Catégorie - VINA AKOHO</title>
     <title th:if="${categorieId != null}">Modifier Catégorie - VINA AKOHO</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- <link rel="stylesheet" href="/static/css/style.css"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         .form-container {
             max-width: 800px;
@@ -186,7 +187,7 @@
         <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
 
         <div class="form-container">
-            <form th:action="${categorieId == null} ? @{/categories} : @{/categories/{id}(id=${categorieId})}"
+            <form th:action="${categorieId == null} ? @{/api/categories} : @{/api/categories/{id}(id=${categorieId})}"
                   th:method="${categorieId == null} ? 'post' : 'post'"
                   th:object="${categorie}">
 
@@ -266,7 +267,7 @@
                         <span th:if="${categorieId == null}">➕ Créer</span>
                         <span th:if="${categorieId != null}">💾 Mettre à jour</span>
                     </button>
-                    <a th:href="@{/categories}" class="btn-secondary">↩️ Annuler</a>
+                    <a th:href="@{/api/categories}" class="btn-secondary">↩️ Annuler</a>
                 </div>
             </form>
         </div>

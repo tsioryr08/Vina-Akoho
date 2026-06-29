@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertes Stock - VINA AKOHO</title>
+    <!-- <link rel="stylesheet" th:href="@{/assets/css/style.css}"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="vina-body">
+    <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
+    <div class="app-main-wrapper">
+        <header th:replace="~{layout/header :: header}"></header>
+        <div id="vina-content">
+
+            <section class="page-header theme-orange">
+                <div>
+                    <p class="eyebrow">MATIÈRES PREMIÈRES</p>
+                    <h1>Alertes Stock — Seuil Atteint</h1>
+                    <p>Matières premières dont le stock actuel est inférieur ou égal au seuil minimum.</p>
+                </div>
+            </section>
+
+            <!-- Sous-navigation interne -->
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small">← Retour à la liste</a>
+                <a th:href="@{/matieres-premieres/alertes}" class="btn btn-primary btn-small">Alertes</a>
+                <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-ghost btn-small">Ajouter Matière</a>
+                <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-ghost btn-small">Créer Fiche Produit</a>
+            </div>
+
+            <!-- Messages flash session -->
+            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
+
+            <!-- KPI -->
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Matières en alerte</div>
+                    <div class="stat-value" th:text="${#lists.size(alertes)}">0</div>
+                    <div class="stat-trend trend-warning">Seuil atteint</div>
+                </article>
+            </section>
+
+            <!-- Tableau des alertes -->
+            <section class="form-section">
+                <h2>Matières Premières en Alerte</h2>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Matière Première</th>
+                                <th>Fournisseur</th>
+                                <th>Stock Actuel</th>
+                                <th>Seuil Minimum</th>
+                                <th>PAMP (Ar)</th>
+                                <th>Statut</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="mp : ${alertes}">
+                                <td><strong th:text="${mp.nom}"></strong></td>
+                                <td th:text="${mp.fournisseurNom}"></td>
+                                <td th:text="${mp.quantiteStock} + ' ' + ${mp.uniteLibelle}"></td>
+                                <td th:text="${mp.seuilMinimum != null} ? ${mp.seuilMinimum} + ' ' + ${mp.uniteLibelle} : '—'"></td>
+                                <td th:text="${mp.pamp} + ' Ar'"></td>
+                                <td>
+                                    <span class="badge badge-danger">SEUIL ATTEINT</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/matieres-premieres/{id}(id=${mp.id})}" class="btn btn-small btn-ghost">Fiche →</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(alertes)}">
+                                <td colspan="7" style="text-align:center; padding: 32px; color: #64748b;">
+                                    <span style="font-size: 24px; display: block; margin-bottom: 8px;">✓</span>
+                                    Aucune matière première en alerte. Tous les stocks sont corrects.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Couverture stock vs seuil pour les matières en alerte -->
+                <div th:if="${!#lists.isEmpty(alertes)}" style="margin-top: 24px;">
+                    <h3 style="font-size: 15px; font-weight: 700; color: #334155; margin-bottom: 16px;">Couverture Stock vs Seuil</h3>
+                    <div class="coverage-grid">
+                        <div class="coverage-card" th:each="mp : ${alertes}"
+                             th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                                <strong th:text="${mp.nom}"></strong>
+                                <span style="color: #ef4444; font-weight: 700;"
+                                      th:text="${#numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"></span>
+                            </div>
+                            <div class="jauge-container">
+                                <div class="jauge-fill jauge-red"
+                                     th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"></div>
+                            </div>
+                            <p style="margin-top: 8px; font-size: 12px; color: #64748b;">
+                                Stock : <strong th:text="${mp.quantiteStock} + ' ' + ${mp.uniteLibelle}"></strong>
+                                &nbsp;/&nbsp; Seuil : <strong th:text="${mp.seuilMinimum} + ' ' + ${mp.uniteLibelle}"></strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</body>
+</html>

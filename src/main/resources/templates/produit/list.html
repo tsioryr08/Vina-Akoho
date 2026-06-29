@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Produits - VINA AKOHO</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- <link rel="stylesheet" href="/static/css/style.css"> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         .filter-bar {
             display: flex;
@@ -224,7 +225,7 @@
 
         <!-- Barre de recherche et filtres -->
         <div class="filter-bar">
-            <form th:action="@{/produits/recherche}" method="get" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+            <form th:action="@{/api/produits/recherche}" method="get" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
                 <input type="text" name="q" th:value="${q != null ? q : ''}"
                        placeholder="🔍 Rechercher un produit..." style="flex: 1; min-width: 180px;">
 
@@ -243,7 +244,7 @@
                        placeholder="Prix max" step="0.01" style="width: 100px;">
 
                 <button type="submit" class="btn-filter">Filtrer</button>
-                <a th:href="@{/produits}" class="btn-reset">Réinitialiser</a>
+                <a th:href="@{/api/produits}" class="btn-reset">Réinitialiser</a>
             </form>
         </div>
 
@@ -256,7 +257,7 @@
                         produit(s) trouvé(s)
                     </p>
                 </div>
-                <button class="btn btn-black btn-small" onclick="window.location.href='/produits/nouveau'">+ Ajouter une référence</button>
+                <button class="btn btn-black btn-small" onclick="window.location.href='/api/produits/nouveau'">+ Ajouter une référence</button>
             </div>
             <div class="table-wrap">
                 <table class="data-table">
@@ -285,13 +286,13 @@
                         </td>
                         <td>
                             <div class="action-btns">
-                                <a th:href="@{/produits/{id}(id=${produit.id})}"
+                                <a th:href="@{/api/produits/{id}(id=${produit.id})}"
                                    class="btn-sm btn-view"
                                    title="Voir les détails">voir plus</a>
-                                <a th:href="@{/produits/{id}/modifier(id=${produit.id})}"
+                                <a th:href="@{/api/produits/{id}/modifier(id=${produit.id})}"
                                    class="btn-sm btn-edit"
                                    title="Modifier">modifier</a>
-                                <a th:href="@{/produits/{id}/supprimer(id=${produit.id})}"
+                                <a th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}"
                                    class="btn-sm btn-delete"
                                    title="Supprimer"
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.')">🗑️</a>
@@ -303,7 +304,7 @@
                             <div class="empty-state">
                                 <p style="font-size: 18px;">📦 Aucun produit trouvé</p>
                                 <p>Commencez par ajouter votre premier produit au catalogue.</p>
-                                <button class="btn btn-black btn-small" onclick="window.location.href='/produits/nouveau'" style="margin-top: 10px;">
+                                <button class="btn btn-black btn-small" onclick="window.location.href='/api/produits/nouveau'" style="margin-top: 10px;">
                                     + Ajouter une référence
                                 </button>
                             </div>
@@ -316,7 +317,7 @@
             <!-- Pagination -->
             <div th:if="${produits != null and produits.totalPages > 1}" class="pagination">
                 <span th:each="i : ${#numbers.sequence(0, produits.totalPages - 1)}">
-                    <a th:href="@{/produits/recherche(page=${i}, size=20, q=${q != null ? q : ''}, idCategorie=${idCategorie != null ? idCategorie : ''}, prixMin=${prixMin != null ? prixMin : ''}, prixMax=${prixMax != null ? prixMax : ''})}"
+                    <a th:href="@{/api/produits/recherche(page=${i}, size=20, q=${q != null ? q : ''}, idCategorie=${idCategorie != null ? idCategorie : ''}, prixMin=${prixMin != null ? prixMin : ''}, prixMax=${prixMax != null ? prixMax : ''})}"
                        th:text="${i + 1}"
                        th:class="${i == produits.number} ? 'active' : ''">
                     </a>
