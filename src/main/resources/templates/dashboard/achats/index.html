@@ -4,16 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VINA AKOHO - Approvisionnements & Fournisseurs</title>
-    <link rel="stylesheet" href="/assets/css/style.css" />
+    <!-- <link rel="stylesheet" href="/assets/css/style.css" /> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
   </head>
   <body>
     <aside class="sidebar" id="vina-sidebar">
       <div class="sidebar-brand">
-        <img
+        <!-- <img
           src="/assets/VINA_AKOHO_LOGO.png"
           alt="VINA AKOHO"
           class="brand-mark"
-        />
+        /> -->
+        <img th:src="@{/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark">
+
         <div>
           <div class="brand-title">VINA AKOHO</div>
           <div class="brand-subtitle">RO06 - Responsable Achats</div>
