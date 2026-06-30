@@ -11,30 +11,15 @@
   </div>
 
   <nav class="sidebar-nav">
-    <div class="sidebar-section">Principal</div>
-    <a class="sidebar-link" th:href="@{/api/dashboard/admin}">Dashboard <span class="sidebar-code">A1</span></a>
-
-    <div class="sidebar-section">Gestion Commerciale</div>
-    <a class="sidebar-link" th:href="@{/api/clients}">Clients <span class="sidebar-code">C1</span></a>
-    <a class="sidebar-link" th:href="@{/api/commandes}">Commandes <span class="sidebar-code">C2</span></a>
-    <a class="sidebar-link" th:href="@{/api/factures}">Factures <span class="sidebar-code">C3</span></a>
-
-    <div class="sidebar-section">Stock & Production</div>
-    <a class="sidebar-link active" th:href="@{/api/produits}">Produits <span class="sidebar-code">P1</span></a>
-    <a class="sidebar-link" th:href="@{/api/stock}">Stock <span class="sidebar-code">P2</span></a>
-    <a class="sidebar-link" th:href="@{/api/production}">Production <span class="sidebar-code">P3</span></a>
-    <a class="sidebar-link" th:href="@{/api/approvisionnements}">Approvisionnements <span class="sidebar-code">P4</span></a>
-
-    <div class="sidebar-section">Finances</div>
-    <a class="sidebar-link" th:href="@{/api/creances}">Créances <span class="sidebar-code">F1</span></a>
-    <a class="sidebar-link" th:href="@{/api/depenses}">Dépenses <span class="sidebar-code">F2</span></a>
-    <a class="sidebar-link" th:href="@{/api/rapports}">Rapports & Trésorerie <span class="sidebar-code">F3</span></a>
-
-    <div class="sidebar-section">Utilisateurs</div>
-    <a class="sidebar-link" th:href="@{/api/utilisateurs}">Gestion des comptes <span class="sidebar-code">U1</span></a>
-
-    <div class="sidebar-section">Configuration</div>
-    <a class="sidebar-link" th:href="@{/api/configuration}">Paramètres système <span class="sidebar-code">S1</span></a>
+    <div class="sidebar-section">Matieres Premieres</div>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/nouveau}">Ajouter Matieres <span class="sidebar-code">M1</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres}">Suivi Stock Matieres <span class="sidebar-code">M2</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/fiche}">Creer Fiche Produit <span class="sidebar-code">M3</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/alertes}">Suggestions <span class="sidebar-code">M4</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/previsions}">Previsions <span class="sidebar-code">M5</span></a>
+    <a class="sidebar-link" th:href="@{/api/produits}">Suivi Produits Finis <span class="sidebar-code">P1</span></a>
+    <a class="sidebar-link" th:href="@{/api/produits/nouveau}">Ajouter Produit <span class="sidebar-code">P2</span></a>
+    <a class="sidebar-link" th:href="@{/api/produits/detail}">Details Produits Finis <span class="sidebar-code">P3</span></a>
   </nav>
 </aside>
 </body>
