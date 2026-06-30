@@ -236,6 +236,12 @@ GRANT ALL PRIVILEGES ON DATABASE vinakoho TO vinakoho;
 -- 4. Connexion à la base vinakoho, puis droits sur le schéma public
 \c vinakoho
 GRANT ALL ON SCHEMA public TO vinakoho;
+
+-- Grant all privileges on all current tables
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vinakoho;
+
+-- Grant privileges on sequences (crucial for auto-incrementing IDs)
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO vinakoho;
 ```
 
 L'application se connecte ensuite à PostgreSQL avec l'utilisateur `vinakoho`.
@@ -307,3 +313,4 @@ Commentaire :
 ---
 
 *Document de référence — Architectes Backend VINA-AKOHO — Sprint 1*
+
