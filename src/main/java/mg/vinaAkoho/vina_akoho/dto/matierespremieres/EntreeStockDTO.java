@@ -18,7 +18,11 @@ public record EntreeStockDTO(
         LocalDate dateReception,
 
         @NotNull(message = "L'employé responsable est obligatoire")
-        Integer idEmploye
+        Integer idEmploye,
+
+        @NotNull(message = "Le coût unitaire est obligatoire")
+        @DecimalMin(value = "0", inclusive = false, message = "Le coût unitaire doit être supérieur à 0")
+        BigDecimal coutUnitaire
 
 ) {
 }

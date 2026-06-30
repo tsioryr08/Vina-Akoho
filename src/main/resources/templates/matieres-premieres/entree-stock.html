@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrée en Stock - VINA AKOHO</title>
-    <!-- <link rel="stylesheet" th:href="@{/assets/css/style.css}"> -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
 </head>
 <body class="vina-body">
     <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
@@ -32,10 +31,6 @@
             <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
 
             <section class="form-section" style="max-width: 800px; padding: 40px; border-radius: 16px; box-shadow: var(--shadow-sm);">
-                <div class="alert-box alert-warning" style="margin-bottom: 24px;">
-                    <strong>Règle de Gestion :</strong> Le prix d'achat n'est plus modifiable ici.
-                    Il est automatiquement récupéré depuis le coût unitaire défini lors de la création de la matière première.
-                </div>
                 <form method="post" th:action="@{/matieres-premieres/entree-stock}">
                     <div style="display: flex; flex-direction: column; gap: 20px;">
                         <div class="form-group">
@@ -54,11 +49,10 @@
                                    placeholder="ex: 1500" min="0.01" step="0.01" required style="height: 50px;">
                         </div>
                         <div class="form-group">
-                            <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Prix unitaire appliqué (Ariary)</label>
-                            <input type="text" id="prixField" class="form-control" readonly
-                                   style="background: #f1f5f9; color: #64748b; height: 50px; cursor: not-allowed; border-color: #e2e8f0;"
-                                   placeholder="Sélectionner d'abord une matière">
-                            <p style="margin-top: 6px; font-size: 12px; color: #94a3b8; font-style: italic;">Désactivé — Lié à la fiche technique d'origine.</p>
+                            <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Coût unitaire de cet achat (Ariary)</label>
+                            <input type="number" id="coutUnitaire" name="coutUnitaire" class="form-control"
+                                   placeholder="Sélectionner d'abord une matière" min="0.01" step="0.01" required style="height: 50px;">
+                            <p style="margin-top: 6px; font-size: 12px; color: #94a3b8; font-style: italic;">Pré-rempli avec le tarif de la fiche. Modifiable si le prix du fournisseur a changé pour cet achat.</p>
                         </div>
                         <div class="form-group">
                             <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Date de réception</label>
@@ -80,7 +74,7 @@
         document.getElementById('mpSelect').addEventListener('change', function () {
             const selected = this.options[this.selectedIndex];
             const prix = selected.dataset.prix;
-            document.getElementById('prixField').value = prix ? prix + ' Ar' : '';
+            document.getElementById('coutUnitaire').value = prix || '';
         });
     </script>
 </body>

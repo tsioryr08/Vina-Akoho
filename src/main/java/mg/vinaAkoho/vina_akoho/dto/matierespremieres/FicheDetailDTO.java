@@ -15,6 +15,7 @@ public record FicheDetailDTO(
         BigDecimal seuilMinimum,
         BigDecimal stockGlobal,
         BigDecimal pamp,
-        List<LotDTO> lots
+        List<LotDTO> lots,
+        BigDecimal suggestionReapprovisionnement
 ) {
 }

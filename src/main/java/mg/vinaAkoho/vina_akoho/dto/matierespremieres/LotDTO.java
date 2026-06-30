@@ -7,6 +7,8 @@ public record LotDTO(
         Integer id,
         LocalDate dateAchat,
         BigDecimal quantiteRestante,
-        String statut
+        String statut,
+        String fournisseurNom,
+        BigDecimal coutUnitaire
 ) {
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import mg.vinaAkoho.vina_akoho.entity.matierespremieres.Fournisseur;
 
 @Entity
 @Table(name = "lot_mp")
@@ -34,6 +35,13 @@ public class LotMp {
 
     @Column(name = "date_peremption")
     private LocalDate datePeremption;
+
+    @ManyToOne
+    @JoinColumn(name = "id_fournisseur")
+    private Fournisseur fournisseur;
+
+    @Column(name = "cout_unitaire")
+    private BigDecimal coutUnitaire;
 
     public Integer getId() {
         return id;
@@ -81,5 +89,21 @@ public class LotMp {
 
     public void setDatePeremption(LocalDate datePeremption) {
         this.datePeremption = datePeremption;
+    }
+
+    public Fournisseur getFournisseur() {
+        return fournisseur;
+    }
+
+    public void setFournisseur(Fournisseur fournisseur) {
+        this.fournisseur = fournisseur;
+    }
+
+    public BigDecimal getCoutUnitaire() {
+        return coutUnitaire;
+    }
+
+    public void setCoutUnitaire(BigDecimal coutUnitaire) {
+        this.coutUnitaire = coutUnitaire;
     }
 }

@@ -1,9 +1,13 @@
 package mg.vinaAkoho.vina_akoho.service.matierespremieres;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.Normalizer;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.EntreeStockDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.FicheDetailDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.FournisseurDTO;
@@ -108,6 +112,9 @@ public class MatierePremiereService {
         lot.setQuantiteInitiale(dto.quantite());
         lot.setQuantiteRestante(dto.quantite());
         lot.setDateAchat(dto.dateReception());
+        // RG03 — enregistrer le coût unitaire et le fournisseur par lot d'achat
+        lot.setCoutUnitaire(dto.coutUnitaire());
+        lot.setFournisseur(mp.getFournisseur());
         lotMpRepository.save(lot);
 
         MouvementStockMp mouvement = new MouvementStockMp();
@@ -116,6 +123,7 @@ public class MatierePremiereService {
         mouvement.setQuantite(dto.quantite());
         mouvement.setUnite(mp.getUnite());
         mouvement.setIdEmploye(dto.idEmploye());
+        mouvement.setDateMouvement(dto.dateReception());
         mouvementStockMpRepository.save(mouvement);
 
         return versDetailDTO(mp);
@@ -145,7 +153,6 @@ public class MatierePremiereService {
 
     private MatierePremiereListDTO versListDTO(MatierePremiere mp) {
         BigDecimal stock = lotMpRepository.sommeQuantiteRestante(mp.getId());
-        // PAMP = coût unitaire : le prix d'achat est verrouillé à la création, tous les lots ont donc le même coût.
         return new MatierePremiereListDTO(mp.getId(), mp.getNom(), mp.getFournisseur().getNom(),
                 mp.getUnite().getLibelle(), stock, mp.getSeuilMinimum(), mp.getCoutUnitaire(),
                 statut(stock, mp.getSeuilMinimum()));
@@ -153,11 +160,16 @@ public class MatierePremiereService {
 
     private FicheDetailDTO versDetailDTO(MatierePremiere mp) {
         List<LotMp> lots = lotMpRepository.findByMatierePremiereIdOrderByDateAchatAscIdAsc(mp.getId());
+
         BigDecimal stock = BigDecimal.ZERO;
         for (LotMp lot : lots) {
             stock = stock.add(lot.getQuantiteRestante());
         }
-        // FIFO : le plus ancien lot non vide est en tête de pile (à épuiser en premier).
+
+        // PAMP calculé à partir du coût réel de chaque lot (prix d'achat pondéré par la quantité initiale)
+        BigDecimal pamp = calculerPamp(lots, mp.getCoutUnitaire());
+
+        // Règle FIFO : le plus ancien lot non vide est en tête de pile
         boolean teteTrouvee = false;
         List<LotDTO> lotsDTO = new ArrayList<>();
         for (LotMp lot : lots) {
@@ -170,13 +182,23 @@ public class MatierePremiereService {
             } else {
                 statutLot = "EN ATTENTE";
             }
-            lotsDTO.add(new LotDTO(lot.getId(), lot.getDateAchat(), lot.getQuantiteRestante(), statutLot));
+            String fournisseurNom = lot.getFournisseur() != null
+                    ? lot.getFournisseur().getNom()
+                    : mp.getFournisseur().getNom();
+            BigDecimal coutLot = lot.getCoutUnitaire() != null
+                    ? lot.getCoutUnitaire()
+                    : mp.getCoutUnitaire();
+            lotsDTO.add(new LotDTO(lot.getId(), lot.getDateAchat(), lot.getQuantiteRestante(),
+                    statutLot, fournisseurNom, coutLot));
         }
+
+        BigDecimal suggestion = calculerSuggestion(mp.getId(), stock, mp.getSeuilMinimum());
+
         return new FicheDetailDTO(mp.getId(), mp.getCode(), mp.getNom(),
                 mp.getFournisseur().getId(), mp.getFournisseur().getNom(),
                 mp.getUnite().getId(), mp.getUnite().getLibelle(),
                 mp.getCoutUnitaire(), mp.getSeuilMinimum(), stock,
-                mp.getCoutUnitaire(), lotsDTO);
+                pamp, lotsDTO, suggestion);
     }
 
     private String statut(BigDecimal stock, BigDecimal seuil) {
@@ -184,6 +206,51 @@ public class MatierePremiereService {
             return STATUT_ALERTE;
         }
         return STATUT_OK;
+    }
+
+    // PAMP = Σ(coutLot × quantiteInitiale) / Σ(quantiteInitiale)
+    private BigDecimal calculerPamp(List<LotMp> lots, BigDecimal coutDefaut) {
+        if (lots.isEmpty()) {
+            return coutDefaut;
+        }
+        BigDecimal totalValeur = BigDecimal.ZERO;
+        BigDecimal totalQte = BigDecimal.ZERO;
+        for (LotMp lot : lots) {
+            BigDecimal cout = lot.getCoutUnitaire() != null ? lot.getCoutUnitaire() : coutDefaut;
+            totalValeur = totalValeur.add(cout.multiply(lot.getQuantiteInitiale()));
+            totalQte = totalQte.add(lot.getQuantiteInitiale());
+        }
+        if (totalQte.signum() == 0) {
+            return coutDefaut;
+        }
+        return totalValeur.divide(totalQte, 2, RoundingMode.HALF_UP);
+    }
+
+    // RG03 — suggestion basée sur la consommation moyenne observée (sorties des 30 derniers jours extrapolées)
+    private BigDecimal calculerSuggestion(Integer idMp, BigDecimal stock, BigDecimal seuilMinimum) {
+        BigDecimal totalSorties = Objects.requireNonNullElse(
+                mouvementStockMpRepository.sommeTotalSorties(idMp), BigDecimal.ZERO);
+        LocalDate premiereSortie = mouvementStockMpRepository.premiereDateSortieAvecDate(idMp);
+
+        if (premiereSortie == null || totalSorties.signum() == 0) {
+            // Pas d'historique : suggérer de combler le déficit par rapport au seuil minimum
+            if (seuilMinimum == null) return BigDecimal.ZERO;
+            return seuilMinimum.subtract(stock).max(BigDecimal.ZERO).setScale(2, RoundingMode.CEILING);
+        }
+
+        long jours = ChronoUnit.DAYS.between(premiereSortie, LocalDate.now());
+        if (jours == 0) jours = 1;
+
+        BigDecimal consommation30Jours = totalSorties
+                .divide(BigDecimal.valueOf(jours), 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(30))
+                .setScale(2, RoundingMode.CEILING);
+
+        // Cible = stock cible pour 30 jours, au moins le seuil minimum
+        BigDecimal cible = seuilMinimum != null
+                ? consommation30Jours.max(seuilMinimum)
+                : consommation30Jours;
+        return cible.subtract(stock).max(BigDecimal.ZERO);
     }
 
     // Code auto-généré au format MP-<PREMIER_MOT>-NN (ex: MP-MAIS-01), incrémenté pour rester unique.

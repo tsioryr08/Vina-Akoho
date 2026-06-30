@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'Fiche — ' + ${fiche.nom} + ' - VINA AKOHO'">Fiche matière première</title>
-    <!-- <link rel="stylesheet" th:href="@{/assets/css/style.css}"> -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
 </head>
 <body class="vina-body">
     <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
@@ -97,6 +96,8 @@
                                 <th>Ordre</th>
                                 <th>Réf. Lot</th>
                                 <th>Date d'Arrivée</th>
+                                <th>Fournisseur</th>
+                                <th>Coût unitaire</th>
                                 <th>Quantité Restante</th>
                                 <th>Statut</th>
                             </tr>
@@ -106,6 +107,8 @@
                                 <td th:text="${iter.count}"></td>
                                 <td th:text="'LOT-' + ${fiche.code} + '-' + ${lot.id}"></td>
                                 <td th:text="${#temporals.format(lot.dateAchat, 'dd MMM yyyy')}"></td>
+                                <td th:text="${lot.fournisseurNom}"></td>
+                                <td th:text="${lot.coutUnitaire} + ' Ar'"></td>
                                 <td th:text="${lot.quantiteRestante} + ' ' + ${fiche.uniteLibelle}"></td>
                                 <td>
                                     <span th:if="${lot.statut == 'EN TÊTE DE PILE'}" class="badge badge-success">EN TÊTE DE PILE</span>
@@ -127,6 +130,28 @@
                     Ce journal d'approvisionnement est verrouillé en lecture seule.
                     Aucune modification ou suppression rétroactive n'est possible.
                 </div>
+            </section>
+
+            <!-- Suggestion de réapprovisionnement -->
+            <section class="form-section" th:if="${fiche.suggestionReapprovisionnement != null and fiche.suggestionReapprovisionnement.doubleValue() > 0}">
+                <h2>Suggestion de Réapprovisionnement</h2>
+                <p style="color: #64748b; margin-bottom: 16px;">
+                    Calculée à partir de la consommation moyenne observée (sorties enregistrées).
+                </p>
+                <div class="alert-box danger" style="display: flex; align-items: center; gap: 16px;">
+                    <div>
+                        <strong>Quantité suggérée à commander :</strong>
+                        <span style="font-size: 1.4rem; font-weight: 800; color: #dc2626;"
+                              th:text="${fiche.suggestionReapprovisionnement} + ' ' + ${fiche.uniteLibelle}"></span>
+                    </div>
+                    <div style="font-size: 13px; color: #64748b;">
+                        Stock actuel : <strong th:text="${fiche.stockGlobal} + ' ' + ${fiche.uniteLibelle}"></strong>
+                        &nbsp;/&nbsp; Seuil : <strong th:text="${fiche.seuilMinimum} + ' ' + ${fiche.uniteLibelle}"></strong>
+                    </div>
+                </div>
+                <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-primary" style="margin-top: 12px;">
+                    Enregistrer une entrée →
+                </a>
             </section>
 
         </div>

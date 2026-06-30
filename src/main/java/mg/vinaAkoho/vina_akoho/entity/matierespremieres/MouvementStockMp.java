@@ -36,6 +36,9 @@ public class MouvementStockMp {
     @Column(name = "id_employe", nullable = false)
     private Integer idEmploye;
 
+    @Column(name = "date_mouvement")
+    private java.time.LocalDate dateMouvement;
+
     @Column
     private String observation;
 
@@ -88,6 +91,14 @@ public class MouvementStockMp {
 
     public void setIdEmploye(Integer idEmploye) {
         this.idEmploye = idEmploye;
+    }
+
+    public java.time.LocalDate getDateMouvement() {
+        return dateMouvement;
+    }
+
+    public void setDateMouvement(java.time.LocalDate dateMouvement) {
+        this.dateMouvement = dateMouvement;
     }
 
     public String getObservation() {
