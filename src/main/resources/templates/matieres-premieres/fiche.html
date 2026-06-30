@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'Fiche — ' + ${fiche.nom} + ' - VINA AKOHO'">Fiche matière première</title>
     
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
-    <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
+    <div th:replace="~{layout/sidebar-matierepremiere::sidebar-matierepremiere}"></div>
     <div class="app-main-wrapper">
         <header th:replace="~{layout/header :: header}"></header>
         <div id="vina-content">
