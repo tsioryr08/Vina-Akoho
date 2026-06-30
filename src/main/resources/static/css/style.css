@@ -381,6 +381,9 @@ select {
   padding-bottom: 22px;
   margin-bottom: 22px;
   border-bottom: 1px solid var(--border);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .form-section:last-of-type {
@@ -4241,7 +4244,7 @@ select {
   transform: translateY(-2px);
 }
 .vina-body .btn-secondary {
-  background: linear-gradient(135deg, var(--secondary-dark), var(--secondary));
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
   color: white;
   padding: 12px 30px;
   border: none;
@@ -4251,7 +4254,69 @@ select {
   text-decoration: none;
   display: inline-block;
   transition: all var(--transition);
-  box-shadow: 0 4px 12px rgba(87, 204, 153, 0.2);
+  box-shadow: 0 4px 12px rgba(34, 87, 122, 0.2);
+}
+.vina-body .btn-secondary:hover {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  box-shadow: 0 8px 20px rgba(34, 87, 122, 0.3);
+  transform: translateY(-2px);
+}
+
+.vina-body .btn-ghost {
+  background: rgba(34, 87, 122, 0.08);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition);
+}
+.vina-body .btn-ghost:hover {
+  background: rgba(34, 87, 122, 0.15);
+  border-color: var(--primary-dark);
+  color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.vina-body .btn-red,
+.vina-body .btn-orange,
+.vina-body .btn-warning {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 87, 122, 0.2);
+}
+.vina-body .btn-red:hover,
+.vina-body .btn-orange:hover,
+.vina-body .btn-warning:hover {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  box-shadow: 0 8px 20px rgba(34, 87, 122, 0.3);
+}
+
+.vina-body .btn-black {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 87, 122, 0.2);
+}
+.vina-body .btn-black:hover {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  box-shadow: 0 8px 20px rgba(34, 87, 122, 0.3);
+}
+
+.vina-body .btn-white {
+  background: #fff;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  box-shadow: none;
+}
+.vina-body .btn-white:hover {
+  background: rgba(34, 87, 122, 0.05);
+  border-color: var(--primary-dark);
 }
 .vina-body .btn-secondary:hover {
   background: linear-gradient(135deg, var(--secondary), var(--secondary-light));

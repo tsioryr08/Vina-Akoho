@@ -32,10 +32,10 @@
             <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
 
-            <div class="form-section" style="max-width: 720px;">
+            <div class="form-section">
                 <h2>Informations de la Matière Première</h2>
                 <form method="post" th:action="@{/matieres-premieres/nouveau}">
-                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Nom de la matière première <span style="color:#ef4444;">*</span></label>
                             <input type="text" name="nom" class="form-control" placeholder="ex: Maïs concassé" required>
