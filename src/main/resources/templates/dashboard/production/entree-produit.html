@@ -1,0 +1,209 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrée Produit - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}" />
+  </head>
+  <body>
+    <div th:replace="~{layout/responsableProduction :: responsableProduction}"></div>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="vina-menu-button" type="button">☰</button>
+          <span class="breadcrumb">Production / Entrée Produit</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="role-pill">RO02 - Responsable Production</span>
+          <button
+            class="btn btn-ghost btn-small"
+            id="vina-logout-button"
+            onclick="window.location.href='/'"
+            type="button"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="page-header theme-orange">
+          <div>
+            <p class="eyebrow">PRODUCTION</p>
+            <h1>Entrée Produit</h1>
+            <p class="muted-text">
+              Enregistrez une fabrication : les matières premières sont
+              automatiquement déduites selon la recette.
+            </p>
+          </div>
+        </section>
+
+        <!-- FORMULAIRE -->
+        <section id="formSection" class="card" style="max-width: 800px; margin: 0 auto;">
+          <div class="card-body">
+            <div class="alert-box">
+              <strong>Règle de Gestion :</strong> La quantité de matières
+              premières consommées est calculée automatiquement à partir de
+              la recette active du produit sélectionné.
+            </div>
+
+            <div id="errorBanner" class="info-banner error" style="display:none;"></div>
+
+            <form id="formEntreeProduit">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="produitSelect">Produit à fabriquer *</label>
+                  <select id="produitSelect" name="idProduit" class="form-control" required>
+                    <option value="">Sélectionner une option...</option>
+                    <option th:each="p : ${produits}" th:value="${p.id}" th:text="${p.nom}"></option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="quantite">Quantité à produire *</label>
+                  <input type="number" id="quantite" name="quantiteAProduire" class="form-control"
+                         placeholder="ex: 50" min="0.01" step="0.01" required />
+                </div>
+
+                <div class="field">
+                  <label for="datePeremption">Date de péremption (optionnel)</label>
+                  <input type="date" id="datePeremption" name="datePeremption" class="form-control" />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                  Valider la production
+                </button>
+                <a th:href="@{/production}" class="btn btn-secondary">Annuler</a>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- RÉSULTAT (affiché après succès, remplace le popup) -->
+        <section id="resultSection" class="card" style="max-width: 800px; margin: 24px auto 0; display:none;">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">✅ Production enregistrée</h2>
+              <p class="card-subtitle" id="resultSubtitle"></p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="result-grid-2">
+              <div class="result-card-sim">
+                <span>Lot Produit</span>
+                <strong id="resultLotId"></strong>
+              </div>
+              <div class="result-card-sim">
+                <span>Quantité produite</span>
+                <strong id="resultQuantite"></strong>
+              </div>
+            </div>
+
+            <h3 style="margin-top: 24px;">Matières premières consommées (FIFO)</h3>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Lot MP</th>
+                    <th>Matière première</th>
+                    <th>Quantité consommée</th>
+                  </tr>
+                </thead>
+                <tbody id="resultMpTable"></tbody>
+              </table>
+            </div>
+
+            <div class="card-actions" style="margin-top: 24px;">
+              <button type="button" class="btn btn-primary" id="nouvelleProductionBtn">
+                Nouvelle production
+              </button>
+              <a th:href="@{/production}" class="btn btn-white">Retour au dashboard</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-footer">VINA AKOHO — Production</div>
+    </div>
+
+    <script>
+      const form = document.getElementById("formEntreeProduit");
+      const formSection = document.getElementById("formSection");
+      const resultSection = document.getElementById("resultSection");
+      const errorBanner = document.getElementById("errorBanner");
+      const submitBtn = document.getElementById("submitBtn");
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        errorBanner.style.display = "none";
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Validation en cours...";
+
+        const idEmploye = 3; // TODO: remplacer par l'employé connecté (session)
+        const payload = {
+          idProduit: document.getElementById("produitSelect").value,
+          quantiteAProduire: document.getElementById("quantite").value,
+          datePeremption: document.getElementById("datePeremption").value || null,
+          idEmploye: idEmploye
+        };
+
+        try {
+          const res = await fetch("/api/entrees-produit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            afficherResultat(data.data);
+          } else {
+            errorBanner.textContent = "Erreur : " + data.message;
+            errorBanner.style.display = "block";
+          }
+        } catch (err) {
+          errorBanner.textContent = "Erreur réseau : impossible de contacter le serveur.";
+          errorBanner.style.display = "block";
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Valider la production";
+        }
+      });
+
+      function afficherResultat(data) {
+        document.getElementById("resultSubtitle").textContent =
+          data.nomProduit + " — fabriqué le " + data.dateFabrication;
+        document.getElementById("resultLotId").textContent = "#" + data.idLotProduit;
+        document.getElementById("resultQuantite").textContent = data.quantiteProduite + " unité(s)";
+
+        const tbody = document.getElementById("resultMpTable");
+        tbody.innerHTML = "";
+        data.matieresPremieresConsommees.forEach(function (ligne) {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td><span class=\"code-ref\">Lot #" + ligne.idLotMp + "</span></td>" +
+            "<td>" + ligne.nomMp + "</td>" +
+            "<td>" + ligne.quantiteConsommee + " kg</td>";
+          tbody.appendChild(tr);
+        });
+
+        formSection.style.display = "none";
+        resultSection.style.display = "block";
+        resultSection.scrollIntoView({ behavior: "smooth" });
+      }
+
+      document.getElementById("nouvelleProductionBtn").addEventListener("click", function () {
+        form.reset();
+        resultSection.style.display = "none";
+        formSection.style.display = "block";
+      });
+    </script>
+    <script src="/assets/js/script_content.js"></script>
+  </body>
+</html>
