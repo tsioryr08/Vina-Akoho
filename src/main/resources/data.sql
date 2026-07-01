@@ -17,3 +17,15 @@ INSERT INTO employe (nom, prenom, email, contact, mdp, id_role) VALUES ('Stock',
 INSERT INTO employe (nom, prenom, email, contact, mdp, id_role) VALUES ('Commercial', 'Responsable', 'commercial@vinaakoho.mg', NULL, '$2a$10$97H3BldJA5InSJmrQDaMOew.75kl52Wkl35N5.hv2COl.CoEuzvm.', 5) ON CONFLICT (email) DO NOTHING;
 --mdp: comptable123
 INSERT INTO employe (nom, prenom, email, contact, mdp, id_role) VALUES ('Comptable', 'Sys', 'comptable@vinaakoho.mg', NULL, '$2a$10$jP.L5EwtrXUPE6kcooG50eIlJvjKfwSCRToRmlR4UtlBdIwhet8s.', 6) ON CONFLICT (email) DO NOTHING;
+
+INSERT INTO mode_paiement (libelle) VALUES ('Espèces') ON CONFLICT (libelle) DO NOTHING;
+INSERT INTO mode_paiement (libelle) VALUES ('Transfert bancaire') ON CONFLICT (libelle) DO NOTHING;
+INSERT INTO mode_paiement (libelle) VALUES ('Mobile money') ON CONFLICT (libelle) DO NOTHING;
+
+INSERT INTO statut_vente (libelle) VALUES ('Validée') ON CONFLICT (libelle) DO NOTHING;
+INSERT INTO statut_vente (libelle) VALUES ('Annulée') ON CONFLICT (libelle) DO NOTHING;
+INSERT INTO statut_vente (libelle) VALUES ('En attente') ON CONFLICT (libelle) DO NOTHING;
+
+INSERT INTO statut_commande (libelle) VALUES ('Validée') ON CONFLICT (libelle) DO NOTHING;
+INSERT INTO statut_commande (libelle) VALUES ('En cours') ON CONFLICT (libelle) DO NOTHING;
+INSERT INTO statut_commande (libelle) VALUES ('Annulée') ON CONFLICT (libelle) DO NOTHING;
