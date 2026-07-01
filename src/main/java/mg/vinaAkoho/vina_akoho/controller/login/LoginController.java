@@ -1,11 +1,12 @@
 package mg.vinaAkoho.vina_akoho.controller.login;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import mg.vinaAkoho.vina_akoho.dto.login.LoginRequestDTO;
 import mg.vinaAkoho.vina_akoho.exception.login.IdentifiantsInvalidesException;
+import mg.vinaAkoho.vina_akoho.security.SessionFilter;
 import mg.vinaAkoho.vina_akoho.service.login.LoginService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,6 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @Autowired
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
@@ -26,11 +26,14 @@ public class LoginController {
     @PostMapping
     public String login(@RequestParam String email,
                         @RequestParam String mdp,
-                        HttpSession session,
+                        HttpServletRequest request,
                         RedirectAttributes redirectAttributes) {
         LoginRequestDTO requete = new LoginRequestDTO(email, mdp);
         try {
+            HttpSession session = request.getSession(true);
             var reponse = loginService.login(requete, session);
+            session.setAttribute(SessionFilter.ATTRIBUT_ID_EMPLOYE, reponse.getIdEmploye());
+            session.setAttribute(SessionFilter.ATTRIBUT_ROLE, reponse.getRole());
             String role = reponse.getRole();
             if (role != null && role.equalsIgnoreCase("Administrateur")) {
                 return "redirect:/admin";

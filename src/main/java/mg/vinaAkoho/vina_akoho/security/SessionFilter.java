@@ -21,6 +21,7 @@ public class SessionFilter extends OncePerRequestFilter {
             "/index",
             "/index.html",
             "/index.php",
+            "/css/",
             "/assets/",
             "/static/"
     );

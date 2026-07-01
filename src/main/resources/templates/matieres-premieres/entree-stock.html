@@ -1,81 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Entrée en Stock - VINA AKOHO</title>
-    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
-</head>
-<body class="vina-body">
-    <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}" />
+  </head>
+  <body class="vina-body">
+    <div
+      th:replace="~{layout/sidebar-matierepremiere::sidebar-matierepremiere}"
+    ></div>
     <div class="app-main-wrapper">
-        <header th:replace="~{layout/header :: header}"></header>
-        <div id="vina-content">
+      <header th:replace="~{layout/header :: header}"></header>
+      <div id="vina-content">
+        <section class="page-header theme-orange">
+          <div>
+            <p class="eyebrow">MATIÈRES PREMIÈRES</p>
+            <h1>Entrée en Stock</h1>
+            <p class="muted-text">
+              Réception physique de la marchandise — enregistrez un lot arrivé à
+              Mahitsy.
+            </p>
+          </div>
+        </section>
 
-            <section class="page-header theme-orange">
-                <div class="header-orange-line">
-                    <p class="eyebrow" style="color: #64748b; font-weight: 600;">Étape : Réception physique de la marchandise.</p>
-                    <h1 style="font-size: 28px;">2. Entrée en Stock (Arrivée d'un lot à Mahitsy)</h1>
-                </div>
-            </section>
+        <div
+          th:if="${successMessage}"
+          class="info-banner success"
+          th:text="${successMessage}"
+        ></div>
+        <div
+          th:if="${errorMessage}"
+          class="info-banner error"
+          th:text="${errorMessage}"
+        ></div>
 
-            <!-- Sous-navigation interne -->
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
-                <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small">Suivi Stock</a>
-                <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-primary btn-small">Ajouter Matière</a>
-                <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-ghost btn-small">Créer Fiche Produit</a>
+        <section
+          class="form-section"
+          style="
+            max-width: 800px;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            margin: 0 auto;
+          "
+        >
+          <div class="alert-box">
+            <strong>Règle de Gestion :</strong> Le prix d'achat n'est plus
+            modifiable ici. Il est automatiquement récupéré depuis le coût
+            unitaire défini lors de la création de la matière première.
+          </div>
+
+          <form method="post" th:action="@{/matieres-premieres/entree-stock}">
+            <div class="form-grid">
+              <div class="field">
+                <label for="mpSelect">Sélectionner la matière première *</label>
+                <select
+                  id="mpSelect"
+                  name="idMatierePremiere"
+                  class="form-control"
+                  required
+                >
+                  <option value="">Sélectionner une option...</option>
+                  <option
+                    th:each="mp : ${mps}"
+                    th:value="${mp.id}"
+                    th:text="${mp.nom}"
+                    th:attr="data-prix=${mp.pamp}"
+                  ></option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="quantite">Quantité reçue (Kilos ou Sacs) *</label>
+                <input
+                  type="number"
+                  id="quantite"
+                  name="quantite"
+                  class="form-control"
+                  placeholder="ex: 1500"
+                  min="0.01"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="coutUnitaire"
+                  >Coût unitaire de cet achat (Ariary)</label
+                >
+                <input
+                  type="number"
+                  id="coutUnitaire"
+                  name="coutUnitaire"
+                  class="form-control"
+                  placeholder="Sélectionner d'abord une matière"
+                  min="0.01"
+                  step="0.01"
+                  readonly
+                  style="height: 50px"
+                />
+                <p class="help-text">
+                  Désactivé — Lié à la fiche technique d'origine.
+                </p>
+              </div>
+
+              <div class="field">
+                <label for="dateReception">Date de réception *</label>
+                <input
+                  type="date"
+                  id="dateReception"
+                  name="dateReception"
+                  class="form-control"
+                  required
+                />
+              </div>
             </div>
 
-            <!-- Messages flash session -->
-            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
-            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                Valider l'entrée du Lot
+              </button>
+              <a th:href="@{/matieres-premieres}" class="btn btn-secondary"
+                >Annuler</a
+              >
+            </div>
+          </form>
+        </section>
 
-            <section class="form-section" style="max-width: 800px; padding: 40px; border-radius: 16px; box-shadow: var(--shadow-sm);">
-                <form method="post" th:action="@{/matieres-premieres/entree-stock}">
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        <div class="form-group">
-                            <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Sélectionner la matière première</label>
-                            <select id="mpSelect" name="idMatierePremiere" class="form-control" required style="height: 50px;">
-                                <option value="">Sélectionner une option...</option>
-                                <option th:each="mp : ${mps}"
-                                        th:value="${mp.id}"
-                                        th:text="${mp.nom}"
-                                        th:attr="data-prix=${mp.pamp}"></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Quantité reçue (Kilos ou Sacs)</label>
-                            <input type="number" name="quantite" class="form-control"
-                                   placeholder="ex: 1500" min="0.01" step="0.01" required style="height: 50px;">
-                        </div>
-                        <div class="form-group">
-                            <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Coût unitaire de cet achat (Ariary)</label>
-                            <input type="number" id="coutUnitaire" name="coutUnitaire" class="form-control"
-                                   placeholder="Sélectionner d'abord une matière" min="0.01" step="0.01" required style="height: 50px;">
-                            <p style="margin-top: 6px; font-size: 12px; color: #94a3b8; font-style: italic;">Pré-rempli avec le tarif de la fiche. Modifiable si le prix du fournisseur a changé pour cet achat.</p>
-                        </div>
-                        <div class="form-group">
-                            <label style="font-weight: 700; color: #334155; margin-bottom: 8px; display: block;">Date de réception</label>
-                            <input type="date" name="dateReception" class="form-control" required style="height: 50px;">
-                        </div>
-                        <div class="form-actions" style="margin-top: 15px; justify-content: flex-start;">
-                            <button type="submit" class="btn btn-primary btn-large" style="font-weight: 800; border-bottom: 4px solid #166534;">
-                                Valider l'entrée du Lot
-                            </button>
-                            <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-large">Annuler</a>
-                        </div>
-                    </div>
-                </form>
-            </section>
-
-        </div>
+        <div id="vina-footer"></div>
+      </div>
     </div>
+
     <script>
-        document.getElementById('mpSelect').addEventListener('change', function () {
-            const selected = this.options[this.selectedIndex];
-            const prix = selected.dataset.prix;
-            document.getElementById('coutUnitaire').value = prix || '';
+      document
+        .getElementById("mpSelect")
+        .addEventListener("change", function () {
+          const selected = this.options[this.selectedIndex];
+          const prix = selected.dataset.prix;
+          document.getElementById("coutUnitaire").value = prix || "";
         });
     </script>
-</body>
+  </body>
 </html>

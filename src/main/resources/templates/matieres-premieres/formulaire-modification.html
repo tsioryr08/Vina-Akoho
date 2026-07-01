@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'Modifier — ' + ${fiche.nom} + ' - VINA AKOHO'">Modifier matière première</title>
-    <!-- <link rel="stylesheet" th:href="@{/assets/css/style.css}"> -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
-    <aside th:replace="~{layout/sidebar :: sidebar}"></aside>
+    <div th:replace="~{layout/sidebar-matierepremiere::sidebar-matierepremiere}"></div>
     <div class="app-main-wrapper">
         <header th:replace="~{layout/header :: header}"></header>
         <div id="vina-content">
@@ -33,10 +33,10 @@
             <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
             <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
 
-            <div class="form-section" style="max-width: 720px;">
+            <div class="form-section">
                 <h2>Informations de la Matière Première</h2>
                 <form method="post" th:action="@{/matieres-premieres/{id}/modifier(id=${fiche.id})}">
-                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Nom de la matière première <span style="color:#ef4444;">*</span></label>
                             <input type="text" name="nom" class="form-control"
