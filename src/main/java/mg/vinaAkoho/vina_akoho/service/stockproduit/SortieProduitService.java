@@ -1,5 +1,12 @@
 package mg.vinaAkoho.vina_akoho.service.stockproduit;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import jakarta.transaction.Transactional;
 import mg.vinaAkoho.vina_akoho.entity.login.Employe;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.TypeMouvement;
@@ -12,12 +19,6 @@ import mg.vinaAkoho.vina_akoho.repository.matierespremieres.TypeMouvementReposit
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.UniteRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.MouvementStockProduitRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class SortieProduitService {
@@ -62,14 +63,13 @@ public class SortieProduitService {
                         "Employé #" + idEmploye + " introuvable pour l'enregistrement du mouvement"));
 
         TypeMouvement typeSortie = typeMouvementRepository.findByLibelle(LIBELLE_TYPE_MOUVEMENT_SORTIE)
-                .orElseThrow(() -> new StockInsuffisantException(
-                        "Type de mouvement '" + LIBELLE_TYPE_MOUVEMENT_SORTIE + "' introuvable"));
+                .orElseGet(() -> creerTypeMouvement(LIBELLE_TYPE_MOUVEMENT_SORTIE));
 
         Unite unite = uniteRepository.findById(1)
                 .orElseGet(() -> uniteRepository.findAll()
                         .stream()
                         .findFirst()
-                        .orElseThrow(() -> new StockInsuffisantException("Aucune unité disponible pour le mouvement")));
+                        .orElseGet(this::creerUniteParDefaut));
 
         List<LotProduit> lots = lotProduitRepository.findByProduitIdAndQuantiteRestanteGreaterThanOrderByDateFabricationAsc(
                 produitId,
@@ -108,6 +108,18 @@ public class SortieProduitService {
         }
 
         return allocations;
+    }
+
+    private TypeMouvement creerTypeMouvement(String libelle) {
+        TypeMouvement typeMouvement = new TypeMouvement();
+        typeMouvement.setLibelle(libelle);
+        return typeMouvementRepository.save(typeMouvement);
+    }
+
+    private Unite creerUniteParDefaut() {
+        Unite unite = new Unite();
+        unite.setLibelle("Kg");
+        return uniteRepository.save(unite);
     }
 
     public static class Allocation {

@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VINA AKOHO - Historique des Ventes</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar"></div>
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
 <section class="page-header">
 <div>
@@ -128,7 +128,7 @@
 </div>
 </section>
         </div>
-        <div id="vina-footer"></div>
+        <div id="vina-footer" th:replace="~{layout/footer}"></div>
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>

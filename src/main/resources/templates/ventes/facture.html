@@ -22,7 +22,7 @@
             </div>
             <div>
                 <p th:text="${facture != null ? facture.numero : '—'}"></p>
-                <p th:text="${facture != null ? #dates.format(facture.dateEmission, 'dd/MM/yyyy') : '—'}"></p>
+                <p th:text="${facture != null ? #temporals.format(facture.dateEmission, 'dd/MM/yyyy') : '—'}"></p>
             </div>
         </header>
 
@@ -36,7 +36,7 @@
             <div>
                 <h4>Détails vente</h4>
                 <p>ID: <span th:text="${vente.id}"></span></p>
-                <p>Date: <span th:text="${#dates.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></span></p>
+                <p>Date: <span th:text="${#temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></span></p>
             </div>
         </section>
 

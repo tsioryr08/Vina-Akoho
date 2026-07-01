@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VINA AKOHO - Nouvelle Vente</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar"></div>
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
             <section class="page-header">
                 <div>
@@ -25,6 +25,9 @@
                 <a class="tab-link" th:href="@{/ventes/historique}">Historique</a>
                 <a class="tab-link active" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
             </section>
+
+            <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+            <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
 
             <section class="form-card">
                 <div class="form-section">
@@ -117,6 +120,7 @@
                                             th:value="${client.id}"
                                             th:text="${client.nom + ' ' + client.prenom}"></option>
                                 </select>
+                                <div class="error" th:if="${#fields.hasErrors('idClient')}" th:errors="*{idClient}"></div>
                             </div>
                             <div class="field">
                                 <label for="idModePaiement">Mode de paiement</label>
@@ -126,6 +130,7 @@
                                             th:value="${mode.id}"
                                             th:text="${mode.libelle}"></option>
                                 </select>
+                                <div class="error" th:if="${#fields.hasErrors('idModePaiement')}" th:errors="*{idModePaiement}"></div>
                             </div>
                             <div class="field">
                                 <label for="saleDate">Date de vente</label>
@@ -149,7 +154,7 @@
                     </form>
                 </div>
             </section>
-            <div id="vina-footer"></div>
+            <div id="vina-footer" th:replace="~{layout/footer}"></div>
         </div>
     </div>
     <script th:src="@{/js/auth.js}"></script>

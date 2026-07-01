@@ -1,5 +1,20 @@
 package mg.vinaAkoho.vina_akoho.controller.ventes;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,20 +30,6 @@ import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.security.SessionFilter;
 import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/ventes")
@@ -127,15 +128,25 @@ public class VenteController {
         }
 
         List<PanierItemDTO> panier = panier(session);
-        BigDecimal montant = produit.getPrixVente().multiply(form.getQuantite());
-        PanierItemDTO item = PanierItemDTO.builder()
-                .idProduit(produit.getId())
-                .nomProduit(produit.getNom())
-                .quantite(form.getQuantite())
-                .prixUnitaire(produit.getPrixVente())
-                .montant(montant)
-                .build();
-        panier.add(item);
+        PanierItemDTO item = panier.stream()
+                .filter(i -> i.getIdProduit().equals(produit.getId()))
+                .findFirst()
+                .orElse(null);
+
+        if (item != null) {
+            item.setQuantite(item.getQuantite().add(form.getQuantite()));
+            item.setMontant(item.getPrixUnitaire().multiply(item.getQuantite()));
+        } else {
+            BigDecimal montant = produit.getPrixVente().multiply(form.getQuantite());
+            item = PanierItemDTO.builder()
+                    .idProduit(produit.getId())
+                    .nomProduit(produit.getNom())
+                    .quantite(form.getQuantite())
+                    .prixUnitaire(produit.getPrixVente())
+                    .montant(montant)
+                    .build();
+            panier.add(item);
+        }
 
         redirectAttributes.addFlashAttribute("success", "Produit ajouté au panier.");
         return "redirect:/ventes/nouvelle";
@@ -155,16 +166,17 @@ public class VenteController {
     public String validerVente(@Valid @ModelAttribute("venteForm") VenteFormDTO venteForm,
                                BindingResult bindingResult,
                                HttpSession session,
-                               RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes,
+                               Model model) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Le client et le mode de paiement sont obligatoires.");
-            return "redirect:/ventes/nouvelle";
+            model.addAttribute("error", "Le client et le mode de paiement sont obligatoires.");
+            return "ventes/responsable-commercial-ventes-nouvelles";
         }
 
         List<PanierItemDTO> panier = panier(session);
         if (panier.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Le panier est vide.");
-            return "redirect:/ventes/nouvelle";
+            model.addAttribute("error", "Le panier est vide.");
+            return "ventes/responsable-commercial-ventes-nouvelles";
         }
 
         try {
@@ -177,8 +189,8 @@ public class VenteController {
             redirectAttributes.addFlashAttribute("success", "Vente créée avec succès (#" + vente.getId() + ").");
             return "redirect:/ventes";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Impossible de créer la vente : " + e.getMessage());
-            return "redirect:/ventes/nouvelle";
+            model.addAttribute("error", "Impossible de créer la vente : " + e.getMessage());
+            return "ventes/responsable-commercial-ventes-nouvelles";
         }
     }
 

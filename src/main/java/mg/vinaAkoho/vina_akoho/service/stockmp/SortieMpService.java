@@ -1,5 +1,12 @@
 package mg.vinaAkoho.vina_akoho.service.stockmp;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import jakarta.transaction.Transactional;
 import mg.vinaAkoho.vina_akoho.dto.recetteproduit.RecetteProduitDTO;
 import mg.vinaAkoho.vina_akoho.dto.stockmp.MouvementStockMpDTO;
@@ -9,17 +16,11 @@ import mg.vinaAkoho.vina_akoho.entity.matierespremieres.LotMp;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.MouvementStockMp;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.TypeMouvement;
 import mg.vinaAkoho.vina_akoho.exception.stockmp.StockInsuffisantException;
-import mg.vinaAkoho.vina_akoho.exception.stockmp.TypeMouvementNotFoundException;
 import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.LotMpRepository;
-import mg.vinaAkoho.vina_akoho.repository.matierespremieres.TypeMouvementRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.MouvementStockMpRepository;
+import mg.vinaAkoho.vina_akoho.repository.matierespremieres.TypeMouvementRepository;
 import mg.vinaAkoho.vina_akoho.service.recetteproduit.RecetteProduitService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class SortieMpService {
@@ -66,8 +67,7 @@ public class SortieMpService {
                         "Employé #" + requete.getIdEmploye() + " introuvable"));
 
         TypeMouvement typeSortie = typeMouvementRepository.findByLibelle(LIBELLE_TYPE_MOUVEMENT_SORTIE)
-                .orElseThrow(() -> new TypeMouvementNotFoundException(
-                        "Type de mouvement '" + LIBELLE_TYPE_MOUVEMENT_SORTIE + "' introuvable en base"));
+                .orElseGet(() -> creerTypeMouvement(LIBELLE_TYPE_MOUVEMENT_SORTIE));
 
         // 1. Lire la recette active de la catégorie
         List<RecetteProduitDTO> recette = recetteProduitService.getRecetteActive(requete.getIdCategorie());
@@ -121,6 +121,12 @@ public class SortieMpService {
         }
 
         return mouvementsCrees.stream().map(this::toDTO).toList();
+    }
+
+    private TypeMouvement creerTypeMouvement(String libelle) {
+        TypeMouvement typeMouvement = new TypeMouvement();
+        typeMouvement.setLibelle(libelle);
+        return typeMouvementRepository.save(typeMouvement);
     }
 
     private MouvementStockMpDTO toDTO(MouvementStockMp m) {

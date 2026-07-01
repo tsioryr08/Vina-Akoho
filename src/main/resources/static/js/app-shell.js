@@ -4,7 +4,7 @@
   function getDefaultRoleForCurrentPage() {
     const path = window.location.pathname;
 
-    if (path.indexOf("/clients") === 0 || path.indexOf("/layout") === 0) {
+    if (path.indexOf("/ventes") === 0 || path.indexOf("/clients") === 0 || path.indexOf("/livraisons") === 0 || path.indexOf("/layout") === 0) {
       return "responsableCommercial";
     }
 
