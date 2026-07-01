@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enregistrer un Client - VINA AKOHO</title>
-    
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
     <div id="vina-sidebar"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
         <div id="vina-header"></div>
         <div id="vina-content">
@@ -16,7 +16,7 @@
                 <div>
                     <p class="eyebrow">RESPONSABLE COMMERCIAL</p>
                     <h1>Enregistrer un Client / Partenaire</h1>
-                    <div style="height: 2px; background: #16a34a; margin-top: 8px; width: 100px;"></div>
+                    <div class="header-accent-line"></div>
                 </div>
             </section>
 
@@ -28,7 +28,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Code Client Unique</label>
-                            <input type="text" class="form-control" value="CLT-2026-XXXX" disabled style="background: #e9ecef;">
+                            <input type="text" class="form-control form-control-disabled" value="CLT-2026-XXXX" disabled>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="idTypeClient">Profil du Client *</label>
@@ -86,14 +86,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group" style="margin-top: 15px;">
+                    <div class="form-group form-group-spaced">
                         <label class="form-label" for="isActif">Compte actif</label>
                         <select class="form-control" id="isActif" th:field="*{isActif}">
                             <option th:value="true">Oui</option>
                             <option th:value="false">Non</option>
                         </select>
                     </div>
-                    <div class="form-group" style="margin-top: 20px;">
+                    <div class="form-group form-group-spaced-large">
                         <label class="form-label" for="notes">Conditions particulieres :</label>
                         <textarea class="form-control" id="notes" th:field="*{notes}" rows="4" placeholder="Notez ici les credits ou prix negocies..."></textarea>
                     </div>
@@ -102,9 +102,9 @@
                 <p class="login-error" aria-live="polite" th:text="${erreur}"></p>
                 <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
 
-                <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+                <div class="form-actions-row">
                     <button type="button" class="btn btn-ghost btn-large" onclick="history.back()">Annuler</button>
-                    <button type="submit" class="btn btn-primary btn-large" style="background-color: #16a34a; border-color: #16a34a;">Enregistrer le Client</button>
+                    <button type="submit" class="btn btn-save-client btn-large">Enregistrer le Client</button>
                 </div>
             </form>
             <div id="vina-footer"></div>

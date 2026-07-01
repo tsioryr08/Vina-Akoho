@@ -1,15 +1,17 @@
 package mg.vinaAkoho.vina_akoho.exception;
 
-import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
-import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitException;
-import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import mg.vinaAkoho.vina_akoho.exception.stockmp.StockInsuffisantException;
 
+import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
+import mg.vinaAkoho.vina_akoho.exception.entreeproduit.ProduitNotFoundException;
+import mg.vinaAkoho.vina_akoho.exception.entreeproduit.RecetteInexistanteException;
+import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitException;
+import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitNotFoundException;
+import mg.vinaAkoho.vina_akoho.exception.stockmp.StockInsuffisantException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -51,5 +53,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("Une erreur interne est survenue"));
+    }
+
+    @ExceptionHandler(ProduitNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleProduitNotFound(ProduitNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(RecetteInexistanteException.class)
+    public ResponseEntity<ApiResponse<Object>> handleRecetteInexistante(RecetteInexistanteException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(ex.getMessage()));
     }
 }
