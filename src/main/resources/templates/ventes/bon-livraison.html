@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bon de livraison</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .bl-table{width:100%;border-collapse:collapse}
+        .bl-table th, .bl-table td{padding:8px;border-bottom:1px solid #eee}
+    </style>
+</head>
+<body class="vina-body">
+    <div class="app-print-wrapper">
+        <header style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h3>VINA AKOHO</h3>
+                <p>Bon de livraison</p>
+            </div>
+            <div>
+                <p th:text="${vente.id}"></p>
+                <p th:text="${#dates.format(vente.dateVente, 'dd/MM/yyyy')}"></p>
+            </div>
+        </header>
+
+        <section style="margin-top:12px;">
+            <strong>Livrer à :</strong>
+            <p th:text="${vente.clientNom + ' ' + vente.clientPrenom}"></p>
+            <p th:text="${vente.clientAdresse}"></p>
+        </section>
+
+        <section style="margin-top:12px;">
+            <table class="bl-table">
+                <thead>
+                    <tr><th>Produit</th><th>Quantité</th><th>Unité</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="l : ${vente.lignes}">
+                        <td th:text="${l.nomProduit}"></td>
+                        <td th:text="${l.quantite}"></td>
+                        <td th:text="${l.unite ?: 'kg'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer style="margin-top:20px;">Signature réception: ____________________</footer>
+    </div>
+</body>
+</html>

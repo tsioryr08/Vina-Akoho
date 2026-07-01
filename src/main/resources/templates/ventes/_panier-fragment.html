@@ -1,0 +1,38 @@
+<!-- Fragment: panier -->
+<div th:fragment="panier(panier, panierTotal)">
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix/kg</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${panier}">
+                    <td th:text="${item.nomProduit}"></td>
+                    <td th:text="${item.quantite}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.prixUnitaire,0,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.montant,0,'COMMA',2,'POINT')}"></td>
+                    <td>
+                        <form th:action="@{/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}" method="post">
+                            <button class="btn btn-red btn-small" type="submit">X</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${panier == null or #lists.isEmpty(panier)}">
+                    <td colspan="5" class="empty-state">Aucun produit dans le panier.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="summary-card">
+        <div>
+            <span class="summary-label">Sous-total</span>
+            <span class="summary-value" th:text="${#numbers.formatDecimal(panierTotal,0,'COMMA',2,'POINT')} + ' Ar'"></span>
+        </div>
+    </div>
+</div>
