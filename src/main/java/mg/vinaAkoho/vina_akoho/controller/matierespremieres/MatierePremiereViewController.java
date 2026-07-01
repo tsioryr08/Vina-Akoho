@@ -59,7 +59,8 @@ public class MatierePremiereViewController {
             @RequestParam(required = false) BigDecimal seuilMinimum,
             RedirectAttributes redirectAttributes) {
         try {
-            var fiche = service.creer(new MatierePremiereRequestDTO(nom, idFournisseur, coutUnitaire, idUnite, seuilMinimum));
+            var fiche = service
+                    .creer(new MatierePremiereRequestDTO(nom, idFournisseur, coutUnitaire, idUnite, seuilMinimum));
             redirectAttributes.addFlashAttribute("successMessage", "Matière première créée avec succès");
             return "redirect:/matieres-premieres/" + fiche.id();
         } catch (RuntimeException ex) {
@@ -102,7 +103,8 @@ public class MatierePremiereViewController {
             @RequestParam(required = false) BigDecimal seuilMinimum,
             RedirectAttributes redirectAttributes) {
         try {
-            service.modifier(id, new MatierePremiereRequestDTO(nom, idFournisseur, coutUnitaire, idUnite, seuilMinimum));
+            service.modifier(id,
+                    new MatierePremiereRequestDTO(nom, idFournisseur, coutUnitaire, idUnite, seuilMinimum));
             redirectAttributes.addFlashAttribute("successMessage", "Matière première modifiée avec succès");
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
@@ -132,11 +134,11 @@ public class MatierePremiereViewController {
     public String entreeStock(
             @RequestParam Integer idMatierePremiere,
             @RequestParam BigDecimal quantite,
+            @RequestParam BigDecimal coutUnitaire,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateReception,
             RedirectAttributes redirectAttributes) {
         try {
-            // idEmploye = 1 en attendant le module F0 Login
-            service.entreeStock(new EntreeStockDTO(idMatierePremiere, quantite, dateReception, 1));
+            service.entreeStock(new EntreeStockDTO(idMatierePremiere, quantite, dateReception, 1, coutUnitaire));
             redirectAttributes.addFlashAttribute("successMessage", "Entrée en stock enregistrée avec succès");
             return "redirect:/matieres-premieres/" + idMatierePremiere;
         } catch (RuntimeException ex) {
