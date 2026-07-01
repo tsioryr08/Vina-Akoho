@@ -12,4 +12,11 @@ public interface LotMpRepository extends JpaRepository<LotMp, Integer> {
 
     @Query("SELECT COALESCE(SUM(l.quantiteRestante), 0) FROM LotMp l WHERE l.matierePremiere.id = :idMp")
     BigDecimal sommeQuantiteRestante(Integer idMp);
+
+    //rajout de cette methode pour que ca soit compatible avec mp
+    List<LotMp> findByMatierePremiereIdAndQuantiteRestanteGreaterThanOrderByDateAchatAsc(
+            Integer idMp,
+            BigDecimal seuil
+    );
+
 }

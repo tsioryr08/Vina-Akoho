@@ -10,6 +10,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "lot_mp")
@@ -34,6 +36,13 @@ public class LotMp {
 
     @Column(name = "date_peremption")
     private LocalDate datePeremption;
+
+    // rajout de ces colonnes 
+    @Column(name = "id_mouvement_entree")
+    private Integer idMouvementEntree;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Integer getId() {
         return id;
@@ -82,4 +91,22 @@ public class LotMp {
     public void setDatePeremption(LocalDate datePeremption) {
         this.datePeremption = datePeremption;
     }
+
+    //ajout de getters et setters pour idMouvementEntree et createdAt
+    public Integer getIdMouvementEntree() {
+        return idMouvementEntree;
+    }
+
+    public void setIdMouvementEntree(Integer idMouvementEntree) {
+        this.idMouvementEntree = idMouvementEntree;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }
