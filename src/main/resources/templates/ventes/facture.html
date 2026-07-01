@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Facture - ' + (${facture != null} ? facture.numero : 'N/A')">Facture</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* Ajustements d'impression minimalistes, respect du style global */
+        .invoice-header{display:flex;justify-content:space-between;align-items:center}
+        .invoice-table{width:100%;border-collapse:collapse}
+        .invoice-table th, .invoice-table td{padding:8px;border-bottom:1px solid #eee}
+        .invoice-total{font-size:1.1rem;font-weight:700;text-align:right}
+    </style>
+</head>
+<body class="vina-body">
+    <div class="app-print-wrapper">
+        <header class="invoice-header">
+            <div>
+                <h2>VINA AKOHO</h2>
+                <p>Facture</p>
+            </div>
+            <div>
+                <p th:text="${facture != null ? facture.numero : '—'}"></p>
+                <p th:text="${facture != null ? #dates.format(facture.dateEmission, 'dd/MM/yyyy') : '—'}"></p>
+            </div>
+        </header>
+
+        <section class="invoice-meta" style="margin-top:12px;display:flex;justify-content:space-between;">
+            <div>
+                <h4>Client</h4>
+                <p th:text="${vente.clientNom + ' ' + vente.clientPrenom}"></p>
++                <p th:text="${vente.clientTelephone}"></p>
+                <p th:text="${vente.clientAdresse}"></p>
+            </div>
+            <div>
+                <h4>Détails vente</h4>
+                <p>ID: <span th:text="${vente.id}"></span></p>
+                <p>Date: <span th:text="${#dates.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></span></p>
+            </div>
+        </section>
+
+        <section style="margin-top:18px;">
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix unitaire</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="l : ${vente.lignes}">
+                        <td th:text="${l.nomProduit}"></td>
+                        <td th:text="${l.quantite} + ' kg'"></td>
+                        <td th:text="${#numbers.formatDecimal(l.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
+                        <td th:text="${#numbers.formatDecimal(l.montant, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section style="margin-top:12px;display:flex;justify-content:flex-end;">
+            <div style="width:320px;">
+                <div style="display:flex;justify-content:space-between;">
+                    <span>Sous-total</span>
+                    <span th:text="${#numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                    <span>Remise</span>
+                    <span th:text="${facture != null ? #numbers.formatDecimal(facture.remise ?: 0, 0, 'COMMA', 2, 'POINT') + ' Ar' : '0 Ar'}"></span>
+                </div>
+                <div class="invoice-total" style="margin-top:8px;">
+                    <span>Total TTC:</span>
+                    <span th:text="${facture != null ? #numbers.formatDecimal(facture.montantTtc, 0, 'COMMA', 2, 'POINT') + ' Ar' : #numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT') + ' Ar'}"></span>
+                </div>
+            </div>
+        </section>
+
+        <footer style="margin-top:28px;text-align:center;color:#666">Merci pour votre confiance.</footer>
+    </div>
+</body>
+</html>

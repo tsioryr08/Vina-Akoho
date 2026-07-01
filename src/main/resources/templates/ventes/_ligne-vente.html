@@ -1,0 +1,7 @@
+<!-- Fragment: ligne vente -->
+<tr th:fragment="ligne(ligne)">
+    <td th:text="${ligne.nomProduit}"></td>
+    <td th:text="${ligne.quantite}"></td>
+    <td th:text="${#numbers.formatDecimal(ligne.prixUnitaire,0,'COMMA',2,'POINT')}"></td>
+    <td th:text="${#numbers.formatDecimal(ligne.montant,0,'COMMA',2,'POINT')}"></td>
+</tr>

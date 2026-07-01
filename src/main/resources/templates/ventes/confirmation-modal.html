@@ -1,0 +1,19 @@
+<!-- Modal de confirmation simple -->
+<div th:fragment="confirmModal(modalId, titre, message, actionUrl)">
+    <div id="" class="modal" th:id="${modalId}">
+        <div class="modal-content">
+            <header>
+                <h3 th:text="${titre}">Confirmer</h3>
+            </header>
+            <div class="modal-body">
+                <p th:text="${message}">Voulez-vous continuer ?</p>
+            </div>
+            <footer>
+                <form th:action="${actionUrl}" method="post">
+                    <button type="button" class="btn btn-ghost" onclick="document.getElementById('${modalId}').style.display='none'">Annuler</button>
+                    <button type="submit" class="btn btn-green">Confirmer</button>
+                </form>
+            </footer>
+        </div>
+    </div>
+</div>
