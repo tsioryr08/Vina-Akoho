@@ -459,7 +459,7 @@ select {
 .field.stat-field { border-left: 6px solid var(--primary-dark); }
 
 .field label {
-  color: var(--text);
+  color: var(--primary);
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -682,7 +682,7 @@ select {
   font-size: 18px;
   letter-spacing: -0.01em;
   font-weight: 700;
-  color: var(--text);
+  color: var(--primary);
 }
 
 .card-subtitle,
@@ -801,7 +801,7 @@ select {
   padding: 14px;
   border-bottom: 2px solid rgba(203, 213, 224, 0.6);
   background: linear-gradient(180deg, #f8fafc 0%, #f3f8fb 100%);
-  color: var(--text-secondary);
+  color: var(--primary);
   text-align: left;
   font-size: 12px;
   font-weight: 700;
@@ -813,7 +813,7 @@ select {
 .table-wrap td {
   padding: 16px 14px;
   border-bottom: 1px solid rgba(203, 213, 224, 0.4);
-  color: var(--text-secondary);
+  color: var(--primary);
   font-size: 14px;
   vertical-align: middle;
   transition: background-color var(--transition);
@@ -1473,7 +1473,7 @@ select {
   font-size: clamp(26px, 3vw, 36px);
   letter-spacing: -0.02em;
   font-weight: 700;
-  color: var(--text);
+  color: var(--primary);
 }
 
 .page-header p {
@@ -3147,8 +3147,8 @@ select {
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 20px;
   margin-bottom: 24px;
 }
@@ -3756,68 +3756,76 @@ select {
 /* ===== PRODUIT TEMPLATE STYLES ===== */
 .vina-body .filter-bar {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 14px;
   margin: 15px 0 20px 0;
-  padding: 15px;
+  padding: 20px;
   background: white;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
-  align-items: center;
+  align-items: stretch;
 }
 .vina-body .filter-bar form {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 14px;
   width: 100%;
-  align-items: center;
+  align-items: stretch;
 }
 .vina-body .filter-bar input, .vina-body .filter-bar select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 13px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
   font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
 }
 .vina-body .filter-bar input:focus, .vina-body .filter-bar select:focus {
-  border-color: #e67e22;
+  border-color: var(--primary);
   outline: none;
+  box-shadow: 0 0 0 3px rgba(34, 87, 122, 0.1);
 }
 .vina-body .filter-bar input[type="text"] {
-  flex: 1;
-  min-width: 180px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .vina-body .filter-bar input[type="number"] {
-  width: 100px;
+  width: 100%;
 }
 .vina-body .btn-filter {
-  background: #e67e22;
+  background: var(--primary);
   color: white;
-  padding: 8px 20px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+  transition: all var(--transition);
 }
 .vina-body .btn-filter:hover {
-  background: #d35400;
+  background: var(--primary-dark);
+  box-shadow: 0 4px 12px rgba(34, 87, 122, 0.25);
 }
 .vina-body .btn-reset {
-  background: #95a5a6;
-  color: white;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 4px;
+  background: var(--surface-soft);
+  color: var(--text-secondary);
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
+  font-weight: 600;
+  transition: all var(--transition);
 }
 .vina-body .btn-reset:hover {
-  background: #7f8c8d;
+  background: var(--border);
+  color: var(--text);
 }
 .vina-body .code-ref {
-  font-weight: 600;
-  color: #e67e22;
+  font-weight: 700;
+  color: var(--primary);
   font-family: monospace;
   font-size: 13px;
 }
@@ -3862,9 +3870,9 @@ select {
 .vina-body .btn-sm:hover {
   opacity: 0.8;
 }
-.vina-body .btn-view { background: #17a2b8; color: white; }
-.vina-body .btn-edit { background: #ffc107; color: #212529; }
-.vina-body .btn-delete { background: #dc3545; color: white; }
+.vina-body .btn-view { background: var(--primary); color: white; }
+.vina-body .btn-edit { background: var(--secondary); color: #0f2a3d; }
+.vina-body .btn-delete { background: var(--accent); color: white; }
 .vina-body .btn-sm-action { background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 2px 6px; }
 .vina-body .btn-sm-action:hover { opacity: 0.7; }
 .vina-body .card-header {
@@ -4002,7 +4010,7 @@ select {
 }
 .vina-body .detail-item .label {
   font-size: 13px;
-  color: #7f8c8d;
+  color: var(--primary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -4011,7 +4019,7 @@ select {
 .vina-body .detail-item .value {
   font-size: 18px;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--primary);
 }
 .vina-body .detail-item .value.money {
   color: #e67e22;
@@ -4465,7 +4473,7 @@ select {
 }
 .vina-body .nutrition-title {
   margin-top: 0;
-  color: var(--text);
+  color: var(--primary);
   font-size: 16px;
 }
 .vina-body .nutrition-grid {
@@ -4480,7 +4488,7 @@ select {
   gap: 5px;
 }
 .vina-body .nutrition-label {
-  color: var(--muted);
+  color: var(--primary);
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -4489,7 +4497,7 @@ select {
 .vina-body .nutrition-value {
   font-weight: 700;
   font-size: 16px;
-  color: var(--text);
+  color: var(--primary);
 }
 .vina-body .meta-info {
   display: flex;
@@ -4498,7 +4506,8 @@ select {
   padding-top: 20px;
   border-top: 1px solid var(--border);
   font-size: 13px;
-  color: var(--muted);
+  color: var(--primary);
+  font-weight: 700;
   flex-wrap: wrap;
 }
 .vina-body .meta-info span {
