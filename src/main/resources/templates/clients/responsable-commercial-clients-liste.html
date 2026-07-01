@@ -1,228 +1,181 @@
-<!doctype html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Base de donnees Clients - VINA AKOHO</title>
-    
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-  </head>
-  <body class="vina-body">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
+</head>
+<body class="vina-body">
     <div id="vina-sidebar"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
-      <div id="vina-header"></div>
-      <div id="vina-content">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-          "
-        >
-          <h1 style="margin: 0; color: #1e293b">Base de donnees Clients</h1>
-          <a
-            class="btn btn-primary"
-            th:href="@{/clients/nouveau}"
-            style="
-              background: #16a34a;
-              border-color: #16a34a;
-              font-weight: bold;
-              text-decoration: none;
-            "
-          >
-            + Ajouter un eleveur / client
-          </a>
-        </div>
-
-        <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
-
-        <div class="form-section" style="margin-bottom: 30px; padding: 15px">
-          <input
-            id="clientSearch"
-            type="text"
-            class="form-control"
-            placeholder="Rechercher par nom, code, telephone, ou axe de livraison..."
-            style="width: 100%"
-          />
-        </div>
-
-        <div style="display: grid; grid-template-columns: 280px 1fr; gap: 30px">
-          <aside class="form-section" style="height: fit-content">
-            <h3
-              style="
-                margin-top: 0;
-                margin-bottom: 20px;
-                font-size: 16px;
-                color: #64748b;
-                text-transform: uppercase;
-              "
-            >
-              Options de Filtrage
-            </h3>
-            <div style="display: flex; flex-direction: column; gap: 20px">
-              <div class="form-group" style="margin-bottom: 0">
-                <label class="form-label" style="font-size: 13px">Type de Profil</label>
-                <select id="typeFilter" class="form-control">
-                  <option value="">Tous les profils</option>
-                  <option th:each="typeClient : ${typesClient}" th:value="${typeClient.libelle}" th:text="${typeClient.libelle}"></option>
-                </select>
-              </div>
-              <div class="form-group" style="margin-bottom: 0">
-                <label class="form-label" style="font-size: 13px">Zone Geographique</label>
-                <select id="zoneFilter" class="form-control">
-                  <option value="">Toutes les zones</option>
-                  <option value="ZONE001">Mahitsy Centre</option>
-                  <option value="ZONE002">Peripherie</option>
-                  <option value="ZONE003">Antananarivo Ville</option>
-                  <option value="ZONE004">Axe Ankazobe</option>
-                </select>
-              </div>
-              <div class="form-group" style="margin-bottom: 0">
-                <label class="form-label" style="font-size: 13px">Taille Cheptel</label>
-                <select id="cheptelFilter" class="form-control">
-                  <option value="">Toutes les tailles</option>
-                  <option value="small">Moins de 100 tetes</option>
-                  <option value="medium">100 a 999 tetes</option>
-                  <option value="large">1000 tetes et plus</option>
-                </select>
-              </div>
-              <div class="form-group" style="margin-bottom: 0">
-                <label class="form-label" style="font-size: 13px">Services souscrits</label>
-                <select id="serviceFilter" class="form-control">
-                  <option value="">Tous les services</option>
-                  <option th:each="service : ${services}" th:value="${service.libelle}" th:text="${service.libelle}"></option>
-                </select>
-              </div>
+        <div id="vina-header"></div>
+        <div id="vina-content">
+            <div class="page-header-row">
+                <h1 class="client-page-title">Base de donnees Clients</h1>
+                <a class="btn btn-add-client" th:href="@{/clients/nouveau}">
+                    + Ajouter un eleveur / client
+                </a>
             </div>
-          </aside>
 
-          <div class="form-section" style="padding: 0; overflow: hidden">
-            <div class="table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Code</th>
-                    <th>Nom / Ferme</th>
-                    <th>Telephone & Axe</th>
-                    <th>Type</th>
-                    <th>Taille Cheptel</th>
-                    <th>Services Actifs</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="clientsTableBody">
-                  <tr th:if="${#lists.isEmpty(clients)}">
-                    <td colspan="7" style="text-align: center; padding: 24px; color: #64748b">
-                      Aucun client non supprime.
-                    </td>
-                  </tr>
-                  <tr
-                    th:each="client : ${clients}"
-                    th:data-search="${client.id + ' ' + client.nom + ' ' + client.prenom + ' ' + client.numeroTelephone + ' ' + client.idZoneLivraison + ' ' + client.typeClient + ' ' + client.service}"
-                    th:data-type="${client.typeClient}"
-                    th:data-zone="${client.idZoneLivraison}"
-                    th:data-service="${client.service}"
-                    th:data-cheptel="${client.tailleCheptel}"
-                  >
-                    <td th:text="${'CLT-' + #numbers.formatInteger(client.id, 3)}">CLT-001</td>
-                    <td>
-                      <div style="font-weight: bold; color: #1e293b" th:text="${client.nom}">Ferme Razafy</div>
-                      <div style="font-size: 12px; color: #64748b" th:text="${client.prenom}">M. Jean de Dieu</div>
-                    </td>
-                    <td>
-                      <div style="font-weight: 500" th:text="${client.numeroTelephone ?: '--'}">034 11 222 33</div>
-                      <div style="font-size: 11px; color: #16a34a" th:text="${client.idZoneLivraison ?: '--'}">Mahitsy Centre</div>
-                    </td>
-                    <td>
-                      <span
-                        class="badge"
-                        style="background: #e8f5e9; color: #16a34a"
-                        th:text="${client.typeClient ?: '--'}"
-                      >Eleveur</span>
-                    </td>
-                    <td style="font-weight: 600" th:text="${client.tailleCheptel == null ? '--' : client.tailleCheptel + ' tetes'}">850 tetes</td>
-                    <td>
-                      <div style="display: flex; gap: 4px; flex-wrap: wrap">
-                        <span
-                          class="badge"
-                          style="
-                            background: #f1f5f9;
-                            color: #475569;
-                            font-size: 10px;
-                            padding: 2px 6px;
-                          "
-                          th:text="${client.service ?: '--'}"
-                        >Livraison</span>
-                      </div>
-                    </td>
-                    <td>
-                      <a
-                        th:href="@{/clients/{id}(id=${client.id})}"
-                        style="
-                          color: #16a34a;
-                          font-weight: bold;
-                          text-decoration: none;
-                        "
-                      >Voir</a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
+
+            <div class="filter-panel">
+                <input
+                    id="clientSearch"
+                    type="text"
+                    class="client-search-input"
+                    placeholder="Rechercher par nom, code, telephone, ou axe de livraison..."
+                />
             </div>
-          </div>
+
+            <div class="client-layout">
+                <aside class="filter-panel client-filter-aside">
+                    <h3 class="filter-title">Options de Filtrage</h3>
+                    <div class="filter-groups">
+                        <div class="form-group">
+                            <label class="form-label">Type de Profil</label>
+                            <select id="typeFilter" class="form-control">
+                                <option value="">Tous les profils</option>
+                                <option th:each="typeClient : ${typesClient}" th:value="${typeClient.libelle}" th:text="${typeClient.libelle}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Zone Geographique</label>
+                            <select id="zoneFilter" class="form-control">
+                                <option value="">Toutes les zones</option>
+                                <option value="ZONE001">Mahitsy Centre</option>
+                                <option value="ZONE002">Peripherie</option>
+                                <option value="ZONE003">Antananarivo Ville</option>
+                                <option value="ZONE004">Axe Ankazobe</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Taille Cheptel</label>
+                            <select id="cheptelFilter" class="form-control">
+                                <option value="">Toutes les tailles</option>
+                                <option value="small">Moins de 100 tetes</option>
+                                <option value="medium">100 a 999 tetes</option>
+                                <option value="large">1000 tetes et plus</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Services souscrits</label>
+                            <select id="serviceFilter" class="form-control">
+                                <option value="">Tous les services</option>
+                                <option th:each="service : ${services}" th:value="${service.libelle}" th:text="${service.libelle}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="filter-panel client-table-panel">
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom / Ferme</th>
+                                    <th>Telephone & Axe</th>
+                                    <th>Type</th>
+                                    <th>Taille Cheptel</th>
+                                    <th>Services Actifs</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientsTableBody">
+                                <tr th:if="${#lists.isEmpty(clients)}">
+                                    <td colspan="7" class="empty-table-message">
+                                        Aucun client non supprime.
+                                    </td>
+                                </tr>
+                                <tr
+                                    th:each="client : ${clients}"
+                                    th:data-search="${client.id + ' ' + client.nom + ' ' + client.prenom + ' ' + client.numeroTelephone + ' ' + client.idZoneLivraison + ' ' + client.typeClient + ' ' + client.service}"
+                                    th:data-type="${client.typeClient}"
+                                    th:data-zone="${client.idZoneLivraison}"
+                                    th:data-service="${client.service}"
+                                    th:data-cheptel="${client.tailleCheptel}"
+                                >
+                                    <td th:text="${'CLT-' + #numbers.formatInteger(client.id, 3)}">CLT-001</td>
+                                    <td>
+                                        <div class="client-name" th:text="${client.nom}">Ferme Razafy</div>
+                                        <div class="client-prenom" th:text="${client.prenom}">M. Jean de Dieu</div>
+                                    </td>
+                                    <td>
+                                        <div class="client-phone" th:text="${client.numeroTelephone ?: '--'}">034 11 222 33</div>
+                                        <div class="client-zone" th:text="${client.idZoneLivraison ?: '--'}">Mahitsy Centre</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-client-type" th:text="${client.typeClient ?: '--'}">Eleveur</span>
+                                    </td>
+                                    <td class="client-cheptel" th:text="${client.tailleCheptel == null ? '--' : client.tailleCheptel + ' tetes'}">850 tetes</td>
+                                    <td>
+                                        <div class="client-services">
+                                            <span class="badge badge-service-tag" th:text="${client.service ?: '--'}">Livraison</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a class="client-link-view" th:href="@{/clients/{id}(id=${client.id})}">Voir</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="vina-footer"></div>
         </div>
-        <div id="vina-footer"></div>
-      </div>
     </div>
     <script th:src="@{/static/js/auth.js}"></script>
     <script th:src="@{/static/js/app-shell.js}"></script>
     <script>
-      const searchInput = document.getElementById("clientSearch");
-      const typeFilter = document.getElementById("typeFilter");
-      const zoneFilter = document.getElementById("zoneFilter");
-      const cheptelFilter = document.getElementById("cheptelFilter");
-      const serviceFilter = document.getElementById("serviceFilter");
-      const rows = Array.from(document.querySelectorAll("#clientsTableBody tr[data-search]"));
-      const controls = [searchInput, typeFilter, zoneFilter, cheptelFilter, serviceFilter].filter(Boolean);
+        const searchInput = document.getElementById("clientSearch");
+        const typeFilter = document.getElementById("typeFilter");
+        const zoneFilter = document.getElementById("zoneFilter");
+        const cheptelFilter = document.getElementById("cheptelFilter");
+        const serviceFilter = document.getElementById("serviceFilter");
+        const rows = Array.from(document.querySelectorAll("#clientsTableBody tr[data-search]"));
+        const controls = [searchInput, typeFilter, zoneFilter, cheptelFilter, serviceFilter].filter(Boolean);
 
-      function matchesCheptel(row, value) {
-        if (!value) return true;
-        const raw = row.dataset.cheptel;
-        if (!raw) return false;
-        const count = Number(raw);
-        if (value === "small") return count < 100;
-        if (value === "medium") return count >= 100 && count < 1000;
-        if (value === "large") return count >= 1000;
-        return true;
-      }
+        function matchesCheptel(row, value) {
+            if (!value) return true;
+            const raw = row.dataset.cheptel;
+            if (!raw) return false;
+            const count = Number(raw);
+            if (value === "small") return count < 100;
+            if (value === "medium") return count >= 100 && count < 1000;
+            if (value === "large") return count >= 1000;
+            return true;
+        }
 
-      function applyFilters() {
-        const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
-        const type = typeFilter ? typeFilter.value : "";
-        const zone = zoneFilter ? zoneFilter.value : "";
-        const cheptel = cheptelFilter ? cheptelFilter.value : "";
-        const service = serviceFilter ? serviceFilter.value : "";
+        function applyFilters() {
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
+            const type = typeFilter ? typeFilter.value : "";
+            const zone = zoneFilter ? zoneFilter.value : "";
+            const cheptel = cheptelFilter ? cheptelFilter.value : "";
+            const service = serviceFilter ? serviceFilter.value : "";
 
-        rows.forEach((row) => {
-          const visible =
-            (!query || (row.dataset.search || "").toLowerCase().includes(query)) &&
-            (!type || row.dataset.type === type) &&
-            (!zone || row.dataset.zone === zone) &&
-            (!service || row.dataset.service === service) &&
-            matchesCheptel(row, cheptel);
-          row.style.display = visible ? "" : "none";
+            rows.forEach((row) => {
+                const visible =
+                    (!query || (row.dataset.search || "").toLowerCase().includes(query)) &&
+                    (!type || row.dataset.type === type) &&
+                    (!zone || row.dataset.zone === zone) &&
+                    (!service || row.dataset.service === service) &&
+                    matchesCheptel(row, cheptel);
+                row.style.display = visible ? "" : "none";
+            });
+        }
+
+        controls.forEach((control) => {
+            control.addEventListener("input", applyFilters);
+            control.addEventListener("change", applyFilters);
         });
-      }
 
-      controls.forEach((control) => {
-        control.addEventListener("input", applyFilters);
-        control.addEventListener("change", applyFilters);
-      });
-
-      if (window.VinaAkohoAuth) {
-        window.VinaAkohoAuth.enforceModuleAccess("responsable-commercial-clients-liste.html");
-      }
+        if (window.VinaAkohoAuth) {
+            window.VinaAkohoAuth.enforceModuleAccess("responsable-commercial-clients-liste.html");
+        }
     </script>
-  </body>
+</body>
 </html>

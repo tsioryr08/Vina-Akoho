@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier le Profil - VINA AKOHO</title>
-    
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
     <div id="vina-sidebar"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
         <div id="vina-header"></div>
         <div id="vina-content">
@@ -31,7 +31,7 @@
                 <div class="card-header">
                     <h2 class="card-title">Informations generales</h2>
                 </div>
-                <div style="padding: 24px;">
+                <div class="card-body">
                     <form method="post" th:action="@{/clients/{id}/modifier(id=${client.id})}" th:object="${inscription}">
                         <div class="form-grid">
                             <div class="form-group">
@@ -76,7 +76,7 @@
                                 <label class="form-label" for="idLocalite">Localite</label>
                                 <input type="text" class="form-control" id="idLocalite" th:field="*{idLocalite}">
                             </div>
-                            <div class="form-group" style="grid-column: span 2;">
+                            <div class="form-group form-group-wide">
                                 <label class="form-label" for="adresse">Adresse ou repere precis</label>
                                 <input type="text" class="form-control" id="adresse" th:field="*{adresse}">
                             </div>
@@ -87,14 +87,14 @@
                                     <option th:value="false">Non</option>
                                 </select>
                             </div>
-                            <div class="form-group" style="grid-column: span 2;">
+                            <div class="form-group form-group-wide">
                                 <label class="form-label" for="notes">Notes & observations</label>
                                 <textarea class="form-control" id="notes" th:field="*{notes}" rows="4"></textarea>
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px;">
+                        <div class="form-actions-row">
                             <a class="btn btn-ghost btn-large" th:href="@{/clients/{id}(id=${client.id})}">Annuler</a>
-                            <button type="submit" class="btn btn-primary btn-large" style="background-color: #16a34a; border-color: #16a34a;">Enregistrer les modifications</button>
+                            <button type="submit" class="btn btn-save-client btn-large">Enregistrer les modifications</button>
                         </div>
                     </form>
                 </div>

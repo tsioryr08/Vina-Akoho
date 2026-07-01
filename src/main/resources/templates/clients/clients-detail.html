@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Client - VINA AKOHO</title>
     
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
     <div id="vina-sidebar"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
         <div id="vina-header"></div>
         <div id="vina-content">
@@ -21,7 +22,7 @@
                 <div class="header-actions">
                     <a class="btn btn-white" th:href="@{/clients/espace}">Retour</a>
                     <a class="btn btn-green" th:href="@{/clients/{id}/modifier(id=${client.id})}">Modifier</a>
-                    <form method="post" th:action="@{/clients/{id}/supprimer(id=${client.id})}" style="display: inline">
+                    <form method="post" th:action="@{/clients/{id}/supprimer(id=${client.id})}" class="form-inline">
                         <button class="btn btn-red" type="submit" onclick="return confirm('Supprimer ce client de la liste ?')">Supprimer</button>
                     </form>
                 </div>
@@ -60,39 +61,39 @@
                 </article>
             </section>
 
-            <div class="card" style="margin-bottom: 24px;">
-                <div class="card-header">
-                    <h2 class="card-title">Coordonnees & Informations</h2>
-                </div>
-                <div style="padding: 20px;">
-                    <div class="info-grid">
-                        <div class="contact-box">
-                            <label>Telephone</label>
-                            <div th:text="${client.numeroTelephone == null ? '--' : client.numeroTelephone}">0341111111</div>
-                        </div>
-                        <div class="contact-box">
-                            <label>Service</label>
-                            <div th:text="${client.service == null ? '--' : client.service}">Livraison</div>
-                        </div>
-                        <div class="contact-box">
-                            <label>Zone de livraison</label>
-                            <div th:text="${client.idZoneLivraison == null ? '--' : client.idZoneLivraison}">ZONE002</div>
-                        </div>
-                        <div class="contact-box">
-                            <label>Localite</label>
-                            <div th:text="${client.idLocalite == null ? '--' : client.idLocalite}">LOC002</div>
-                        </div>
-                        <div class="contact-box" style="grid-column: span 2;">
-                            <label>Adresse</label>
-                            <div th:text="${client.adresse == null ? '--' : client.adresse}">Antananarivo</div>
-                        </div>
-                        <div class="notes-area">
-                            <strong>Notes commerciales :</strong><br>
-                            <span th:text="${client.notes == null ? 'Aucune note.' : client.notes}">Client modifie</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+             <div class="card card-spaced">
+                 <div class="card-header">
+                     <h2 class="card-title">Coordonnees & Informations</h2>
+                 </div>
+                 <div class="card-body">
+                     <div class="info-grid">
+                         <div class="contact-box">
+                             <label>Telephone</label>
+                             <div th:text="${client.numeroTelephone == null ? '--' : client.numeroTelephone}">0341111111</div>
+                         </div>
+                         <div class="contact-box">
+                             <label>Service</label>
+                             <div th:text="${client.service == null ? '--' : client.service}">Livraison</div>
+                         </div>
+                         <div class="contact-box">
+                             <label>Zone de livraison</label>
+                             <div th:text="${client.idZoneLivraison == null ? '--' : client.idZoneLivraison}">ZONE002</div>
+                         </div>
+                         <div class="contact-box">
+                             <label>Localite</label>
+                             <div th:text="${client.idLocalite == null ? '--' : client.idLocalite}">LOC002</div>
+                         </div>
+                         <div class="contact-box col-span-2">
+                             <label>Adresse</label>
+                             <div th:text="${client.adresse == null ? '--' : client.adresse}">Antananarivo</div>
+                         </div>
+                         <div class="notes-area">
+                             <strong>Notes commerciales :</strong><br>
+                             <span th:text="${client.notes == null ? 'Aucune note.' : client.notes}">Client modifie</span>
+                         </div>
+                     </div>
+                 </div>
+             </div>
 
             <div id="vina-footer"></div>
         </div>
