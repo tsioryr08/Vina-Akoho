@@ -6,4 +6,4 @@ WHERE is_active = true;
 
 \d recette_produit;
 
-DROP INDEX uq_recette_active_par_categorie;
+DROP INDEX IF EXISTS uq_recette_active_par_categorie;

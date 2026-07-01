@@ -5,54 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Production Dashboard - VINA AKOHO</title>
     
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
   </head>
   <body>
-    <aside class="sidebar" id="vina-sidebar">
-      <div class="sidebar-brand">
-        <!-- <img
-          th:src="@{/static/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        /> -->
-        <img
-          th:src="@{/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        />
-        <div>
-          <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">RO02 - Responsable Production</div>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link active" href="#"
-          >Dashboard <span class="sidebar-code">F10</span></a
-        >
-
-        <div class="sidebar-section">Matières Premières</div>
-        <a class="sidebar-link" href="#"
-          >Ajouter Matières <span class="sidebar-code">M1</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Suivi Stock Matières <span class="sidebar-code">M2</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Créer Fiche Produit <span class="sidebar-code">M3</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Suggestions <span class="sidebar-code">M4</span></a
-        >
-        <a class="sidebar-link" href="#">Prévisions</a>
-
-        <div class="sidebar-section">Stocks</div>
-        <a class="sidebar-link" href="#"
-          >Suivi Produits Finis <span class="sidebar-code">S1</span></a
-        >
-      </nav>
-    </aside>
+    <div th:replace="~{layout/responsableProduction :: responsableProduction}"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
