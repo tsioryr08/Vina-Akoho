@@ -11,6 +11,9 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.Fournisseur;
+import java.time.LocalDateTime;
+
+
 
 @Entity
 @Table(name = "lot_mp")
@@ -42,6 +45,13 @@ public class LotMp {
 
     @Column(name = "cout_unitaire")
     private BigDecimal coutUnitaire;
+
+    // rajout de ces colonnes 
+    @Column(name = "id_mouvement_entree")
+    private Integer idMouvementEntree;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Integer getId() {
         return id;
@@ -91,6 +101,7 @@ public class LotMp {
         this.datePeremption = datePeremption;
     }
 
+
     public Fournisseur getFournisseur() {
         return fournisseur;
     }
@@ -106,4 +117,23 @@ public class LotMp {
     public void setCoutUnitaire(BigDecimal coutUnitaire) {
         this.coutUnitaire = coutUnitaire;
     }
+
+    //ajout de getters et setters pour idMouvementEntree et createdAt
+    public Integer getIdMouvementEntree() {
+        return idMouvementEntree;
+    }
+
+    public void setIdMouvementEntree(Integer idMouvementEntree) {
+        this.idMouvementEntree = idMouvementEntree;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }
+
