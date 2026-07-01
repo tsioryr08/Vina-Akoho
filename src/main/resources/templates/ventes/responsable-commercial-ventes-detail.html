@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'VINA AKOHO - Détail Vente #' + ${vente.id}"></title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar"></div>
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
             <section class="page-header">
                 <div>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="detail-row">
                         <span>Date de l’opération</span>
-                        <strong th:text="${#dates.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></strong>
+                        <strong th:text="${#temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></strong>
                     </div>
                     <div class="detail-row">
                         <span>Mode paiement</span>
@@ -61,7 +61,7 @@
                     </div>
                     <div class="detail-row">
                         <span>Date émission</span>
-                        <strong th:text="${vente.facture != null ? #dates.format(vente.facture.dateEmission, 'dd/MM/yyyy') : '-'}"></strong>
+                        <strong th:text="${vente.facture != null ? #temporals.format(vente.facture.dateEmission, 'dd/MM/yyyy') : '-'}"></strong>
                     </div>
                     <div class="detail-row">
                         <span>Total TTC</span>
@@ -114,7 +114,7 @@
                     </div>
                 </div>
             </section>
-            <div id="vina-footer"></div>
+            <div id="vina-footer" th:replace="~{layout/footer}"></div>
         </div>
     </div>
     <script th:src="@{/js/auth.js}"></script>
