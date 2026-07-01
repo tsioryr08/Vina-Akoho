@@ -1,10 +1,9 @@
-#  Rapport technique — F3 Sortie Matières Premières
+# Rapport Technique — F3 Sortie Matières Premières
 
 ---
-
-Développeur : Tsiory (Architecte Backend)
-Sprint : 2
-Date : 30/06/2026
+**Développeur :** Tsiory (Architecte Backend)  
+**Sprint :** 2  
+**Date :** 30/06/2026
 
 ---
 
@@ -106,3 +105,27 @@ Au démarrage du Sprint 2, un `BeanDefinitionOverrideException` empêchait le la
 - Suppression de `repository/stockmp/LotMpRepository.java`
 - Conservation et complétion des classes de Rary (`matierespremieres`)
 - Mise à jour des imports dans `SortieMpService` vers `repository.matierespremieres`
+
+---
+
+## Effet de bord Hibernate — Colonnes ajoutées automatiquement
+
+Lors de la résolution du conflit sur `LotMp.java`, la version de `dev` (Rary) contenait 2 champs inexistants en base (`fournisseur` et `coutUnitaire`) mais absents de notre version.
+
+Après merge et lancement du serveur avec `spring.jpa.hibernate.ddl-auto=update`, Hibernate a **automatiquement ajouté ces 2 colonnes** dans la table `lot_mp` :
+
+```
+Hibernate: alter table if exists lot_mp add column cout_unitaire numeric(38,2)
+Hibernate: alter table if exists lot_mp add column id_fournisseur integer
+```
+
+Ces colonnes **n'étaient pas prévues** dans le schéma initial de `lot_mp`. Elles sont actuellement présentes en base mais **non utilisées** par le module Sortie MP.
+
+> **Action requise pour Rary :** vérifier si ces colonnes sont intentionnelles dans sa logique d'Entrée MP, ou les supprimer si elles sont en erreur. Dans tous les cas, mettre à jour le schéma SQL de référence en conséquence.
+
+---
+
+## Bug identifié dans un module tiers
+
+> **Bug dans `MatierePremiereViewController.java` (Rary)** — l'appel à `entreeStock()` utilise 4 paramètres mais `EntreeStockDTO` en attend maintenant 5 (`coutUnitaire` manquant). Le projet compile malgré tout car ce fichier n'est pas dans le module Sortie MP.  
+> **À corriger par Rary dans sa branche.**
