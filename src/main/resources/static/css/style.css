@@ -150,7 +150,7 @@ select {
 .login-photo-side {
   width: 60%;
   min-height: 100vh;
-  background-image: url('/photo/chiken.jpg');
+  background-image: url('/images/chiken.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
