@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
-import mg.vinaAkoho.vina_akoho.exception.entreeproduit.ProduitNotFoundException;
-import mg.vinaAkoho.vina_akoho.exception.entreeproduit.RecetteInexistanteException;
+import mg.vinaAkoho.vina_akoho.exception.produit.ProduitNotFoundException;
+import mg.vinaAkoho.vina_akoho.exception.produit.RecetteInexistanteException;
 import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitException;
 import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.stockmp.StockInsuffisantException;

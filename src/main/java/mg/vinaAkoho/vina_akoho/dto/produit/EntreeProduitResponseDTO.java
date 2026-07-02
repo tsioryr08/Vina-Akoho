@@ -1,11 +1,11 @@
-package mg.vinaAkoho.vina_akoho.dto.entreeproduit;
+package mg.vinaAkoho.vina_akoho.dto.produit;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 public record EntreeProduitResponseDTO(
-        Integer idLotProduit,
+        Long idLotProduit,
         String nomProduit,
         BigDecimal quantiteProduite,
         LocalDate dateFabrication,

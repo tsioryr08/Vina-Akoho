@@ -1,4 +1,4 @@
-package mg.vinaAkoho.vina_akoho.controller.entreeproduit;
+package mg.vinaAkoho.vina_akoho.controller.produit;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
-import mg.vinaAkoho.vina_akoho.dto.entreeproduit.EntreeProduitRequestDTO;
-import mg.vinaAkoho.vina_akoho.dto.entreeproduit.EntreeProduitResponseDTO;
-import mg.vinaAkoho.vina_akoho.service.entreeproduit.EntreeProduitService;
+import mg.vinaAkoho.vina_akoho.dto.produit.EntreeProduitRequestDTO;
+import mg.vinaAkoho.vina_akoho.dto.produit.EntreeProduitResponseDTO;
+import mg.vinaAkoho.vina_akoho.service.produit.EntreeProduitService;
 
 @RestController
 @RequestMapping("/api/entrees-produit")

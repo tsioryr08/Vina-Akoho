@@ -45,6 +45,9 @@ public class LotProduit {
     @Column(name = "date_peremption")
     private LocalDate datePeremption;
 
+    @Column(name = "id_mouvement_entree")
+    private Integer idMouvementEntree;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

@@ -1,4 +1,4 @@
-package mg.vinaAkoho.vina_akoho.entity.entreeproduit;
+package mg.vinaAkoho.vina_akoho.entity.produit;
 
 import java.math.BigDecimal;
 

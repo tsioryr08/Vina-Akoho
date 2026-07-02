@@ -1,4 +1,4 @@
-package mg.vinaAkoho.vina_akoho.controller.entreeproduit;
+package mg.vinaAkoho.vina_akoho.controller.produit;
 
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import org.springframework.stereotype.Controller;

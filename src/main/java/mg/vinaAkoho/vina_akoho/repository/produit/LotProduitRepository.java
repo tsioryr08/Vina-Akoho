@@ -9,11 +9,13 @@ import java.util.List;
 
 public interface LotProduitRepository extends JpaRepository<LotProduit, Long> {
 
-    @Query("SELECT COALESCE(SUM(l.quantiteRestante), 0) FROM LotProduit l WHERE l.produit.id = :produitId")
-    BigDecimal sommeQuantiteRestante(Long produitId);
+    List<LotProduit> findByProduitIdOrderByDateFabricationAscIdAsc(Long idProduit);
 
     List<LotProduit> findByProduitIdAndQuantiteRestanteGreaterThanOrderByDateFabricationAsc(
             Long produitId,
             BigDecimal seuil
     );
+
+    @Query("SELECT COALESCE(SUM(l.quantiteRestante), 0) FROM LotProduit l WHERE l.produit.id = :produitId")
+    BigDecimal sommeQuantiteRestante(Long produitId);
 }
