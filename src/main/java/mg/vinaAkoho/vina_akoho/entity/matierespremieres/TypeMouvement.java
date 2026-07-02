@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "type_mouvement")
@@ -17,6 +18,9 @@ public class TypeMouvement {
 
     @Column(nullable = false, unique = true)
     private String libelle;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Integer getId() {
         return id;
@@ -32,5 +36,13 @@ public class TypeMouvement {
 
     public void setLibelle(String libelle) {
         this.libelle = libelle;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

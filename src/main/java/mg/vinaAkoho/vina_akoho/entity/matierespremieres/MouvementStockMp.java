@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "mouvement_stock_mp")
@@ -44,6 +45,9 @@ public class MouvementStockMp {
 
     @Column(name = "reference_document")
     private String referenceDocument;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public Integer getId() {
         return id;
@@ -115,5 +119,13 @@ public class MouvementStockMp {
 
     public void setReferenceDocument(String referenceDocument) {
         this.referenceDocument = referenceDocument;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
