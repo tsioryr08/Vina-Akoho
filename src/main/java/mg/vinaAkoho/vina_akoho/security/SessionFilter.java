@@ -22,17 +22,22 @@ public class SessionFilter extends OncePerRequestFilter {
             "/index.html",
             "/index.php",
             "/css/",
+            "/js/",
             "/assets/",
-            "/static/"
-    );
+            "/static/",
+            "/images/",
+            "/img/",
+            "/photo/",
+            "/uploads/",
+            "/VINA_AKOHO_LOGO.png");
 
     public static final String ATTRIBUT_ID_EMPLOYE = "idEmploye";
     public static final String ATTRIBUT_ROLE = "role";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
 
         String chemin = request.getRequestURI();
 
@@ -59,9 +64,8 @@ public class SessionFilter extends OncePerRequestFilter {
     }
 
     private boolean estRoutePublique(String chemin) {
-        return ROUTES_PUBLIQUES.stream().anyMatch(route ->
-                route.equals("/") ? route.equals(chemin) : chemin.startsWith(route)
-        );
+        return ROUTES_PUBLIQUES.stream()
+                .anyMatch(route -> route.equals("/") ? route.equals(chemin) : chemin.startsWith(route));
     }
 
     private boolean estPageHtml(String chemin) {
@@ -73,7 +77,6 @@ public class SessionFilter extends OncePerRequestFilter {
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(String.format(
                 "{\"success\": false, \"message\": \"%s\", \"data\": null}",
-                message
-        ));
+                message));
     }
 }
