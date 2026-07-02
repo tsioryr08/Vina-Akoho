@@ -1,81 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VINA AKOHO - Connexion</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body class="login-page">
-  <div class="login-split">
-    <div class="login-photo-side"></div>
-    <div class="login-form-side">
-      <section class="login-card">
-        <div class="login-brand">
-          <img th:src="@{/static/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark">
-          <div>
-            <h1>VINA AKOHO</h1>
-            <p>Production et livraison d'aliments pour poulets</p>
-          </div>
-        </div>
-
-        <form id="loginForm" class="login-form" action="/api/login" method="post" autocomplete="off">
-          <div class="form-group">
-            <label for="employeSelect">Employé</label>
-            <div class="select-with-icon">
-              <select id="employeSelect" name="email" class="form-control login-field-accent" required>
-                <option value="" disabled selected>Sélectionnez votre nom</option>
-                <option th:each="e : ${employes}" th:value="${e.email}" th:text="${e.nom + ' ' + e.prenom}"></option>
-              </select>
-              <span class="select-chevron"></span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Connexion</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="login-page">
+    <div class="login-split">
+      <div class="login-photo-side"></div>
+      <div class="login-form-side">
+        <section class="login-card">
+          <div class="login-brand">
+            <img
+              th:src="@{/images/VINA_AKOHO_LOGO.png}"
+              alt="VINA AKOHO"
+              class="brand-mark"
+            />
+            <div>
+              <h1>VINA AKOHO</h1>
+              <p>Production et livraison d'aliments pour poulets</p>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="passwordInput">Mot de passe</label>
-            <div class="password-field">
-              <input id="passwordInput" name="mdp" class="form-control login-field-accent" type="password" placeholder="Entrez votre mot de passe" required>
-              <button type="button" class="password-toggle" aria-label="Afficher le mot de passe">
-                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              </button>
+          <form
+            id="loginForm"
+            class="login-form"
+            action="/api/login"
+            method="post"
+            autocomplete="off"
+          >
+            <div class="form-group">
+              <label for="employeSelect">Employé</label>
+              <div class="select-with-icon">
+                <select
+                  id="employeSelect"
+                  name="email"
+                  class="form-control login-field-accent"
+                  required
+                >
+                  <option value="" disabled selected>
+                    Sélectionnez votre nom
+                  </option>
+                  <option
+                    th:each="e : ${employes}"
+                    th:value="${e.email}"
+                    th:text="${e.nom + ' ' + e.prenom}"
+                  ></option>
+                </select>
+                <span class="select-chevron"></span>
+              </div>
             </div>
-          </div>
 
-          <p id="loginError" class="login-error" role="alert" th:text="${erreur}"></p>
+            <div class="form-group">
+              <label for="passwordInput">Mot de passe</label>
+              <div class="password-field">
+                <input
+                  id="passwordInput"
+                  name="mdp"
+                  class="form-control login-field-accent"
+                  type="password"
+                  placeholder="Entrez votre mot de passe"
+                  required
+                />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  aria-label="Afficher le mot de passe"
+                >
+                  <svg
+                    class="eye-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    ></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <svg
+                    class="eye-off-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    style="display: none"
+                  >
+                    <path
+                      d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
+                    ></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
 
-          <button class="btn btn-beige btn-full" type="submit">Se connecter</button>
-        </form>
-      </section>
+            <p
+              id="loginError"
+              class="login-error"
+              role="alert"
+              th:text="${erreur}"
+            ></p>
+
+            <button class="btn btn-beige btn-full" type="submit">
+              Se connecter
+            </button>
+          </form>
+        </section>
+      </div>
     </div>
-  </div>
 
-  <script th:src="@{/assets/js/login.js}"></script>
-  <script>
-    (function(){
-      const toggle = document.querySelector('.password-toggle');
-      const input = document.getElementById('passwordInput');
-      const eyeOn = toggle ? toggle.querySelector('.eye-icon') : null;
-      const eyeOff = toggle ? toggle.querySelector('.eye-off-icon') : null;
+    <script th:src="@{/assets/js/login.js}"></script>
+    <script>
+      (function () {
+        const toggle = document.querySelector(".password-toggle");
+        const input = document.getElementById("passwordInput");
+        const eyeOn = toggle ? toggle.querySelector(".eye-icon") : null;
+        const eyeOff = toggle ? toggle.querySelector(".eye-off-icon") : null;
 
-      if (toggle) {
-        toggle.addEventListener('click', function(){
-          const hidden = input.type === 'password';
-          input.type = hidden ? 'text' : 'password';
-          if (eyeOn && eyeOff) {
-            eyeOn.style.display = hidden ? 'none' : 'block';
-            eyeOff.style.display = hidden ? 'block' : 'none';
-          }
-          toggle.setAttribute('aria-label', hidden ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
-        });
-      }
-    })();
-  </script>
-</body>
+        if (toggle) {
+          toggle.addEventListener("click", function () {
+            const hidden = input.type === "password";
+            input.type = hidden ? "text" : "password";
+            if (eyeOn && eyeOff) {
+              eyeOn.style.display = hidden ? "none" : "block";
+              eyeOff.style.display = hidden ? "block" : "none";
+            }
+            toggle.setAttribute(
+              "aria-label",
+              hidden ? "Masquer le mot de passe" : "Afficher le mot de passe",
+            );
+          });
+        }
+      })();
+    </script>
+  </body>
 </html>

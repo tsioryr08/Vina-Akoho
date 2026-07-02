@@ -1,4 +1,5 @@
 # 📐 Règles & Conventions Backend — VINA-AKOHO
+
 > Document de référence pour toute l'équipe — Sprint 1
 > Validé par les Architectes Backend
 
@@ -25,6 +26,7 @@ src/main/java/mg/vinaAkoho/vina_akoho/
 **Format :** `<couche>/<nom-module>/NomClasse.java`
 
 **Exemple concret pour le module Matières premières :**
+
 ```
 controller/matieres-premieres/MatierePremiereController.java
 service/matieres-premieres/MatierePremiereService.java
@@ -35,6 +37,7 @@ exception/matieres-premieres/StockInsuffisantException.java
 ```
 
 **Autre exemple pour le module Produits :**
+
 ```
 controller/produits/ProduitController.java
 service/produits/ProduitService.java
@@ -87,6 +90,7 @@ Toute réponse API, succès ou erreur, doit suivre **ce format unique** :
 ```
 
 En cas d'erreur :
+
 ```json
 {
   "success": false,
@@ -99,19 +103,19 @@ En cas d'erreur :
 
 ## 4. Conventions de nommage
 
-| Élément | Convention | Exemple |
-|---|---|---|
-| Entités | PascalCase | `MatierePremiere` |
-| DTOs | PascalCase + DTO | `MatierePremiereDTO` |
-| Controllers | PascalCase + Controller | `MatierePremiereController` |
-| Services | PascalCase + Service | `MatierePremiereService` |
-| Repositories | PascalCase + Repository | `MatierePremiereRepository` |
-| URLs API | kebab-case | `/api/matieres-premieres` |
-| Fonction | camelCase en français | `creerUser` |
-| Variable | camelCase en français | `nomUser` |
-| Constantes | MAJUSCULES_AVEC_UNDERSCORE | `MAX_RETRY_COUNT` |
-| Table | snake_case, singulier, en français | `matiere_premiere` |
-| Colonne | snake_case, singulier, en français | `date_creation` |
+| Élément      | Convention                         | Exemple                     |
+| ------------ | ---------------------------------- | --------------------------- |
+| Entités      | PascalCase                         | `MatierePremiere`           |
+| DTOs         | PascalCase + DTO                   | `MatierePremiereDTO`        |
+| Controllers  | PascalCase + Controller            | `MatierePremiereController` |
+| Services     | PascalCase + Service               | `MatierePremiereService`    |
+| Repositories | PascalCase + Repository            | `MatierePremiereRepository` |
+| URLs API     | kebab-case                         | `/api/matieres-premieres`   |
+| Fonction     | camelCase en français              | `creerUser`                 |
+| Variable     | camelCase en français              | `nomUser`                   |
+| Constantes   | MAJUSCULES_AVEC_UNDERSCORE         | `MAX_RETRY_COUNT`           |
+| Table        | snake_case, singulier, en français | `matiere_premiere`          |
+| Colonne      | snake_case, singulier, en français | `date_creation`             |
 
 ---
 
@@ -146,13 +150,13 @@ git checkout -b feature/prenom-module
 
 **Exemples concrets (Sprint 1) :**
 
-| Module | Nom de branche |
-|---|---|
-| F0 Login | `feature/ny-antema-login` |
-| F1 Produits | `feature/nekena-produits` |
+| Module                | Nom de branche                    |
+| --------------------- | --------------------------------- |
+| F0 Login              | `feature/ny-antema-login`         |
+| F1 Produits           | `feature/nekena-produits`         |
 | F2 Matières premières | `feature/rary-matieres-premieres` |
-| F5 Clients | `feature/armando-clients` |
-| recette_produit | `feature/tsiory-recette-produit` |
+| F5 Clients            | `feature/armando-clients`         |
+| recette_produit       | `feature/tsiory-recette-produit`  |
 
 ### Règle d'or — Toujours se mettre à jour avant de commencer
 
@@ -183,16 +187,17 @@ git pull origin dev
 
 Pour ne pas se perdre dans l'historique, chaque commit doit respecter ce format :
 
-| Type | Usage |
-|---|---|
-| `feat:` | Nouvelle fonctionnalité |
-| `fix:` | Correction de bug |
-| `config:` | Configuration |
-| `test:` | Ajout de tests |
-| `docs:` | Documentation |
-| `style:` | Mise en forme |
+| Type      | Usage                   |
+| --------- | ----------------------- |
+| `feat:`   | Nouvelle fonctionnalité |
+| `fix:`    | Correction de bug       |
+| `config:` | Configuration           |
+| `test:`   | Ajout de tests          |
+| `docs:`   | Documentation           |
+| `style:`  | Mise en forme           |
 
 **Exemple :**
+
 ```
 feat: ajoute endpoint CRUD matières premières
 fix: corrige validation seuil négatif
@@ -215,10 +220,10 @@ spring.jpa.hibernate.ddl-auto=update
 
 ### Utilisateur et base de données dédiés
 
-| Paramètre | Valeur |
-|---|---|
-| Utilisateur | `vinakoho` |
-| Mot de passe | `vinakoho` |
+| Paramètre       | Valeur     |
+| --------------- | ---------- |
+| Utilisateur     | `vinakoho` |
+| Mot de passe    | `vinakoho` |
 | Base de données | `vinakoho` |
 
 **Script SQL (à exécuter avec un compte superutilisateur, ex. `postgres`) :**
@@ -267,8 +272,9 @@ role
 > À fournir **à chaque fin de tâche ou de module**, avec tests inclus.
 
 ### 📋 Cahier de test
+
 **Emplacement :** `docs/cahiers-de-test/FX-Nom-Test.md`
-*(FX = numéro de la fonctionnalité concernée, ex. F1, F2, F5... — Nom = prénom du développeur)*
+_(FX = numéro de la fonctionnalité concernée, ex. F1, F2, F5... — Nom = prénom du développeur)_
 
 **Exemple concret :** `F1-Rary-Test.md`
 
@@ -288,11 +294,13 @@ Commentaire :
 ```
 
 ### 📄 Rapport technique
+
 **Emplacement :** `docs/rapports-techniques/FX-Nom-Rapport.md`
 
 **Exemple concret :** `F0-Armando-Rapport.md`
 
 **Contenu obligatoire :**
+
 - Documentation technique du code
 - Structure des fichiers du module
 
@@ -312,5 +320,4 @@ Commentaire :
 
 ---
 
-*Document de référence — Architectes Backend VINA-AKOHO — Sprint 1*
-
+_Document de référence — Architectes Backend VINA-AKOHO — Sprint 1_
