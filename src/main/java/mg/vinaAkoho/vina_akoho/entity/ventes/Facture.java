@@ -51,6 +51,9 @@ public class Facture {
     @Column(name = "montant_ttc", nullable = false, precision = 12, scale = 2)
     private BigDecimal montantTtc;
 
+    @Column(name = "remise", precision = 12, scale = 2)
+    private BigDecimal remise;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

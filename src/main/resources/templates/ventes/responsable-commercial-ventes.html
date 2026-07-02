@@ -29,23 +29,22 @@
             <section class="stats-grid">
                 <article class="stat-card">
                     <div class="stat-label">Ventes du jour</div>
-                    <div class="stat-value" th:text="${statistiques.ventesDuJour}">0</div>
-                    <div class="stat-trend trend-positive"
-                         th:text="${statistiques.variationVentesHier >= 0 ? '+' + statistiques.variationVentesHier : statistiques.variationVentesHier} + ' vs hier'">+0 vs hier</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(ventesJour, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
+                    <div class="stat-trend trend-positive">+0 vs hier</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Chiffre d'affaires (Mois)</div>
-                    <div class="stat-value" th:text="${#numbers.formatDecimal(statistiques.chiffreAffairesMois, 0, 'COMMA', 0, 'POINT')} + ' Ar'">0 Ar</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(caMois, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
                     <div class="stat-trend trend-positive">Ventes validées</div>
                 </article>
                 <article class="stat-card">
-                    <div class="stat-label">Ventes en attente</div>
-                    <div class="stat-value" th:text="${statistiques.ventesEnAttente}">0</div>
+                    <div class="stat-label">Commandes en attente</div>
+                    <div class="stat-value" th:text="${commandesEnAttente}"></div>
                     <div class="stat-trend trend-warning">À valider</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Taux de conversion</div>
-                    <div class="stat-value" th:text="${#numbers.formatDecimal(statistiques.tauxConversion, 0, 'COMMA', 1, 'POINT')} + '%'">0%</div>
+                    <div class="stat-value" th:text="${tauxConversion}"></div>
                     <div class="stat-trend trend-info">Stable</div>
                 </article>
             </section>
@@ -55,6 +54,7 @@
                     <div class="side-panel-heading">
                         <h2>Filtres avancés</h2>
                     </div>
+<<<<<<< HEAD
                     <div class="form-group">
                         <label class="form-label">Client</label>
                         <input type="text" class="form-control" placeholder="Nom du client...">
@@ -73,11 +73,34 @@
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <input type="date" class="form-control">
                             <input type="date" class="form-control">
+=======
+                    <form th:action="@{/ventes}" method="get">
+                        <div class="form-group">
+                            <label class="form-label">Client</label>
+                            <input type="text" name="client" class="form-control" placeholder="Nom du client..." th:value="${param.client}">
+>>>>>>> 3ecc192 (fix : modification de lien css et quelque ameliorations)
                         </div>
-                    </div>
-                    <div class="form-actions" style="margin-top: 20px;">
-                        <button class="btn btn-white w-100" type="button">Réinitialiser</button>
-                    </div>
+                        <div class="form-group">
+                            <label class="form-label">Statut commande</label>
+                            <select name="statut" class="form-control">
+                                <option value="">Tous</option>
+                                <option value="Validée" th:selected="${param.statut == 'Validée'}">Validée</option>
+                                <option value="En attente de paiement" th:selected="${param.statut == 'En attente de paiement'}">En attente de paiement</option>
+                                <option value="Annulée" th:selected="${param.statut == 'Annulée'}">Annulée</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Période</label>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <input type="date" name="dateDebut" class="form-control" th:value="${param.dateDebut}">
+                                <input type="date" name="dateFin" class="form-control" th:value="${param.dateFin}">
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <button class="btn btn-green w-100" type="submit">Filtrer</button>
+                            <button class="btn btn-white w-100" type="button" onclick="window.location.href='/ventes'">Réinitialiser</button>
+                        </div>
+                    </form>
                 </aside>
 
                 <main>

@@ -1,13 +1,13 @@
 package mg.vinaAkoho.vina_akoho.dto.produit;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,6 +27,8 @@ public class ProduitDTO {
     private Boolean actif;
     private BigDecimal quantiteStock;
     private String statut;
+    private Long idUnite;
+    private String libelleUnite;
     private BigDecimal margePourcentage;
     private BigDecimal pourcentageProteine;
     private BigDecimal pourcentageMatiereGrasses;

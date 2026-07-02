@@ -90,6 +90,20 @@ public class VenteService {
                 .build();
     }
 
+    @Transactional
+    public VenteDTO validerPaiement(Long id) {
+        Vente vente = venteRepository.findById(id)
+                .orElseThrow(() -> VenteNotFoundException.parId(id));
+        
+        StatutVente statutValide = statutVenteRepository.findByLibelleIgnoreCase("Validée")
+                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("Validée")));
+        
+        vente.setStatutVente(statutValide);
+        vente = venteRepository.save(vente);
+        
+        return versDTO(vente);
+    }
+
     public VenteDTO creer(VenteFormDTO requete, List<PanierItemDTO> panier, Integer idEmploye) {
         if (panier == null || panier.isEmpty()) {
             throw new IllegalArgumentException("Le panier ne peut pas être vide");
@@ -101,8 +115,8 @@ public class VenteService {
         ModePaiement modePaiement = modePaiementRepository.findById(requete.getIdModePaiement())
                 .orElseThrow(() -> new IllegalArgumentException("Mode de paiement introuvable"));
 
-        StatutVente statutVente = statutVenteRepository.findByLibelleIgnoreCase("Validée")
-                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("Validée")));
+        StatutVente statutVente = statutVenteRepository.findByLibelleIgnoreCase("En attente de paiement")
+                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("En attente de paiement")));
 
         BigDecimal montantTotal = panier.stream()
                 .map(item -> {
@@ -175,6 +189,7 @@ public class VenteService {
                 .clientPrenom(client.getPrenom())
                 .clientTelephone(client.getNumeroTelephone())
                 .clientAdresse(client.getAdresse())
+                .clientZoneLivraison(client.getIdZoneLivraison())
                 .dateVente(vente.getDateVente())
                 .modePaiement(vente.getModePaiement().getLibelle())
                 .statutVente(vente.getStatutVente().getLibelle())
@@ -185,9 +200,12 @@ public class VenteService {
     }
 
     private LigneVenteDTO versLigneDTO(LigneVente ligne) {
+        String unite = ligne.getProduit().getUnite() != null ? 
+                ligne.getProduit().getUnite().getLibelle() : "";
         return LigneVenteDTO.builder()
                 .nomProduit(ligne.getProduit().getNom())
                 .quantite(ligne.getQuantite())
+                .unite(unite)
                 .prixUnitaire(ligne.getPrixUnitaire())
                 .montant(ligne.getMontant())
                 .build();
@@ -202,6 +220,7 @@ public class VenteService {
                 .tauxTva(facture.getTauxTva())
                 .montantTva(facture.getMontantTva())
                 .montantTtc(facture.getMontantTtc())
+                .remise(facture.getRemise() != null ? facture.getRemise() : BigDecimal.ZERO)
                 .build();
     }
 }

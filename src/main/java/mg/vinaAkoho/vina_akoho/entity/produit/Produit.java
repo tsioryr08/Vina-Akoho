@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mg.vinaAkoho.vina_akoho.entity.matierespremieres.Unite;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,6 +28,10 @@ public class Produit {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_categorie", nullable = false)
     private Categorie categorie;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_unite")
+    private Unite unite;
 
     @Column(name = "nom", nullable = false, unique = true, length = 150)
     private String nom;
