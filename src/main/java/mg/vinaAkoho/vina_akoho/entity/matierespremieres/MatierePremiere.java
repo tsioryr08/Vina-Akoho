@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "matiere_premiere")
@@ -37,6 +38,12 @@ public class MatierePremiere {
 
     @Column(name = "seuil_minimum")
     private BigDecimal seuilMinimum;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public Integer getId() {
         return id;
@@ -92,5 +99,21 @@ public class MatierePremiere {
 
     public void setSeuilMinimum(BigDecimal seuilMinimum) {
         this.seuilMinimum = seuilMinimum;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
