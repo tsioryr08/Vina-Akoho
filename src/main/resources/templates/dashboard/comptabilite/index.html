@@ -8,72 +8,14 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body>
-    <aside class="sidebar" id="vina-sidebar">
-      <div class="sidebar-brand">
-        <!-- <img
-          th:src="@{/static/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        /> -->
-        <img
-          th:src="@{/images/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        />
-
-        <div>
-          <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">RO05 - Comptable</div>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link active" href="#"
-          >Dashboard <span class="sidebar-code">F9</span></a
-        >
-
-        <div class="sidebar-section">Finance</div>
-        <a class="sidebar-link" href="#"
-          >Vue d'ensemble financière <span class="sidebar-code">F1</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Registre des Dépenses <span class="sidebar-code">F2</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Coût de revient <span class="sidebar-code">F3</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Rapports financiers <span class="sidebar-code">F5</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Voir créances <span class="sidebar-code">F5</span></a
-        >
-      </nav>
-    </aside>
+    <div th:replace="~{layout/comptable :: sidebar}"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="menu-button" id="vina-menu-button" type="button">
-            ☰
-          </button>
-          <span class="breadcrumb">Dashboard Comptable</span>
-        </div>
-        <div class="topbar-actions">
-          <span class="role-pill">RO05 - Comptable</span>
-          <button
-            class="btn btn-ghost btn-small"
-            id="vina-logout-button"
-            onclick="window.location.href = '/'"
-            type="button"
-          >
-            Déconnexion
-          </button>
-        </div>
-      </div>
+      <div
+        th:replace="~{layout/header-comptable :: header('Dashboard Comptable')}"
+      ></div>
 
       <div class="content">
         <section class="page-header theme-blue">

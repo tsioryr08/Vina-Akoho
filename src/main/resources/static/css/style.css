@@ -479,6 +479,10 @@ select {
   color: var(--accent);
 }
 
+.theme-red .eyebrow {
+  color: var(--accent);
+}
+
 .form-card {
   border: 1px solid rgba(203, 213, 224, 0.5);
   border-radius: var(--radius);
@@ -539,6 +543,16 @@ select {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-textarea {
+  min-height: 120px;
 }
 
 .field {
@@ -1813,6 +1827,12 @@ select {
 .progress-fill.success {
   background: linear-gradient(90deg, var(--secondary), var(--secondary-light));
 }
+
+.progress-fill.w-9 { width: 9%; }
+.progress-fill.w-15 { width: 15%; }
+.progress-fill.w-18 { width: 18%; }
+.progress-fill.w-24 { width: 24%; }
+.progress-fill.w-34 { width: 34%; }
 
 .slider-field {
   display: grid;
@@ -3304,6 +3324,11 @@ select {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -3348,6 +3373,140 @@ select {
     margin: 0 auto;
     width: 100%;
     flex: 1;
+}
+
+/* ===== PAGES COMPTABLE (FINANCES & DEPENSES) ===== */
+.page-comptable-finances #vina-content,
+.page-comptable-depenses .content,
+.page-comptable-depenses #vina-content,
+.page-comptable-depenses-nouveau #vina-content {
+  display: grid;
+  gap: 24px;
+}
+
+.page-comptable-finances .page-header,
+.page-comptable-depenses .page-header,
+.page-comptable-depenses-nouveau .page-header {
+  border: 1px solid rgba(34, 87, 122, 0.18);
+  background:
+    linear-gradient(120deg, rgba(34, 87, 122, 0.08), rgba(255, 255, 255, 0.98));
+}
+
+.page-comptable-finances .role-badge {
+  background: rgba(34, 87, 122, 0.12);
+  color: var(--primary);
+}
+
+.page-comptable-finances .grid-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.page-comptable-finances .stat-card {
+  border-top: 3px solid rgba(34, 87, 122, 0.35);
+}
+
+.page-comptable-depenses .stat-card {
+  border-top: 3px solid rgba(239, 35, 60, 0.32);
+}
+
+.page-comptable-finances .table-card,
+.page-comptable-finances .card {
+  border: 1px solid rgba(203, 213, 224, 0.65);
+  box-shadow: var(--shadow-sm);
+}
+
+.page-comptable-depenses .card {
+  border: 1px solid rgba(203, 213, 224, 0.7);
+  box-shadow: var(--shadow-sm);
+}
+
+.page-comptable-depenses .header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.page-comptable-depenses .depense-filter-bar {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 20px 0 0;
+}
+
+.page-comptable-depenses .filter-actions {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.page-comptable-depenses .depense-register-card {
+  margin-top: 24px;
+}
+
+.page-comptable-depenses .data-table {
+  margin: 0;
+  box-shadow: none;
+}
+
+.page-comptable-finances .progress-track {
+  height: 11px;
+}
+
+.page-comptable-finances .progress-meta {
+  font-weight: 700;
+}
+
+.page-comptable-finances .card-actions {
+  justify-content: flex-start;
+}
+
+.page-comptable-depenses-nouveau .card {
+  border: 1px solid rgba(203, 213, 224, 0.7);
+  box-shadow: var(--shadow-sm);
+}
+
+.page-comptable-depenses-nouveau .form-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fbfd 100%);
+  border-color: rgba(34, 87, 122, 0.14);
+}
+
+.page-comptable-depenses-nouveau .form-label {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.page-comptable-depenses-nouveau .form-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
+}
+
+.page-comptable-depenses-nouveau .form-group {
+  gap: 6px;
+}
+
+.page-comptable-depenses-nouveau .alert-box {
+  margin-bottom: 20px;
+}
+
+.page-comptable-depenses-nouveau .form-actions {
+  margin-top: 22px;
+}
+
+@media (max-width: 1100px) {
+  .page-comptable-finances .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-comptable-depenses-nouveau .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* --- Plan Achat & Jauges --- */

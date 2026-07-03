@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saisie de Dépense - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div th:replace="~{layout/comptable :: sidebar}"></div>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div th:replace="~{layout/header-comptable :: header('Dépenses')}"></div>
+
+      <div class="content">
+        <section class="page-header theme-red">
+          <div>
+            <p class="eyebrow">COMPTABILITÉ ET FINANCES</p>
+            <h1>Enregistrer une nouvelle dépense</h1>
+            <p>
+              Saisissez les détails de la sortie de fonds pour le suivi
+              financier.
+            </p>
+          </div>
+        </section>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Détails de la transaction</h2>
+          </div>
+          <div class="form-card">
+            <div class="alert-box">
+              <strong>Règle de Gestion :</strong> Le prix d'achat n'est plus
+              modifiable ici. Il est automatiquement récupéré depuis le coût
+              unitaire défini lors de la création de la matière première.
+            </div>
+
+            <form
+              method="post"
+              th:action="@{/api/depenses}"
+              th:object="${depense}"
+            >
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Désignation / Libellé *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ex: Achat de maïs, Facture Jirama..."
+                    th:field="*{designation}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Catégorie *</label>
+                  <select class="form-control" th:field="*{idCategorieDepense}" required>
+                    <option value="" selected disabled>
+                      Choisir une catégorie
+                    </option>
+                    <option
+                      th:each="categorie : ${categoriesDepense}"
+                      th:value="${categorie.id}"
+                      th:text="${categorie.libelle}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Montant (Ar) *</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    th:field="*{montant}"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Date *</label>
+                  <input type="date" class="form-control" th:field="*{date}" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label"
+                    >Phase de production concernée</label
+                  >
+                  <select class="form-control" th:field="*{idPhase}" required>
+                    <option
+                      th:each="phase : ${phases}"
+                      th:value="${phase.id}"
+                      th:text="${phase.libelle}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Statut du paiement</label>
+                  <select class="form-control" th:field="*{idStatutDepense}" required>
+                    <option
+                      th:each="statut : ${statutsDepense}"
+                      th:value="${statut.id}"
+                      th:text="${statut.libelle}"
+                    ></option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Notes complémentaires</label>
+                <textarea
+                  class="form-control form-textarea"
+                  placeholder="Notes sur le fournisseur, conditions de paiement..."
+                ></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn btn-ghost"
+                  onclick="history.back()"
+                >
+                  Annuler
+                </button>
+                <button type="submit" class="btn btn-red">
+                  Confirmer la dépense
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-footer">VINA AKOHO — Comptabilité & Encaissements</div>
+    </div>
+
+    <script src="/assets/js/script_content.js"></script>
+  </body>
+</html>
