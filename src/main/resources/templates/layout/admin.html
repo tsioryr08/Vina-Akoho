@@ -1,34 +1,63 @@
-<aside class="sidebar">
-<div class="sidebar-brand">
-<img src="../assets/VINA_AKOHO_LOGO.png" alt="VINA AKOHO" class="brand-mark">
-<div>
-<div class="brand-title">VINA AKOHO</div>
-<div class="brand-subtitle">RO01 - Administrateur</div>
-</div>
-</div>
+<aside class="sidebar" id="vina-sidebar" th:fragment="sidebar">
+  <div class="sidebar-brand">
+    <img
+      th:src="@{/images/VINA_AKOHO_LOGO.png}"
+      alt="VINA AKOHO"
+      class="brand-mark"
+    />
+    <div>
+      <div class="brand-title">VINA AKOHO</div>
+      <div class="brand-subtitle">RO01 - Administrateur</div>
+    </div>
+  </div>
 
-<nav class="sidebar-nav">
-<div class="sidebar-section">Principal</div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Principal</div>
 
-<a class="sidebar-link" href="admin-dashboard.html">Dashboard <span class="sidebar-code">A1</span></a>
+    <a class="sidebar-link" th:href="@{/admin}"
+      >Dashboard <span class="sidebar-code">A1</span></a
+    >
 
-<div class="sidebar-section">Utilisateurs</div>
-<a class="sidebar-link" href="clients.html">Gestion des comptes <span class="sidebar-code">A2</span></a>
+    <div class="sidebar-section">Utilisateurs</div>
+    <a class="sidebar-link" href="clients.html"
+      >Gestion des comptes <span class="sidebar-code">A2</span></a
+    >
 
-<div class="sidebar-section">Finances</div>
-<a class="sidebar-link" href="finances.html">Rapports & Trésorerie <span class="sidebar-code">A3</span></a>
+    <div class="sidebar-section">Finances</div>
+    <a class="sidebar-link" href="finances.html"
+      >Rapports & Trésorerie <span class="sidebar-code">A3</span></a
+    >
 
-<div class="sidebar-section">Statistiques</div>
-<a class="sidebar-link" href="statistiques.html">Vue globale & Analytics <span class="sidebar-code">A4</span></a>
-<a class="sidebar-link" href="produits.html">Production <span class="sidebar-code">A4a</span></a>
-<a class="sidebar-link" href="ventes.html">Ventes <span class="sidebar-code">A4b</span></a>
-<a class="sidebar-link" href="responsable-commercial-zones.html">Géographie <span class="sidebar-code">A4c</span></a>
+    <div class="sidebar-section">Statistiques</div>
+    <a class="sidebar-link" href="statistiques.html"
+      >Vue globale & Analytics <span class="sidebar-code">A4</span></a
+    >
+    <a class="sidebar-link" th:href="@{/api/produits}"
+      >Production <span class="sidebar-code">v</span></a
+    >
+    <a class="sidebar-link" href="ventes.html"
+      >Ventes <span class="sidebar-code">A4b</span></a
+    >
+    <a class="sidebar-link" href="responsable-commercial-zones.html"
+      >Géographie <span class="sidebar-code">A4c</span></a
+    >
 
-<div class="sidebar-section">Configuration</div>
-<a class="sidebar-link" href="admin-parametre.html">Paramètres système <span class="sidebar-code">A5</span></a>
+    <div class="sidebar-section">Configuration</div>
+    <a class="sidebar-link" href="admin-parametre.html"
+      >Paramètres système <span class="sidebar-code">A5</span></a
+    >
 
-<div class="sidebar-section">Prévisions</div>
-<a class="sidebar-link" href="responsable-achat-previsions.html">Prévisions <span class="sidebar-code">A6</span></a>
+    <div class="sidebar-section">Prévisions</div>
+    <a class="sidebar-link" href="responsable-achat-previsions.html"
+      >Prévisions <span class="sidebar-code">A6</span></a
+    >
 
-</nav>
+    <div class="sidebar-section">Catégories</div>
+    <a class="sidebar-link" th:href="@{/api/categories}"
+      >Liste des categories<span class="sidebar-code">A7</span></a
+    >
+    <a class="sidebar-link" th:href="@{/api/categories/nouveau}"
+      >Ajout catégorie <span class="sidebar-code">A7b</span></a
+    >
+  </nav>
 </aside>

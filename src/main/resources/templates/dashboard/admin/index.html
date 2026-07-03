@@ -7,83 +7,12 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body>
-    <aside class="sidebar" id="vina-sidebar">
-      <div class="sidebar-brand">
-        <img
-          th:src="@{/images/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        />
-        <div>
-          <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">RO01 - Administrateur</div>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link active" href="#"
-          >Dashboard <span class="sidebar-code">A1</span></a
-        >
-
-        <div class="sidebar-section">Utilisateurs</div>
-        <a class="sidebar-link" href="#"
-          >Gestion des comptes <span class="sidebar-code">A2</span></a
-        >
-
-        <div class="sidebar-section">Finances</div>
-        <a class="sidebar-link" href="#"
-          >Rapports & Trésorerie <span class="sidebar-code">A3</span></a
-        >
-
-        <div class="sidebar-section">Statistiques</div>
-        <a class="sidebar-link" href="#"
-          >Vue globale & Analytics <span class="sidebar-code">A4</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Production <span class="sidebar-code">A4a</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Ventes <span class="sidebar-code">A4b</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Géographie <span class="sidebar-code">A4c</span></a
-        >
-
-        <div class="sidebar-section">Configuration</div>
-        <a class="sidebar-link" href="#"
-          >Paramètres système <span class="sidebar-code">A5</span></a
-        >
-
-        <div class="sidebar-section">Prévisions</div>
-        <a class="sidebar-link" href="#"
-          >Prévisions <span class="sidebar-code">A6</span></a
-        >
-      </nav>
-    </aside>
+    <div th:replace="~{layout/admin :: sidebar}"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="menu-button" id="vina-menu-button" type="button">
-            ☰
-          </button>
-          <span class="breadcrumb">Dashboard</span>
-        </div>
-        <div class="topbar-actions">
-          <span class="role-pill">RO01 - Administrateur</span>
-          <button
-            class="btn btn-ghost btn-small"
-            id="vina-logout-button"
-            onclick="window.location.href = '/'"
-            type="button"
-          >
-            Déconnexion
-          </button>
-        </div>
-      </div>
+      <div th:replace="~{layout/header-admin :: header}"></div>
 
       <div class="content">
         <section class="page-header">

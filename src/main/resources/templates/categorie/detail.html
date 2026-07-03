@@ -266,11 +266,14 @@
         }
     </style>
 </head>
-<body class="vina-body">
-<div id="vina-sidebar"></div>
-<div class="app-main-wrapper">
-    <div id="vina-header"></div>
-    <div id="vina-content">
+  <body class="vina-body">
+    <div th:replace="~{layout/admin :: sidebar}"></div>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="app-main-wrapper">
+      <div th:replace="~{layout/header-admin :: header}"></div>
+      <div id="vina-content">
 
         <section class="page-header theme-orange">
             <div>

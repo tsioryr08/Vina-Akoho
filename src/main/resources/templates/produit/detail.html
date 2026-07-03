@@ -6,11 +6,12 @@
     <title>Détail du Produit - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body class="vina-body">
-<div th:replace="~{layout/sidebar::sidebar}"></div>
-<div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
-<div class="app-main-wrapper">
-    <div id="vina-header"></div>
+  <body class="vina-body">
+    <div th:replace="~{layout/admin :: sidebar}"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+    <div class="app-main-wrapper">
+      <div th:replace="~{layout/header-admin :: header}"></div>
+      <div id="vina-header"></div>
     <div id="vina-content">
 
         <section class="page-header theme-orange">

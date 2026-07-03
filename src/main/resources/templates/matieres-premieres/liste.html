@@ -1,122 +1,194 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Suivi Stock Matières Premières - VINA AKOHO</title>
-    
-    <link rel="stylesheet" th:href="@{/static/css/style.css}">
-</head>
-<body class="vina-body">
-<div th:replace="~{layout/sidebar-matierepremiere::sidebar-matierepremiere}"></div>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="vina-body">
+        <div th:replace="~{layout/responsableProduction :: responsableProduction}"></div>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
     <div class="app-main-wrapper">
-        <header th:replace="~{layout/header :: header}"></header>
-        <div id="vina-content">
+      <div th:replace="~{layout/header-production :: header}"></div>
+      <div id="vina-content">
+        <section class="page-header theme-orange">
+          <div>
+            <p class="eyebrow">MATIÈRES PREMIÈRES</p>
+            <h1>Suivi du Stock de Matières</h1>
+            <p>
+              Consultez en temps réel l'état et la disponibilité des matières
+              premières en stock.
+            </p>
+          </div>
+        </section>
 
-            <section class="page-header theme-orange">
-                <div>
-                    <p class="eyebrow">MATIÈRES PREMIÈRES</p>
-                    <h1>Suivi du Stock de Matières</h1>
-                    <p>Consultez en temps réel l'état et la disponibilité des matières premières en stock.</p>
-                </div>
-            </section>
-
-            <!-- Sous-navigation interne -->
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
-                <a th:href="@{/matieres-premieres}" class="btn btn-primary btn-small">Suivi Stock</a>
-                <a th:href="@{/matieres-premieres/alertes}" class="btn btn-ghost btn-small">Alertes</a>
-                <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-ghost btn-small">Ajouter Matière</a>
-                <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-ghost btn-small">Créer Fiche Produit</a>
-            </div>
-
-            <!-- Messages flash session -->
-            <div th:if="${successMessage}" class="alert-box alert-success" th:text="${successMessage}"></div>
-            <div th:if="${errorMessage}" class="alert-box danger" th:text="${errorMessage}"></div>
-
-            <!-- KPIs -->
-            <section class="stats-grid">
-                <article class="stat-card">
-                    <div class="stat-label">Total articles</div>
-                    <div class="stat-value" th:text="${#lists.size(mps)}">0</div>
-                    <div class="stat-trend trend-info">Fiches actives</div>
-                </article>
-                <article class="stat-card">
-                    <div class="stat-label">Matières à Seuil</div>
-                    <div class="stat-value" th:text="${#lists.size(mps.?[statut == 'SEUIL ATTEINT'])}">0</div>
-                    <div class="stat-trend trend-warning">Alertes</div>
-                </article>
-                <article class="stat-card">
-                    <div class="stat-label">Stock Global</div>
-                    <div class="stat-value" th:text="${totalStock} + ' kg'">0 kg</div>
-                    <div class="stat-trend trend-neutral">Tous articles</div>
-                </article>
-            </section>
-
-            <!-- Tableau de suivi -->
-            <section class="form-section">
-                <h2>Stock Disponible par Matière</h2>
-                <div class="table-wrap">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Matière Première</th>
-                                <th>Fournisseur</th>
-                                <th>Quantité en Stock</th>
-                                <th>Seuil Min</th>
-                                <th>PAMP (Ar)</th>
-                                <th>Statut</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="mp : ${mps}">
-                                <td><strong th:text="${mp.nom}"></strong></td>
-                                <td th:text="${mp.fournisseurNom}"></td>
-                                <td th:text="${mp.quantiteStock} + ' ' + ${mp.uniteLibelle}"></td>
-                                <td th:text="${mp.seuilMinimum != null} ? ${mp.seuilMinimum} + ' ' + ${mp.uniteLibelle} : '—'"></td>
-                                <td th:text="${mp.pamp} + ' Ar'"></td>
-                                <td>
-                                    <span th:if="${mp.statut == 'SEUIL ATTEINT'}" class="badge badge-danger">SEUIL ATTEINT</span>
-                                    <span th:unless="${mp.statut == 'SEUIL ATTEINT'}" class="badge badge-success">Stock Correct</span>
-                                </td>
-                                <td>
-                                    <a th:href="@{/matieres-premieres/{id}(id=${mp.id})}" class="btn btn-small btn-ghost">Fiche →</a>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(mps)}">
-                                <td colspan="7" style="text-align:center; padding: 24px; color: #64748b;">
-                                    Aucune matière première enregistrée.
-                                    <a th:href="@{/matieres-premieres/nouveau}">En créer une →</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Couverture Stock Actuel vs Seuil Minimum -->
-            <section class="form-section" th:if="${!#lists.isEmpty(mps.?[seuilMinimum != null])}">
-                <h2>Couverture Stock Actuel vs Seuil Minimum</h2>
-                <p style="color: #64748b; margin-bottom: 20px;">
-                    Pourcentage du stock actuel par rapport au seuil minimum d'alerte. En dessous de 100%, une commande est recommandée.
-                </p>
-                <div class="coverage-grid">
-                    <div class="coverage-card" th:each="mp : ${mps}"
-                         th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}">
-                        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
-                            <strong th:text="${mp.nom}"></strong>
-                            <span th:style="${mp.statut == 'SEUIL ATTEINT'} ? 'color: #ef4444; font-weight: 700;' : 'color: #16a34a; font-weight: 700;'"
-                                  th:text="${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? '100%+' : #numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"></span>
-                        </div>
-                        <div class="jauge-container">
-                            <div th:class="${mp.statut == 'SEUIL ATTEINT'} ? 'jauge-fill jauge-red' : 'jauge-fill jauge-green'"
-                                 th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? 100 : mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
+        <!-- Sous-navigation interne -->
+        <div
+          style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px"
+        >
+          <a th:href="@{/matieres-premieres}" class="btn btn-primary btn-small"
+            >Suivi Stock</a
+          >
+          <a
+            th:href="@{/matieres-premieres/alertes}"
+            class="btn btn-ghost btn-small"
+            >Alertes</a
+          >
+          <a
+            th:href="@{/matieres-premieres/entree-stock}"
+            class="btn btn-ghost btn-small"
+            >Ajouter Matière</a
+          >
+          <a
+            th:href="@{/matieres-premieres/nouveau}"
+            class="btn btn-ghost btn-small"
+            >Créer Fiche Produit</a
+          >
         </div>
+
+        <!-- Messages flash session -->
+        <div
+          th:if="${successMessage}"
+          class="alert-box alert-success"
+          th:text="${successMessage}"
+        ></div>
+        <div
+          th:if="${errorMessage}"
+          class="alert-box danger"
+          th:text="${errorMessage}"
+        ></div>
+
+        <!-- KPIs -->
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Total articles</div>
+            <div class="stat-value" th:text="${#lists.size(mps)}">0</div>
+            <div class="stat-trend trend-info">Fiches actives</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Matières à Seuil</div>
+            <div
+              class="stat-value"
+              th:text="${#lists.size(mps.?[statut == 'SEUIL ATTEINT'])}"
+            >
+              0
+            </div>
+            <div class="stat-trend trend-warning">Alertes</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Stock Global</div>
+            <div class="stat-value" th:text="${totalStock} + ' kg'">0 kg</div>
+            <div class="stat-trend trend-neutral">Tous articles</div>
+          </article>
+        </section>
+
+        <!-- Tableau de suivi -->
+        <section class="form-section">
+          <h2>Stock Disponible par Matière</h2>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Matière Première</th>
+                  <th>Fournisseur</th>
+                  <th>Quantité en Stock</th>
+                  <th>Seuil Min</th>
+                  <th>PAMP (Ar)</th>
+                  <th>Statut</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="mp : ${mps}">
+                  <td><strong th:text="${mp.nom}"></strong></td>
+                  <td th:text="${mp.fournisseurNom}"></td>
+                  <td
+                    th:text="${mp.quantiteStock} + ' ' + ${mp.uniteLibelle}"
+                  ></td>
+                  <td
+                    th:text="${mp.seuilMinimum != null} ? ${mp.seuilMinimum} + ' ' + ${mp.uniteLibelle} : '—'"
+                  ></td>
+                  <td th:text="${mp.pamp} + ' Ar'"></td>
+                  <td>
+                    <span
+                      th:if="${mp.statut == 'SEUIL ATTEINT'}"
+                      class="badge badge-danger"
+                      >SEUIL ATTEINT</span
+                    >
+                    <span
+                      th:unless="${mp.statut == 'SEUIL ATTEINT'}"
+                      class="badge badge-success"
+                      >Stock Correct</span
+                    >
+                  </td>
+                  <td>
+                    <a
+                      th:href="@{/matieres-premieres/{id}(id=${mp.id})}"
+                      class="btn btn-small btn-ghost"
+                      >Fiche →</a
+                    >
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(mps)}">
+                  <td
+                    colspan="7"
+                    style="text-align: center; padding: 24px; color: #64748b"
+                  >
+                    Aucune matière première enregistrée.
+                    <a th:href="@{/matieres-premieres/nouveau}"
+                      >En créer une →</a
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Couverture Stock Actuel vs Seuil Minimum -->
+        <section
+          class="form-section"
+          th:if="${!#lists.isEmpty(mps.?[seuilMinimum != null])}"
+        >
+          <h2>Couverture Stock Actuel vs Seuil Minimum</h2>
+          <p style="color: #64748b; margin-bottom: 20px">
+            Pourcentage du stock actuel par rapport au seuil minimum d'alerte.
+            En dessous de 100%, une commande est recommandée.
+          </p>
+          <div class="coverage-grid">
+            <div
+              class="coverage-card"
+              th:each="mp : ${mps}"
+              th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}"
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 13px;
+                  margin-bottom: 4px;
+                "
+              >
+                <strong th:text="${mp.nom}"></strong>
+                <span
+                  th:style="${mp.statut == 'SEUIL ATTEINT'} ? 'color: #ef4444; font-weight: 700;' : 'color: #16a34a; font-weight: 700;'"
+                  th:text="${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? '100%+' : #numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"
+                ></span>
+              </div>
+              <div class="jauge-container">
+                <div
+                  th:class="${mp.statut == 'SEUIL ATTEINT'} ? 'jauge-fill jauge-red' : 'jauge-fill jauge-green'"
+                  th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? 100 : mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
-</body>
+  </body>
 </html>
