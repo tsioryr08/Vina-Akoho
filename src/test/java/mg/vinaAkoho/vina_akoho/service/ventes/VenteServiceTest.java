@@ -75,7 +75,7 @@ class VenteServiceTest {
     @BeforeEach
     void setUp() {
         client = new Client();
-        client.setId(1L);
+        client.setId(1);
         client.setNom("Client");
         client.setPrenom("Test");
         client.setNumeroTelephone("0341234567");
@@ -106,7 +106,7 @@ class VenteServiceTest {
     @Test
     void testCreer_PanierVide_ThrowsException() {
         VenteFormDTO requete = new VenteFormDTO();
-        requete.setIdClient(1L);
+        requete.setIdClient(1);
         requete.setIdModePaiement(1L);
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -117,7 +117,7 @@ class VenteServiceTest {
     @Test
     void testCreer_ClientIntrouvable_ThrowsException() {
         VenteFormDTO requete = new VenteFormDTO();
-        requete.setIdClient(999L);
+        requete.setIdClient(999);
         requete.setIdModePaiement(1L);
 
         PanierItemDTO item = PanierItemDTO.builder()
@@ -127,7 +127,7 @@ class VenteServiceTest {
                 .montant(BigDecimal.valueOf(45000))
                 .build();
 
-        when(clientRepository.findByIdAndEstSupprimerFalse(999L)).thenReturn(Optional.empty());
+        when(clientRepository.findByIdAndEstSupprimerFalse(999)).thenReturn(Optional.empty());
 
         assertThrows(Exception.class, () -> {
             venteService.creer(requete, List.of(item), 1);
@@ -137,7 +137,7 @@ class VenteServiceTest {
     @Test
     void testCreer_VenteReussi_AvecFIFO() {
         VenteFormDTO requete = new VenteFormDTO();
-        requete.setIdClient(1L);
+        requete.setIdClient(1);
         requete.setIdModePaiement(1L);
 
         PanierItemDTO item = PanierItemDTO.builder()
@@ -147,7 +147,7 @@ class VenteServiceTest {
                 .montant(BigDecimal.valueOf(45000))
                 .build();
 
-        when(clientRepository.findByIdAndEstSupprimerFalse(1L)).thenReturn(Optional.of(client));
+        when(clientRepository.findByIdAndEstSupprimerFalse(1)).thenReturn(Optional.of(client));
         when(modePaiementRepository.findById(1L)).thenReturn(Optional.of(modePaiement));
         when(statutVenteRepository.findByLibelleIgnoreCase("En attente de paiement"))
                 .thenReturn(Optional.of(statutVente));
@@ -156,7 +156,7 @@ class VenteServiceTest {
         when(ligneVenteRepository.save(any(LigneVente.class))).thenReturn(new LigneVente());
         when(factureRepository.save(any(Facture.class))).thenReturn(new Facture());
         when(sortieProduitService.allouerLots(any(), any(), any(), anyString()))
-                .thenReturn(new SortieProduitService.Allocation(null, BigDecimal.ONE));
+                .thenReturn(List.of(new SortieProduitService.Allocation(null, BigDecimal.ONE)));
 
         VenteDTO result = venteService.creer(requete, List.of(item), 1);
 
