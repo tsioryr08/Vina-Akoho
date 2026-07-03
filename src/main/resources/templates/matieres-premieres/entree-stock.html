@@ -4,19 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Entrée en Stock - VINA AKOHO</title>
-    <link rel="stylesheet" th:href="@{/static/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body class="vina-body">
     <div
-      th:replace="~{layout/sidebar-matierepremiere::sidebar-matierepremiere}"
+      th:replace="~{layout/responsableProduction :: responsableProduction}"
     ></div>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
     <div class="app-main-wrapper">
-      <header th:replace="~{layout/header :: header}"></header>
+      <div th:replace="~{layout/header-production :: header}"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
             <p class="eyebrow">MATIÈRES PREMIÈRES</p>
-            <h1>Entrée en Stock</h1>
+            <h1>Entrée de matiere premiere en Stock</h1>
             <p class="muted-text">
               Réception physique de la marchandise — enregistrez un lot arrivé à
               Mahitsy.

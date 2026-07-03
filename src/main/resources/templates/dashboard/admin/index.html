@@ -12,25 +12,7 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="menu-button" id="vina-menu-button" type="button">
-            ☰
-          </button>
-          <span class="breadcrumb">Dashboard</span>
-        </div>
-        <div class="topbar-actions">
-          <span class="role-pill">RO01 - Administrateur</span>
-          <button
-            class="btn btn-ghost btn-small"
-            id="vina-logout-button"
-            onclick="window.location.href = '/'"
-            type="button"
-          >
-            Déconnexion
-          </button>
-        </div>
-      </div>
+      <div th:replace="~{layout/header-admin :: header}"></div>
 
       <div class="content">
         <section class="page-header">
