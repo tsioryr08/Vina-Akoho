@@ -1,33 +1,37 @@
-<aside class="sidebar">
-<div class="sidebar-brand">
-<img src="../assets/VINA_AKOHO_LOGO.png" alt="VINA AKOHO" class="brand-mark">
-<div>
-<div class="brand-title">VINA AKOHO</div>
-<div class="brand-subtitle">RO05 - Comptable</div>
-</div>
-</div>
+<aside class="sidebar" id="vina-sidebar" th:fragment="sidebar">
+  <div class="sidebar-brand">
+    <img
+      th:src="@{/images/VINA_AKOHO_LOGO.png}"
+      alt="VINA AKOHO"
+      class="brand-mark"
+    />
+    <div>
+      <div class="brand-title">VINA AKOHO</div>
+      <div class="brand-subtitle">RO05 - Comptable</div>
+    </div>
+  </div>
 
-<nav class="sidebar-nav">
-<div class="sidebar-section">Principal</div>
-<a class="sidebar-link" href="comptable-dashboard.html"
->Dashboard <span class="sidebar-code">F9</span></a
->
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Principal</div>
+    <a class="sidebar-link" th:href="@{/comptabilite}"
+      >Dashboard <span class="sidebar-code">F9</span></a
+    >
 
-<div class="sidebar-section">Finance</div>
-<a class="sidebar-link" href="comptable-finances.html"
->Vue d’ensemble financière <span class="sidebar-code">F1</span></a
->
-<a class="sidebar-link" href="comptable-depenses.html"
->Registre des Dépenses <span class="sidebar-code">F2</span></a
->
-<a class="sidebar-link" href="comptable-cout-de-revient.html"
->Coût de revient<span class="sidebar-code">F3</span></a
->
-<a class="sidebar-link" href="comptable-rapports-financiers.html"
->Rapports financiers <span class="sidebar-code">F5</span></a
->
-<a class="sidebar-link" href="clients.html"
->voir creance <span class="sidebar-code">F5</span></a
->
-</nav>
+    <div class="sidebar-section">Finance</div>
+    <a class="sidebar-link" href="comptable-finances.html"
+      >Vue d’ensemble financière <span class="sidebar-code">F1</span></a
+    >
+    <a class="sidebar-link" th:href="@{/api/depenses/comptable-depenses}"
+      >Registre des Dépenses <span class="sidebar-code">F2</span></a
+    >
+    <a class="sidebar-link" href="comptable-cout-de-revient.html"
+      >Coût de revient<span class="sidebar-code">F3</span></a
+    >
+    <a class="sidebar-link" href="comptable-rapports-financiers.html"
+      >Rapports financiers <span class="sidebar-code">F5</span></a
+    >
+    <a class="sidebar-link" href="clients.html"
+      >voir creance <span class="sidebar-code">F5</span></a
+    >
+  </nav>
 </aside>

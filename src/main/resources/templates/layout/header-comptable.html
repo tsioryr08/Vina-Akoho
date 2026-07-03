@@ -1,0 +1,17 @@
+<div class="topbar" th:fragment="header(breadcrumb)">
+  <div class="topbar-left">
+    <button class="menu-button" id="vina-menu-button" type="button">☰</button>
+    <span class="breadcrumb" th:text="${breadcrumb}">Comptabilité</span>
+  </div>
+  <div class="topbar-actions">
+    <span class="role-pill">RO05 - Comptable</span>
+    <button
+      class="btn btn-ghost btn-small"
+      id="vina-logout-button"
+      onclick="window.location.href = '/'"
+      type="button"
+    >
+      Déconnexion
+    </button>
+  </div>
+</div>
