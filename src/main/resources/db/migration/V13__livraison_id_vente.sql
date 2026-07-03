@@ -1,3 +1,4 @@
+-- Renommer colonne et index dans la table livraison
 ALTER TABLE livraison
     RENAME COLUMN id_commande TO id_vente;
 
