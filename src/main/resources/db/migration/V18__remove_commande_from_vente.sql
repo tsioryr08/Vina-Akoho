@@ -1,3 +1,4 @@
+-- Remove commande from vente
 DO $$
 BEGIN
     IF EXISTS (
@@ -34,4 +35,3 @@ BEGIN
         DROP COLUMN id_commande;
     END IF;
 END $$;
-
