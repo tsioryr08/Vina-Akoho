@@ -296,6 +296,183 @@ Commentaire : —
 
 ---
 
+## Sprint 2 — Conformité RG03 (fournisseur, coût, date par lot d'achat)
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : POST /matieres-premieres/entree-stock
+Registration : `test@vinakoho.mg` / test123
+Résultat attendu : Entrée de 300 kg de "Tourteau de Soja" avec coût unitaire saisi à 1600 Ar (différent du tarif fiche 1550 Ar, négociation ponctuelle) → le lot créé enregistre coutUnitaire=1600 et le fournisseur de la fiche.
+Résultat obtenu : Nouveau lot visible dans la fiche avec "Coût unitaire" = 1600 Ar et "Fournisseur" = Agro-HautesTerres (fournisseur de la fiche).
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : RG03 — le prix réel de l'achat est conservé par lot, indépendamment du coutUnitaire par défaut de la fiche.
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : POST /api/matieres-premieres/entree-stock (sans coutUnitaire)
+Registration : —
+Résultat attendu : Coût unitaire absent → HTTP 400, message "Le coût unitaire est obligatoire".
+Résultat obtenu : {"success":false,"message":"Le coût unitaire est obligatoire","data":null}
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Validation @NotNull sur EntreeStockDTO.coutUnitaire.
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : POST /api/matieres-premieres/entree-stock (coutUnitaire=0)
+Registration : —
+Résultat attendu : Coût unitaire = 0 → HTTP 400, message "Le coût unitaire doit être supérieur à 0".
+Résultat obtenu : {"success":false,"message":"Le coût unitaire doit être supérieur à 0","data":null}
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : @DecimalMin(value="0", inclusive=false) sur coutUnitaire, même règle que pour la quantité.
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /api/matieres-premieres/{id} (Maïs Concassé, 2 lots à coûts différents : 1150 Ar × 150 kg et 1250 Ar × 200 kg)
+Registration : —
+Résultat attendu : PAMP recalculé = pondéré par lot = (1150×150 + 1250×200) / (150+200) = 1207,14 Ar/kg, et non plus le coutUnitaire figé de la fiche.
+Résultat obtenu : {"pamp":1207.14,...}
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Évolution Sprint 2 — remplace l'ancien comportement "PAMP verrouillé à la création" testé dans T2.2 ; MatierePremiereService.calculerPamp() applique désormais Σ(coutLot×qtéInitiale)/Σ(qtéInitiale).
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /matieres-premieres/{id} (fiche détail)
+Registration : —
+Résultat attendu : Chaque ligne de la table des lots affiche les colonnes "Fournisseur" et "Coût unitaire" propres à ce lot (et non plus les valeurs génériques de la fiche).
+Résultat obtenu : Table des lots affiche fournisseur + coût par ligne, conforme aux lots créés lors des entrées de stock successives.
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Pour les lots créés avant Sprint 2 (id_fournisseur/cout_unitaire NULL), la fiche retombe sur les valeurs par défaut de la fiche (fallback de compatibilité).
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /matieres-premieres/{id} ("Farine de Poisson Premium", seuil=100, stock=60, aucune sortie enregistrée)
+Registration : —
+Résultat attendu : Section "Suggestion de Réapprovisionnement" affiche 40 (= seuil 100 − stock 60), car aucun historique de sortie n'existe.
+Résultat obtenu : Suggestion affichée = "40 kg".
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Cas sans historique (RG03) — calculerSuggestion() comble simplement le déficit par rapport au seuil.
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /matieres-premieres/{id} (MP avec historique de sorties : 300 kg sorties sur 15 jours, seuil=200, stock=100)
+Registration : —
+Résultat attendu : Consommation extrapolée sur 30 jours = 300/15×30 = 600 kg (arrondi supérieur) ; cible = max(600, seuil 200) = 600 ; suggestion = 600 − 100 = 500 kg.
+Résultat obtenu : Suggestion affichée = "500 kg".
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Cas avec historique — le taux journalier moyen (totalSorties/jours) est extrapolé sur 30 jours, arrondi CEILING.
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /matieres-premieres/{id} (MP dont stock ≥ suggestion calculée)
+Registration : —
+Résultat attendu : Suggestion calculée ≤ 0 → section "Suggestion de Réapprovisionnement" masquée dans fiche.html (affichée uniquement si > 0).
+Résultat obtenu : Section absente de la page, aucune valeur négative affichée.
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : calculerSuggestion() retourne max(0, ...) — jamais de suggestion négative.
+
+---
+
+## Sprint 2.2 — Alertes de stock faible dans le Dashboard (`/stock`)
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /stock
+Registration : `test@vinakoho.mg` / test123
+Résultat attendu : La carte "Seuils Critiques Minimums" liste uniquement les matières premières dont le stock ≤ seuil (Maïs Concassé + Farine de Poisson Premium), avec fournisseur, quantité restante et seuil.
+Résultat obtenu : 2 lignes affichées, correspondant à MatierePremiereService.listerAlertes().
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : DashboardController.stock() ajoute l'attribut "alertesMp" au modèle.
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /stock
+Registration : `test@vinakoho.mg` / test123
+Résultat attendu : La table "État des Stocks Réels" liste tous les produits actifs avec leur quantité en stock réelle (calculée via LotProduitRepository.sommeQuantiteRestante) et un badge de statut.
+Résultat obtenu : Tous les produits actifs affichés, quantités correctes, badges cohérents avec le seuil de chaque produit.
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Avant ce Sprint, la page était entièrement statique (données d'exemple codées en dur).
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /stock (produit "Vina Croissance", stock=40, seuilAlerte=50)
+Registration : —
+Résultat attendu : Badge rouge "Seuil Atteint" affiché pour ce produit (stock ≤ seuilAlerte).
+Résultat obtenu : Badge "Seuil Atteint" (badge-light-red) visible sur la ligne du produit.
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : ProduitService.statut() — même règle RG.2.3.1 que pour les matières premières, appliquée cette fois au seuilAlerte du produit.
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /stock (produit sans seuilAlerte défini, stock=0)
+Registration : —
+Résultat attendu : Badge vert "Normal" malgré un stock à 0, car seuilAlerte est NULL (pas de seuil défini = pas d'alerte).
+Résultat obtenu : Badge "Normal" (badge-light-green) affiché.
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Cohérent avec la règle déjà appliquée aux matières premières (T2.3).
+
+---
+
+Date : 2026-07-03
+Testeur : Rary
+Page : GET /stock (base sans aucune matière première sous seuil)
+Registration : —
+Résultat attendu : Message "✓ Aucune matière première sous le seuil d'alerte." affiché à la place de la liste.
+Résultat obtenu : Message conforme affiché, aucune ligne d'alerte.
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : th:if="${#lists.isEmpty(alertesMp)}" dans dashboard/stock/index.html.
+
+---
+
 ## Tests unitaires automatisés (`MatierePremiereServiceTest`)
 
 Commande : `mvn -Dtest=MatierePremiereServiceTest test`
@@ -320,8 +497,10 @@ Résultat : **5/5 — 0 échec**
 | T2.2 Quantités temps réel | 4 | 4 | 0 |
 | T2.3 Seuils d'alerte | 4 | 4 | 0 |
 | T2.4 Historique / FIFO | 5 | 5 | 0 |
+| Sprint 2 — RG03 (fournisseur/coût/date par lot) | 8 | 8 | 0 |
+| Sprint 2.2 — Alertes Dashboard `/stock` | 5 | 5 | 0 |
 | Tests unitaires auto | 5 | 5 | 0 |
-| **Total** | **25** | **25** | **0** |
+| **Total** | **38** | **38** | **0** |
 
 ## Bugs identifiés
 Aucun.
