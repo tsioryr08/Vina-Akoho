@@ -1,10 +1,19 @@
 package mg.vinaAkoho.vina_akoho.controller.dashboard;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
+
 @Controller
+@RequiredArgsConstructor
 public class DashboardController {
+
+    private final RecetteVenteService recetteVenteService;
 
     @GetMapping("/admin")
     public String admin() {
@@ -17,7 +26,11 @@ public class DashboardController {
     }
 
     @GetMapping("/production")
-    public String production() {
+    public String production(Model model) {
+        LocalDate debutMois = LocalDate.now().withDayOfMonth(1);
+        LocalDate aujourdHui = LocalDate.now();
+        var recettes = recetteVenteService.listerParPeriode(debutMois, aujourdHui);
+        model.addAttribute("recetteMensuelle", recetteVenteService.calculerTotal(recettes));
         return "dashboard/production/index";
     }
 

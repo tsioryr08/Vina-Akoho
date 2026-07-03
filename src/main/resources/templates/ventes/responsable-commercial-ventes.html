@@ -1,186 +1,137 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VINA AKOHO - Ventes</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-  </head>
-  <body class="vina-body">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="vina-body">
     <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
-      <div id="vina-content">
-        <section class="page-header theme-green">
-          <div>
-            <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
-            <h1>Gestion des Ventes</h1>
-            <p class="muted-text">
-              Suivi des commandes clients, facturation et coordination avec le
-              service livraison.
-            </p>
-          </div>
-          <div class="header-actions">
-            <a class="btn btn-green" th:href="@{/ventes/nouvelle}"
-              >+ Nouvelle Vente</a
-            >
-            <button class="btn btn-white" type="button">Exporter Excel</button>
-          </div>
-        </section>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-content">
+            <section class="page-header theme-green">
+                <div>
+                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
+                    <h1>Gestion des Ventes</h1>
+                    <p class="muted-text">Suivi des commandes clients, facturation et coordination avec le service livraison.</p>
+                </div>
+                <div class="header-actions">
+                    <a class="btn btn-green" th:href="@{/ventes/nouvelle}">+ Nouvelle Vente</a>
+                    <button class="btn btn-white" type="button">Exporter Excel</button>
+                </div>
+            </section>
 
-        <div
-          th:if="${success}"
-          class="info-banner success"
-          th:text="${success}"
-        ></div>
-        <div
-          th:if="${error}"
-          class="info-banner error"
-          th:text="${error}"
-        ></div>
+            <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+            <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
 
-        <section class="stats-grid">
-          <article class="stat-card">
-            <div class="stat-label">Ventes du jour</div>
-            <div class="stat-value">0</div>
-            <div class="stat-trend trend-positive">+0 vs hier</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Chiffre d'affaires (Mois)</div>
-            <div class="stat-value">0 Ar</div>
-            <div class="stat-trend trend-positive">Objectif 0%</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Commandes en attente</div>
-            <div class="stat-value">0</div>
-            <div class="stat-trend trend-warning">À valider</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Taux de conversion</div>
-            <div class="stat-value">0%</div>
-            <div class="stat-trend trend-info">Stable</div>
-          </article>
-        </section>
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Ventes du jour</div>
+                    <div class="stat-value" th:text="${statistiques.ventesDuJour}">0</div>
+                    <div class="stat-trend trend-positive"
+                         th:text="${statistiques.variationVentesHier >= 0 ? '+' + statistiques.variationVentesHier : statistiques.variationVentesHier} + ' vs hier'">+0 vs hier</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Chiffre d'affaires (Mois)</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(statistiques.chiffreAffairesMois, 0, 'COMMA', 0, 'POINT')} + ' Ar'">0 Ar</div>
+                    <div class="stat-trend trend-positive">Ventes validées</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Commandes en attente</div>
+                    <div class="stat-value" th:text="${statistiques.commandesEnAttente}">0</div>
+                    <div class="stat-trend trend-warning">À valider</div>
+                </article>
+                <article class="stat-card">
+                    <div class="stat-label">Taux de conversion</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(statistiques.tauxConversion, 0, 'COMMA', 1, 'POINT')} + '%'">0%</div>
+                    <div class="stat-trend trend-info">Stable</div>
+                </article>
+            </section>
 
-        <div class="simulation-grid" style="grid-template-columns: 300px 1fr">
-          <aside class="side-panel">
-            <div class="side-panel-heading">
-              <h2>Filtres avancés</h2>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Client</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Nom du client..."
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Statut commande</label>
-              <select class="form-control">
-                <option>Tous</option>
-                <option>Validée</option>
-                <option>En attente de paiement</option>
-                <option>Annulée</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Période</label>
-              <div style="display: flex; flex-direction: column; gap: 8px">
-                <input type="date" class="form-control" />
-                <input type="date" class="form-control" />
-              </div>
-            </div>
-            <div class="form-actions" style="margin-top: 20px">
-              <button class="btn btn-white w-100" type="button">
-                Réinitialiser
-              </button>
-            </div>
-          </aside>
-
-          <main>
-            <div class="table-card">
-              <div class="card-header">
-                <h2 class="card-title">Flux des Ventes</h2>
-                <div
-                  class="card-badge"
-                  style="
-                    background: #dcfce7;
-                    color: #166534;
-                    border: 1px solid #bbf7d0;
-                  "
-                  th:text="${ventes != null ? ventes.size() + ' Ventes affichées' : '0 Ventes affichées'}"
-                ></div>
-              </div>
-              <div class="table-wrap">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Client</th>
-                      <th>Date</th>
-                      <th>Produit(s)</th>
-                      <th>Total (Ar)</th>
-                      <th>Statut</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr th:each="vente : ${ventes}">
-                      <td>
-                        <span
-                          class="code-ref"
-                          th:text="${'V-' + vente.id}"
-                        ></span>
-                      </td>
-                      <td>
-                        <strong th:text="${vente.clientNom}"></strong
-                        ><br /><small
-                          class="muted-text"
-                          th:text="${vente.clientPrenom}"
-                        ></small>
-                      </td>
-                      <td
-                        th:text="${#temporals.format(vente.dateVente, 'dd MMM yyyy')}"
-                      ></td>
-                      <td>-</td>
-                      <td>
-                        <strong
-                          th:text="${#numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
-                        ></strong>
-                      </td>
-                      <td>
-                        <span
-                          class="badge badge-success"
-                          th:text="${vente.statutVente}"
-                        ></span>
-                      </td>
-                      <td>
-                        <div style="display: flex; gap: 4px">
-                          <a
-                            class="btn-icon"
-                            th:href="@{/ventes/{id}(id=${vente.id})}"
-                            >👁️</a
-                          >
+            <div class="simulation-grid" style="grid-template-columns: 300px 1fr;">
+                <aside class="side-panel">
+                    <div class="side-panel-heading">
+                        <h2>Filtres avancés</h2>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client</label>
+                        <input type="text" class="form-control" placeholder="Nom du client...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Statut commande</label>
+                        <select class="form-control">
+                            <option>Tous</option>
+                            <option>Validée</option>
+                            <option>En attente de paiement</option>
+                            <option>Annulée</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Période</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="date" class="form-control">
+                            <input type="date" class="form-control">
                         </div>
-                      </td>
-                    </tr>
-                    <tr th:if="${ventes == null or #lists.isEmpty(ventes)}">
-                      <td colspan="7" class="empty-state">
-                        <p>📦 Aucune vente enregistrée.</p>
-                        <p>Créez une vente pour afficher les commandes ici.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                    </div>
+                    <div class="form-actions" style="margin-top: 20px;">
+                        <button class="btn btn-white w-100" type="button">Réinitialiser</button>
+                    </div>
+                </aside>
+
+                <main>
+                    <div class="table-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Flux des Ventes</h2>
+                            <div class="card-badge" style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;" th:text="${ventes != null ? ventes.size() + ' Ventes affichées' : '0 Ventes affichées'}"></div>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Produit(s)</th>
+                                        <th>Total (Ar)</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="vente : ${ventes}">
+                                        <td><span class="code-ref" th:text="${'V-' + vente.id}"></span></td>
+                                        <td><strong th:text="${vente.clientNom}"></strong><br><small class="muted-text" th:text="${vente.clientPrenom}"></small></td>
+                                        <td th:text="${#temporals.format(vente.dateVente, 'dd MMM yyyy')}"></td>
+                                        <td>
+                                            <span th:each="ligne, iter : ${vente.lignes}"
+                                                  th:text="${ligne.nomProduit + (iter.last ? '' : ', ')}">Produit</span>
+                                        </td>
+                                        <td><strong th:text="${#numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></strong></td>
+                                        <td><span class="badge badge-success" th:text="${vente.statutVente}"></span></td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px;">
+                                                <a class="btn-icon" th:href="@{/ventes/{id}(id=${vente.id})}">👁️</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${ventes == null or #lists.isEmpty(ventes)}">
+                                        <td colspan="7" class="empty-state">
+                                            <p>📦 Aucune vente enregistrée.</p>
+                                            <p>Créez une vente pour afficher les commandes ici.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
             </div>
-          </main>
         </div>
-      </div>
-      <div id="vina-footer" th:replace="~{layout/footer}"></div>
+        <div id="vina-footer" th:replace="~{layout/footer}"></div>
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
-  </body>
+</body>
 </html>

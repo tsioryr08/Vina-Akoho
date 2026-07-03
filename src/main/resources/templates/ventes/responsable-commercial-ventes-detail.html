@@ -1,159 +1,124 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'VINA AKOHO - Détail Vente #' + ${vente.id}"></title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-  </head>
-  <body class="vina-body">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="vina-body">
     <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
-      <div id="vina-content">
-        <section class="page-header">
-          <div>
-            <p class="eyebrow">RO04 - Responsable Commercial</p>
-            <h1 th:text="'Détail de la vente #' + ${vente.id}"></h1>
-            <p>Fiche récapitulative figée d’une vente spécifique.</p>
-          </div>
-          <span class="role-badge">RO04 - Responsable Commercial</span>
-        </section>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-content">
+            <section class="page-header">
+                <div>
+                    <p class="eyebrow">RO04 - Responsable Commercial</p>
+                    <h1 th:text="'Détail de la vente #' + ${vente.id}"></h1>
+                    <p>Fiche récapitulative figée d’une vente spécifique.</p>
+                </div>
+                <span class="role-badge">RO04 - Responsable Commercial</span>
+            </section>
 
-        <section class="tab-list" role="tablist">
-          <a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
-          <a class="tab-link" th:href="@{/ventes/historique}">Historique</a>
-          <a class="tab-link" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
-        </section>
+            <section class="tab-list" role="tablist">
+                <a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
+                <a class="tab-link" th:href="@{/ventes/historique}">Historique</a>
+                <a class="tab-link" th:href="@{/ventes/recettes}">Recettes</a>
+                <a class="tab-link" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
+            </section>
 
-        <section class="detail-grid">
-          <div class="detail-card">
-            <div class="detail-card-header">
-              <h2>Informations vente</h2>
-              <span
-                class="badge badge-success"
-                th:text="${vente.statutVente}"
-              ></span>
-            </div>
-            <div class="detail-row">
-              <span>ID Vente</span>
-              <strong th:text="${vente.id}"></strong>
-            </div>
-            <div class="detail-row">
-              <span>Client</span>
-              <strong
-                th:text="${vente.clientNom + ' ' + vente.clientPrenom}"
-              ></strong>
-            </div>
-            <div class="detail-row">
-              <span>Date de l’opération</span>
-              <strong
-                th:text="${#temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"
-              ></strong>
-            </div>
-            <div class="detail-row">
-              <span>Mode paiement</span>
-              <strong th:text="${vente.modePaiement}"></strong>
-            </div>
-          </div>
+            <section class="detail-grid">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h2>Informations vente</h2>
+                        <span class="badge badge-success" th:text="${vente.statutVente}"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span>ID Vente</span>
+                        <strong th:text="${vente.id}"></strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Client</span>
+                        <strong th:text="${vente.clientNom + ' ' + vente.clientPrenom}"></strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Date de l’opération</span>
+                        <strong th:text="${#temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Mode paiement</span>
+                        <strong th:text="${vente.modePaiement}"></strong>
+                    </div>
+                </div>
 
-          <div class="detail-card">
-            <div class="detail-card-header">
-              <h2>Coordonnées & commande</h2>
-              <span class="badge badge-success">Livrée</span>
-            </div>
-            <div class="detail-row">
-              <span>Facture</span>
-              <strong
-                th:text="${vente.facture != null ? vente.facture.numero : '-'}"
-              ></strong>
-            </div>
-            <div class="detail-row">
-              <span>Date émission</span>
-              <strong
-                th:text="${vente.facture != null ? #temporals.format(vente.facture.dateEmission, 'dd/MM/yyyy') : '-'}"
-              ></strong>
-            </div>
-            <div class="detail-row">
-              <span>Total TTC</span>
-              <strong
-                th:text="${vente.facture != null ? #numbers.formatDecimal(vente.facture.montantTtc, 0, 'COMMA', 2, 'POINT') + ' Ar' : '-'}"
-              ></strong>
-            </div>
-          </div>
-        </section>
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h2>Coordonnées & commande</h2>
+                        <span class="badge badge-success">Livrée</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Facture</span>
+                        <strong th:text="${vente.facture != null ? vente.facture.numero : '-'}"></strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Date émission</span>
+                        <strong th:text="${vente.facture != null ? #temporals.format(vente.facture.dateEmission, 'dd/MM/yyyy') : '-'}"></strong>
+                    </div>
+                    <div class="detail-row">
+                        <span>Total TTC</span>
+                        <strong th:text="${vente.facture != null ? #numbers.formatDecimal(vente.facture.montantTtc, 0, 'COMMA', 2, 'POINT') + ' Ar' : '-'}"></strong>
+                    </div>
+                </div>
+            </section>
 
-        <section class="table-card">
-          <div class="table-card-header">
-            <div>
-              <h2 class="card-title">Articles vendus</h2>
-              <p class="card-subtitle">
-                Détail des lignes de produits rattachées à la vente.
-              </p>
-            </div>
-          </div>
+            <section class="table-card">
+                <div class="table-card-header">
+                    <div>
+                        <h2 class="card-title">Articles vendus</h2>
+                        <p class="card-subtitle">Détail des lignes de produits rattachées à la vente.</p>
+                    </div>
+                </div>
 
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Produit</th>
-                  <th>Quantité</th>
-                  <th>Prix unitaire</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="ligne : ${vente.lignes}">
-                  <td th:text="${ligne.nomProduit}"></td>
-                  <td th:text="${ligne.quantite} + ' kg'"></td>
-                  <td
-                    th:text="${#numbers.formatDecimal(ligne.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' Ar / kg'"
-                  ></td>
-                  <td
-                    th:text="${#numbers.formatDecimal(ligne.montant, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
-                  ></td>
-                </tr>
-                <tr
-                  th:if="${vente.lignes == null or #lists.isEmpty(vente.lignes)}"
-                >
-                  <td colspan="4" class="empty-state">
-                    Aucune ligne de vente.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Prix unitaire</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ligne : ${vente.lignes}">
+                            <td th:text="${ligne.nomProduit}"></td>
+                            <td th:text="${ligne.quantite} + ' kg'"></td>
+                            <td th:text="${#numbers.formatDecimal(ligne.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' Ar / kg'"></td>
+                            <td th:text="${#numbers.formatDecimal(ligne.montant, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
+                        </tr>
+                        <tr th:if="${vente.lignes == null or #lists.isEmpty(vente.lignes)}">
+                            <td colspan="4" class="empty-state">Aucune ligne de vente.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-          <div class="summary-card">
-            <div>
-              <span class="summary-label">Total facture</span>
-              <span
-                class="summary-value"
-                th:text="${vente.facture != null ? #numbers.formatDecimal(vente.facture.montantTtc, 0, 'COMMA', 2, 'POINT') + ' Ar' : #numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT') + ' Ar'}"
-              ></span>
-            </div>
-            <div class="card-actions">
-              <a class="btn btn-ghost" th:href="@{/ventes}"
-                >Retour à la liste</a
-              >
-              <a
-                class="btn btn-blue-dark"
-                th:href="@{/ventes/{id}/facture(id=${vente.id})}"
-                >PDF Facture</a
-              >
-              <a
-                class="btn btn-green"
-                th:href="@{/ventes/{id}/bon-livraison(id=${vente.id})}"
-                >Bon de livraison</a
-              >
-            </div>
-          </div>
-        </section>
-        <div id="vina-footer" th:replace="~{layout/footer}"></div>
-      </div>
+                <div class="summary-card">
+                    <div>
+                        <span class="summary-label">Total facture</span>
+                        <span class="summary-value" th:text="${vente.facture != null ? #numbers.formatDecimal(vente.facture.montantTtc, 0, 'COMMA', 2, 'POINT') + ' Ar' : #numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT') + ' Ar'}"></span>
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn btn-ghost" th:href="@{/ventes}">Retour à la liste</a>
+                        <a class="btn btn-blue-dark" th:href="@{/ventes/{id}/facture(id=${vente.id})}">PDF Facture</a>
+                        <a class="btn btn-green" th:href="@{/ventes/{id}/bon-livraison(id=${vente.id})}">Bon de livraison</a>
+                    </div>
+                </div>
+            </section>
+            <div id="vina-footer" th:replace="~{layout/footer}"></div>
+        </div>
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
-  </body>
+</body>
 </html>

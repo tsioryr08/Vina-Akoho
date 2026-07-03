@@ -6,6 +6,7 @@ import mg.vinaAkoho.vina_akoho.dto.ventes.LigneVenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.PanierItemDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteFormDTO;
+import mg.vinaAkoho.vina_akoho.dto.ventes.VenteStatistiquesDTO;
 import mg.vinaAkoho.vina_akoho.entity.clients.Client;
 import mg.vinaAkoho.vina_akoho.entity.produit.Produit;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Commande;
@@ -36,7 +37,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +74,36 @@ public class VenteService {
                 .orElseThrow(() -> VenteNotFoundException.parId(id));
     }
 
+    public VenteStatistiquesDTO obtenirStatistiques() {
+        LocalDate aujourdHui = LocalDate.now();
+        LocalDate hier = aujourdHui.minusDays(1);
+        LocalDate debutMois = aujourdHui.withDayOfMonth(1);
+
+        long ventesDuJour = venteRepository.compterVentesValideesEntre(
+                aujourdHui.atStartOfDay(), aujourdHui.plusDays(1).atStartOfDay());
+        long ventesHier = venteRepository.compterVentesValideesEntre(
+                hier.atStartOfDay(), aujourdHui.atStartOfDay());
+        BigDecimal chiffreAffairesMois = venteRepository.sommeVentesValideesEntre(
+                debutMois.atStartOfDay(), aujourdHui.plusDays(1).atStartOfDay());
+        long ventesValidees = venteRepository.compterVentesValideesEntre(
+                LocalDateTime.of(1900, 1, 1, 0, 0),
+                LocalDateTime.of(3000, 1, 1, 0, 0));
+        long toutesLesVentes = venteRepository.compterToutesLesVentes();
+        BigDecimal tauxConversion = toutesLesVentes == 0
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(ventesValidees)
+                        .multiply(BigDecimal.valueOf(100))
+                        .divide(BigDecimal.valueOf(toutesLesVentes), 1, RoundingMode.HALF_UP);
+
+        return VenteStatistiquesDTO.builder()
+                .ventesDuJour(ventesDuJour)
+                .variationVentesHier(ventesDuJour - ventesHier)
+                .chiffreAffairesMois(chiffreAffairesMois)
+                .commandesEnAttente(commandeRepository.compterCommandesEnAttente())
+                .tauxConversion(tauxConversion)
+                .build();
+    }
+
     public VenteDTO creer(VenteFormDTO requete, List<PanierItemDTO> panier, Integer idEmploye) {
         if (panier == null || panier.isEmpty()) {
             throw new IllegalArgumentException("Le panier ne peut pas être vide");
@@ -95,7 +128,11 @@ public class VenteService {
         commande = commandeRepository.save(commande);
 
         BigDecimal montantTotal = panier.stream()
-                .map(item -> item.getPrixUnitaire().multiply(item.getQuantite()))
+                .map(item -> {
+                    Produit produit = produitRepository.findById(item.getIdProduit())
+                            .orElseThrow(() -> ProduitNotFoundException.parId(item.getIdProduit()));
+                    return produit.getPrixVente().multiply(item.getQuantite());
+                })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Vente vente = new Vente();
@@ -116,15 +153,15 @@ public class VenteService {
             ligneCommande.setCommande(commandeFinal);
             ligneCommande.setProduit(produit);
             ligneCommande.setQuantite(item.getQuantite());
-            ligneCommande.setPrixUnitaire(item.getPrixUnitaire());
+            ligneCommande.setPrixUnitaire(produit.getPrixVente());
             ligneCommandeRepository.save(ligneCommande);
 
             LigneVente ligneVente = new LigneVente();
             ligneVente.setVente(venteFinal);
             ligneVente.setProduit(produit);
             ligneVente.setQuantite(item.getQuantite());
-            ligneVente.setPrixUnitaire(item.getPrixUnitaire());
-            ligneVente.setMontant(item.getPrixUnitaire().multiply(item.getQuantite()));
+            ligneVente.setPrixUnitaire(produit.getPrixVente());
+            ligneVente.setMontant(produit.getPrixVente().multiply(item.getQuantite()));
             ligneVente = ligneVenteRepository.save(ligneVente);
 
             for (SortieProduitService.Allocation allocation : sortieProduitService.allouerLots(

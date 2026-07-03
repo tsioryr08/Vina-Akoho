@@ -1,10 +1,12 @@
 package mg.vinaAkoho.vina_akoho.controller.ventes;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
@@ -29,6 +32,7 @@ import mg.vinaAkoho.vina_akoho.repository.clients.ClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.security.SessionFilter;
+import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
 import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
 
 @Controller
@@ -39,6 +43,7 @@ public class VenteController {
     private static final String SESSION_PANIER = "panier";
 
     private final VenteService venteService;
+    private final RecetteVenteService recetteVenteService;
     private final ClientRepository clientRepository;
     private final ProduitRepository produitRepository;
     private final ModePaiementRepository modePaiementRepository;
@@ -91,6 +96,7 @@ public class VenteController {
     @GetMapping
     public String listerTous(Model model) {
         model.addAttribute("ventes", venteService.listerToutes());
+        model.addAttribute("statistiques", venteService.obtenirStatistiques());
         return "ventes/responsable-commercial-ventes";
     }
 
@@ -103,6 +109,24 @@ public class VenteController {
                 .map(VenteDTO::getMontantTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
         return "ventes/responsable-commercial-ventes-historique";
+    }
+
+    @GetMapping("/recettes")
+    public String recettes(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate debut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+            Model model) {
+        LocalDate dateDebut = debut != null ? debut : LocalDate.now().withDayOfMonth(1);
+        LocalDate dateFin = fin != null ? fin : LocalDate.now();
+
+        var recettes = recetteVenteService.listerParPeriode(dateDebut, dateFin);
+        model.addAttribute("debut", dateDebut);
+        model.addAttribute("fin", dateFin);
+        model.addAttribute("recettes", recettes);
+        model.addAttribute("recetteTotale", recetteVenteService.calculerTotal(recettes));
+        model.addAttribute("quantiteTotale", recetteVenteService.calculerQuantiteTotale(recettes));
+        model.addAttribute("nombreLignes", recettes.size());
+        return "ventes/responsable-commercial-recettes";
     }
 
     @GetMapping("/nouvelle")
