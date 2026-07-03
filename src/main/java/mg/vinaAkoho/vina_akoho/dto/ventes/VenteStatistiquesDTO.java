@@ -18,6 +18,6 @@ public class VenteStatistiquesDTO {
     private long ventesDuJour;
     private long variationVentesHier;
     private BigDecimal chiffreAffairesMois;
-    private long commandesEnAttente;
+    private long ventesEnAttente;
     private BigDecimal tauxConversion;
 }

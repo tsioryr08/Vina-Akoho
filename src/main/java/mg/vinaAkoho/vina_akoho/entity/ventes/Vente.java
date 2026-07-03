@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mg.vinaAkoho.vina_akoho.entity.clients.Client;
 
 @Entity
 @Table(name = "vente")
@@ -30,8 +31,8 @@ public class Vente {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_commande", nullable = false)
-    private Commande commande;
+    @JoinColumn(name = "id_client", nullable = false)
+    private Client client;
 
     @Column(name = "date_vente")
     private LocalDateTime dateVente;
