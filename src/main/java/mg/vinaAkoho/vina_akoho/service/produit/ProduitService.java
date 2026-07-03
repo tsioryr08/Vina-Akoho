@@ -9,6 +9,7 @@ import mg.vinaAkoho.vina_akoho.exception.produit.CategorieNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.produit.ProduitDejaExistantException;
 import mg.vinaAkoho.vina_akoho.exception.produit.ProduitNotFoundException;
 import mg.vinaAkoho.vina_akoho.repository.produit.CategorieRepository;
+import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitSpecification;
 import org.springframework.data.domain.Page;
@@ -24,13 +25,24 @@ import java.util.List;
 @Transactional
 public class ProduitService {
 
+    private static final String STATUT_ALERTE = "SEUIL ATTEINT";
+    private static final String STATUT_OK = "Stock Correct";
+
     private final ProduitRepository produitRepository;
     private final CategorieRepository categorieRepository;
+    private final LotProduitRepository lotProduitRepository;
 
     public List<ProduitDTO> listerTous() {
         return produitRepository.findAllActifs()
                 .stream()
                 .map(this::versDTO)
+                .toList();
+    }
+
+    // Rary — F2.2 : produits dont le stock actuel est descendu au seuil d'alerte
+    public List<ProduitDTO> listerAlertes() {
+        return listerTous().stream()
+                .filter(p -> STATUT_ALERTE.equals(p.getStatut()))
                 .toList();
     }
 
@@ -154,6 +166,7 @@ public class ProduitService {
         produit.setDescription(requete.getDescription());
     }
     private ProduitDTO versDTO(Produit produit) {
+        BigDecimal stock = lotProduitRepository.sommeQuantiteRestante(produit.getId());
         return ProduitDTO.builder()
                 .id(produit.getId())
                 .ref(produit.getRef())
@@ -170,7 +183,17 @@ public class ProduitService {
                 .pourcentageHumiditeMax(produit.getCategorie().getPourcentageHumiditeMax())
                 .createdAt(produit.getCreatedAt())
                 .updatedAt(produit.getUpdatedAt())
+                .quantiteStock(stock)
+                .statut(statut(stock, produit.getSeuilAlerte()))
                 .build();
+    }
+
+    // Rary — F2.2, règle métier Sprint 2.2 : quantité actuelle <= seuil_alerte -> alerte
+    private String statut(BigDecimal stock, Integer seuilAlerte) {
+        if (seuilAlerte != null && stock.compareTo(BigDecimal.valueOf(seuilAlerte)) <= 0) {
+            return STATUT_ALERTE;
+        }
+        return STATUT_OK;
     }
 
 }
