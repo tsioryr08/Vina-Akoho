@@ -2,6 +2,7 @@ package mg.vinaAkoho.vina_akoho.controller.produit;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.produit.HistoriquePrixProduitDTO;
 import mg.vinaAkoho.vina_akoho.dto.produit.ProduitDTO;
 import mg.vinaAkoho.vina_akoho.dto.produit.ProduitRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.produit.CategorieDTO;
@@ -90,6 +91,8 @@ public class ProduitController {
     @GetMapping("/{id}")
     public String trouverParId(@PathVariable Long id, Model model) {
         model.addAttribute("produit", produitService.trouverParId(id));
+        List<HistoriquePrixProduitDTO> historiquePrix = produitService.listerHistoriquePrix(id);
+        model.addAttribute("historiquePrix", historiquePrix);
         return "produit/detail";
     }
 

@@ -104,6 +104,39 @@
           </article>
         </section>
 
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Total achats</div>
+            <div
+              class="stat-value"
+              th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.totalAchats, 0, 'COMMA', 2, 'POINT') + ' Ar'}"
+            >
+              0 Ar
+            </div>
+            <div class="stat-trend trend-info">Prix total</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Montant réglé</div>
+            <div
+              class="stat-value"
+              th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.totalRegle, 0, 'COMMA', 2, 'POINT') + ' Ar'}"
+            >
+              0 Ar
+            </div>
+            <div class="stat-trend trend-positive">Ventes validées</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Solde restant</div>
+            <div
+              class="stat-value"
+              th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.soldeRestant, 0, 'COMMA', 2, 'POINT') + ' Ar'}"
+            >
+              0 Ar
+            </div>
+            <div class="stat-trend trend-negative">Montant à recouvrer</div>
+          </article>
+        </section>
+
         <div class="card card-spaced">
           <div class="card-header">
             <h2 class="card-title">Coordonnees & Informations</h2>
@@ -157,6 +190,94 @@
                   >Client modifie</span
                 >
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-spaced">
+          <div class="card-header">
+            <h2 class="card-title">Historique des achats</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Vente</th>
+                    <th>Date</th>
+                    <th>Articles</th>
+                    <th>Facture</th>
+                    <th>Statut</th>
+                    <th>Montant</th>
+                    <th>Reste à payer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    th:each="vente : ${historiqueAchats == null ? null : historiqueAchats.ventes}"
+                    th:with="montantVente=${vente.facture != null && vente.facture.montantTtc != null ? vente.facture.montantTtc : vente.montantTotal}, resteAPayer=${vente.statutVente != null && vente.statutVente.equalsIgnoreCase('En attente de paiement') ? montantVente : 0}"
+                  >
+                    <td th:text="${'VTE-' + #numbers.formatInteger(vente.id, 3)}">VTE-001</td>
+                    <td th:text="${vente.dateVente == null ? '--' : #temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}">01/07/2026 10:00</td>
+                    <td>
+                      <div th:if="${vente.lignes != null and !#lists.isEmpty(vente.lignes)}">
+                        <div th:each="ligne, iterStat : ${vente.lignes}">
+                          <span th:text="${ligne.nomProduit + ' x ' + ligne.quantite + (ligne.unite != null and ligne.unite != '' ? ' ' + ligne.unite : '')}">Aliment x 2 kg</span>
+                          <span th:if="${!iterStat.last}">, </span>
+                        </div>
+                      </div>
+                      <span th:unless="${vente.lignes != null and !#lists.isEmpty(vente.lignes)}">--</span>
+                    </td>
+                    <td th:text="${vente.facture == null ? '--' : vente.facture.numero}">FACT-001</td>
+                    <td>
+                      <span class="badge badge-blue" th:text="${vente.statutVente}">En attente de paiement</span>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(montantVente, 0, 'COMMA', 2, 'POINT') + ' Ar'}">0 Ar</td>
+                    <td th:text="${#numbers.formatDecimal(resteAPayer, 0, 'COMMA', 2, 'POINT') + ' Ar'}">0 Ar</td>
+                  </tr>
+                  <tr th:if="${historiqueAchats == null or historiqueAchats.ventes == null or #lists.isEmpty(historiqueAchats.ventes)}">
+                    <td colspan="7" class="empty-table-message">Aucun achat enregistre pour ce client.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-spaced">
+          <div class="card-header">
+            <h2 class="card-title">Toutes les ventes du client</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Vente</th>
+                    <th>Date</th>
+                    <th>Facture</th>
+                    <th>Statut</th>
+                    <th>Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    th:each="vente : ${historiqueAchats == null ? null : historiqueAchats.ventes}"
+                    th:with="montantVente=${vente.facture != null && vente.facture.montantTtc != null ? vente.facture.montantTtc : vente.montantTotal}"
+                  >
+                    <td th:text="${'VTE-' + #numbers.formatInteger(vente.id, 3)}">VTE-001</td>
+                    <td th:text="${vente.dateVente == null ? '--' : #temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}">01/07/2026 10:00</td>
+                    <td th:text="${vente.facture == null ? '--' : vente.facture.numero}">FACT-001</td>
+                    <td>
+                      <span class="badge badge-blue" th:text="${vente.statutVente}">En attente de paiement</span>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(montantVente, 0, 'COMMA', 2, 'POINT') + ' Ar'}">0 Ar</td>
+                  </tr>
+                  <tr th:if="${historiqueAchats == null or historiqueAchats.ventes == null or #lists.isEmpty(historiqueAchats.ventes)}">
+                    <td colspan="5" class="empty-table-message">Aucune vente enregistree pour ce client.</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

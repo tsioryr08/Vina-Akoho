@@ -23,4 +23,5 @@ public class FactureDTO {
     private BigDecimal tauxTva;
     private BigDecimal montantTva;
     private BigDecimal montantTtc;
+    private BigDecimal remise;
 }

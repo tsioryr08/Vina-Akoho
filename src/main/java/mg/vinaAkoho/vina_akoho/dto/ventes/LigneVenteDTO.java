@@ -17,6 +17,7 @@ public class LigneVenteDTO {
 
     private String nomProduit;
     private BigDecimal quantite;
+    private String unite;
     private BigDecimal prixUnitaire;
     private BigDecimal montant;
 }

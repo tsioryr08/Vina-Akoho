@@ -104,8 +104,8 @@ public class MatierePremiereService {
         MatierePremiere mp = matierePremiereRepository.findById(dto.idMatierePremiere())
                 .orElseThrow(() -> new MatierePremiereNotFoundException(
                         "Matière première introuvable : " + dto.idMatierePremiere()));
-        TypeMouvement entree = typeMouvementRepository.findByLibelle("ENTREE")
-                .orElseThrow(() -> new TypeMouvementNotFoundException("Type de mouvement 'ENTREE' non configuré"));
+        TypeMouvement entree = typeMouvementRepository.findByLibelle("Entree")
+                .orElseThrow(() -> new TypeMouvementNotFoundException("Type de mouvement 'Entree' non configuré"));
 
         LotMp lot = new LotMp();
         lot.setMatierePremiere(mp);

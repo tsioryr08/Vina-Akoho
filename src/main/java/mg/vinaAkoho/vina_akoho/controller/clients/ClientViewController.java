@@ -3,12 +3,14 @@ package mg.vinaAkoho.vina_akoho.controller.clients;
 import jakarta.validation.Valid;
 import java.util.Map;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientConnexionDTO;
+import mg.vinaAkoho.vina_akoho.dto.clients.ClientHistoriqueAchatsDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientGestionDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientResumeDTO;
 import mg.vinaAkoho.vina_akoho.repository.clients.ServiceClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.clients.TypeClientRepository;
 import mg.vinaAkoho.vina_akoho.service.clients.ClientService;
+import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,13 +30,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ClientViewController {
 
     private final ClientService clientService;
+    private final VenteService venteService;
     private final ServiceClientRepository serviceClientRepository;
     private final TypeClientRepository typeClientRepository;
 
     public ClientViewController(ClientService clientService,
+                                VenteService venteService,
                                 ServiceClientRepository serviceClientRepository,
                                 TypeClientRepository typeClientRepository) {
         this.clientService = clientService;
+        this.venteService = venteService;
         this.serviceClientRepository = serviceClientRepository;
         this.typeClientRepository = typeClientRepository;
     }
@@ -118,7 +123,11 @@ public class ClientViewController {
 
     @GetMapping(value = "/{id}", produces = MediaType.TEXT_HTML_VALUE)
     public String detail(@PathVariable Integer id, Model model) {
-        model.addAttribute("client", clientService.getClientById(id));
+        ClientGestionDTO client = clientService.getClientById(id);
+        ClientHistoriqueAchatsDTO historiqueAchats = venteService.obtenirHistoriqueClient(id);
+
+        model.addAttribute("client", client);
+        model.addAttribute("historiqueAchats", historiqueAchats);
         return "clients/clients-detail";
     }
 

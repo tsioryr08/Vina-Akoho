@@ -299,3 +299,36 @@ Le champ prix, anciennement readonly, est maintenant un <input type="number" nam
 ### Tests mis à jour
 
 MatierePremiereServiceTest.java — entreeStock_creeUnLotEtUnMouvement : constructeur EntreeStockDTO mis à jour avec le paramètre coutUnitaire.
+
+---
+
+## 10. Sprint 2.2 / Rattrapage 2 — Alertes de stock faible (report depuis le projet local)
+
+Dernière mise à jour : 2026-07-03
+
+### Contexte
+
+Tâche du Sprint 2.2 (rattrapage, cf. `Sprint2.2.md`) : vérifier les seuils d'alerte des produits et des matières premières, et les afficher dans le Dashboard. Ce travail avait été fait et vérifié dans le projet local d'abord (voir `docs/rapports-techniques/Rary.md` du projet local, sections 1 à 11), puis reporté ici dans cette copie du projet partagé, qui n'avait ni le calcul de stock/statut côté produit, ni le branchement du Dashboard.
+
+### État constaté dans cette copie avant le report
+
+- `DashboardController.java` utilisait `@RequiredArgsConstructor` avec un champ `RecetteVenteService recetteVenteService` et une méthode `production(Model model)` (calcul de recette mensuelle) — absents du projet local. Route `/stock` sans `Model`, aucune donnée réelle affichée.
+- `ProduitDTO.java` n'avait pas les champs `quantiteStock` ni `statut`.
+- `ProduitService.java` ne dépendait pas de `LotProduitRepository` (pourtant déjà présent dans ce module avec sa méthode `sommeQuantiteRestante`), n'avait pas de `listerAlertes()`, et `versDTO()` ne calculait ni stock ni statut.
+- Module `matierespremieres` (`MatierePremiereService`, `MatierePremiereListDTO`) : déjà conforme, identique au projet local, aucun changement nécessaire.
+- `templates/dashboard/stock/index.html` : entièrement statique (données d'exemple codées en dur).
+
+### Modifications appliquées
+
+| Fichier | Modification |
+| --- | --- |
+| `controller/dashboard/DashboardController.java` | Ajout des champs `produitService` et `matierePremiereService` (constructeur régénéré par Lombok ; `production()` et `recetteVenteService` non touchés) ; `stock()` prend désormais un paramètre `Model` et ajoute les attributs `alertesMp` et `produits`. |
+| `dto/produit/ProduitDTO.java` | Ajout des champs `quantiteStock` (`BigDecimal`) et `statut` (`String`). |
+| `service/produit/ProduitService.java` | Ajout de la dépendance `LotProduitRepository` ; ajout de `listerAlertes()` ; `versDTO()` calcule désormais `quantiteStock` via `sommeQuantiteRestante` et `statut` via une méthode privée `statut(stock, seuilAlerte)` (`SEUIL ATTEINT` si seuil défini et stock ≤ seuil, sinon `Stock Correct`). |
+| `templates/dashboard/stock/index.html` | Ajout de `xmlns:th`. Remplacement des blocs statiques "Seuils Critiques Minimums" et "État des Stocks Réels" par des boucles `th:each` sur `alertesMp` et `produits`, identiques au projet local. |
+
+Aucun fichier du module `matierespremieres` modifié dans cette copie (déjà conforme). Aucune table, migration ni fichier SQL touché — uniquement du code Java/HTML.
+
+### Vérification effectuée
+
+`mvn compile` exécuté à la racine de cette copie (`docs/Vina-Akoho`) : compilation réussie sans erreur, `.class` générés pour `DashboardController`, `ProduitService` et les DTOs modifiés. Pas de vérification fonctionnelle navigateur/curl sur cette copie (pas de base de données connectée dans cet environnement) — seule la compilation a été vérifiée. Le détail complet des tests fonctionnels (exécutés sur le projet local) est dans `docs/rapports-techniques/Rary.md` du projet local, section 8.

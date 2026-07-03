@@ -47,14 +47,10 @@
         </div>
       </header>
 
-      <section
-        class="invoice-meta"
-        style="margin-top: 12px; display: flex; justify-content: space-between"
-      >
+      <section class="invoice-meta" style="margin-top: 12px; display: flex; justify-content: space-between">
         <div>
           <h4>Client</h4>
           <p th:text="${vente.clientNom + ' ' + vente.clientPrenom}"></p>
-          +
           <p th:text="${vente.clientTelephone}"></p>
           <p th:text="${vente.clientAdresse}"></p>
         </div>
@@ -83,7 +79,7 @@
           <tbody>
             <tr th:each="l : ${vente.lignes}">
               <td th:text="${l.nomProduit}"></td>
-              <td th:text="${l.quantite} + ' kg'"></td>
+              <td th:text="${l.quantite} + ' ' + (${l.unite} != null ? l.unite : 'kg')"></td>
               <td
                 th:text="${#numbers.formatDecimal(l.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
               ></td>

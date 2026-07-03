@@ -1,6 +1,7 @@
 package mg.vinaAkoho.vina_akoho.service.produit;
 
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.produit.HistoriquePrixProduitDTO;
 import mg.vinaAkoho.vina_akoho.dto.produit.ProduitDTO;
 import mg.vinaAkoho.vina_akoho.dto.produit.ProduitRequestDTO;
 import mg.vinaAkoho.vina_akoho.entity.produit.Categorie;
@@ -8,7 +9,10 @@ import mg.vinaAkoho.vina_akoho.entity.produit.Produit;
 import mg.vinaAkoho.vina_akoho.exception.produit.CategorieNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.produit.ProduitDejaExistantException;
 import mg.vinaAkoho.vina_akoho.exception.produit.ProduitNotFoundException;
+import mg.vinaAkoho.vina_akoho.entity.produit.HistoriquePrixProduit;
 import mg.vinaAkoho.vina_akoho.repository.produit.CategorieRepository;
+import mg.vinaAkoho.vina_akoho.repository.produit.HistoriquePrixProduitRepository;
+import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitSpecification;
 import org.springframework.data.domain.Page;
@@ -24,13 +28,25 @@ import java.util.List;
 @Transactional
 public class ProduitService {
 
+    private static final String STATUT_ALERTE = "SEUIL ATTEINT";
+    private static final String STATUT_OK = "Stock Correct";
+
     private final ProduitRepository produitRepository;
     private final CategorieRepository categorieRepository;
+    private final LotProduitRepository lotProduitRepository;
+    private final HistoriquePrixProduitRepository historiquePrixProduitRepository;
 
     public List<ProduitDTO> listerTous() {
         return produitRepository.findAllActifs()
                 .stream()
                 .map(this::versDTO)
+                .toList();
+    }
+
+    // Rary — F2.2 : produits dont le stock actuel est descendu au seuil d'alerte
+    public List<ProduitDTO> listerAlertes() {
+        return listerTous().stream()
+                .filter(p -> STATUT_ALERTE.equals(p.getStatut()))
                 .toList();
     }
 
@@ -96,6 +112,19 @@ public class ProduitService {
         }
 
         Categorie categorie = recupererCategorieOuLeverException(requete.getIdCategorie());
+        
+        // Enregistrer l'historique des prix si le prix a changé
+        BigDecimal ancienPrix = produit.getPrixVente();
+        BigDecimal nouveauPrix = requete.getPrixVente();
+        
+        if (ancienPrix != null && nouveauPrix != null && ancienPrix.compareTo(nouveauPrix) != 0) {
+            HistoriquePrixProduit historique = new HistoriquePrixProduit();
+            historique.setProduit(produit);
+            historique.setAncienPrix(ancienPrix);
+            historique.setNouveauPrix(nouveauPrix);
+            historiquePrixProduitRepository.save(historique);
+        }
+        
         appliquerRequete(produit, requete, categorie);
 
         if (requete.getActif() != null) {
@@ -154,6 +183,7 @@ public class ProduitService {
         produit.setDescription(requete.getDescription());
     }
     private ProduitDTO versDTO(Produit produit) {
+        BigDecimal stock = lotProduitRepository.sommeQuantiteRestante(produit.getId());
         return ProduitDTO.builder()
                 .id(produit.getId())
                 .ref(produit.getRef())
@@ -170,7 +200,36 @@ public class ProduitService {
                 .pourcentageHumiditeMax(produit.getCategorie().getPourcentageHumiditeMax())
                 .createdAt(produit.getCreatedAt())
                 .updatedAt(produit.getUpdatedAt())
+                .quantiteStock(stock)
+                .statut(statut(stock, produit.getSeuilAlerte()))
                 .build();
+    }
+
+    // Rary — F2.2, règle métier Sprint 2.2 : quantité actuelle <= seuil_alerte -> alerte
+    private String statut(BigDecimal stock, Integer seuilAlerte) {
+        if (seuilAlerte != null && stock.compareTo(BigDecimal.valueOf(seuilAlerte)) <= 0) {
+            return STATUT_ALERTE;
+        }
+        return STATUT_OK;
+    }
+
+    private HistoriquePrixProduitDTO versHistoriquePrixDTO(HistoriquePrixProduit historique) {
+        return HistoriquePrixProduitDTO.builder()
+                .id(historique.getId())
+                .idProduit(historique.getProduit().getId())
+                .nomProduit(historique.getProduit().getNom())
+                .ancienPrix(historique.getAncienPrix())
+                .nouveauPrix(historique.getNouveauPrix())
+                .dateModification(historique.getDateModification())
+                .nomEmploye(historique.getEmploye() != null ? historique.getEmploye().getNom() : null)
+                .build();
+    }
+
+    public List<HistoriquePrixProduitDTO> listerHistoriquePrix(Long idProduit) {
+        return historiquePrixProduitRepository.findByProduitIdOrderByDateModificationDesc(idProduit)
+                .stream()
+                .map(this::versHistoriquePrixDTO)
+                .toList();
     }
 
 }

@@ -1,20 +1,18 @@
 package mg.vinaAkoho.vina_akoho.service.ventes;
 
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.clients.ClientHistoriqueAchatsDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.FactureDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.LigneVenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.PanierItemDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteFormDTO;
+import mg.vinaAkoho.vina_akoho.dto.ventes.VenteStatistiquesDTO;
 import mg.vinaAkoho.vina_akoho.entity.clients.Client;
 import mg.vinaAkoho.vina_akoho.entity.produit.Produit;
-import mg.vinaAkoho.vina_akoho.entity.ventes.Commande;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Facture;
-import mg.vinaAkoho.vina_akoho.entity.ventes.LigneCommande;
 import mg.vinaAkoho.vina_akoho.entity.ventes.LigneVente;
-import mg.vinaAkoho.vina_akoho.entity.ventes.LigneVenteLot;
 import mg.vinaAkoho.vina_akoho.entity.ventes.ModePaiement;
-import mg.vinaAkoho.vina_akoho.entity.ventes.StatutCommande;
 import mg.vinaAkoho.vina_akoho.entity.ventes.StatutVente;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Vente;
 import mg.vinaAkoho.vina_akoho.exception.clients.ClientNotFoundException;
@@ -22,13 +20,9 @@ import mg.vinaAkoho.vina_akoho.exception.produit.ProduitNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.ventes.VenteNotFoundException;
 import mg.vinaAkoho.vina_akoho.repository.clients.ClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
-import mg.vinaAkoho.vina_akoho.repository.ventes.CommandeRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.FactureRepository;
-import mg.vinaAkoho.vina_akoho.repository.ventes.LigneCommandeRepository;
-import mg.vinaAkoho.vina_akoho.repository.ventes.LigneVenteLotRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.LigneVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
-import mg.vinaAkoho.vina_akoho.repository.ventes.StatutCommandeRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.StatutVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
 import mg.vinaAkoho.vina_akoho.service.stockproduit.SortieProduitService;
@@ -36,7 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,20 +42,16 @@ import java.util.stream.Collectors;
 public class VenteService {
 
     private final VenteRepository venteRepository;
-    private final CommandeRepository commandeRepository;
-    private final LigneCommandeRepository ligneCommandeRepository;
     private final LigneVenteRepository ligneVenteRepository;
-    private final LigneVenteLotRepository ligneVenteLotRepository;
     private final FactureRepository factureRepository;
     private final ClientRepository clientRepository;
     private final ProduitRepository produitRepository;
     private final ModePaiementRepository modePaiementRepository;
     private final StatutVenteRepository statutVenteRepository;
-    private final StatutCommandeRepository statutCommandeRepository;
     private final SortieProduitService sortieProduitService;
 
     public List<VenteDTO> listerToutes() {
-        return venteRepository.findAll()
+        return venteRepository.findAllByOrderByDateVenteDesc()
                 .stream()
                 .map(this::versDTO)
                 .collect(Collectors.toList());
@@ -69,6 +61,71 @@ public class VenteService {
         return venteRepository.findById(id)
                 .map(this::versDTO)
                 .orElseThrow(() -> VenteNotFoundException.parId(id));
+    }
+
+    @Transactional(readOnly = true)
+    public ClientHistoriqueAchatsDTO obtenirHistoriqueClient(Integer clientId) {
+        clientRepository.findByIdAndEstSupprimerFalse(clientId)
+                .orElseThrow(() -> ClientNotFoundException.parId(clientId));
+
+        List<VenteDTO> ventes = venteRepository.findByClientIdOrderByDateVenteDesc(clientId)
+                .stream()
+                .map(this::versDTO)
+                .collect(Collectors.toList());
+
+        BigDecimal totalAchats = venteRepository.sommeAchatsClient(clientId);
+        BigDecimal totalRegle = venteRepository.sommeReglementsClient(clientId);
+
+        return ClientHistoriqueAchatsDTO.builder()
+                .ventes(ventes)
+                .totalAchats(totalAchats)
+                .totalRegle(totalRegle)
+                .soldeRestant(totalAchats.subtract(totalRegle))
+                .build();
+    }
+
+    public VenteStatistiquesDTO obtenirStatistiques() {
+        LocalDate aujourdHui = LocalDate.now();
+        LocalDate hier = aujourdHui.minusDays(1);
+        LocalDate debutMois = aujourdHui.withDayOfMonth(1);
+
+        long ventesDuJour = venteRepository.compterVentesValideesEntre(
+                aujourdHui.atStartOfDay(), aujourdHui.plusDays(1).atStartOfDay());
+        long ventesHier = venteRepository.compterVentesValideesEntre(
+                hier.atStartOfDay(), aujourdHui.atStartOfDay());
+        BigDecimal chiffreAffairesMois = venteRepository.sommeVentesValideesEntre(
+                debutMois.atStartOfDay(), aujourdHui.plusDays(1).atStartOfDay());
+        long ventesValidees = venteRepository.compterVentesValideesEntre(
+                LocalDateTime.of(1900, 1, 1, 0, 0),
+                LocalDateTime.of(3000, 1, 1, 0, 0));
+        long toutesLesVentes = venteRepository.compterToutesLesVentes();
+        BigDecimal tauxConversion = toutesLesVentes == 0
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(ventesValidees)
+                        .multiply(BigDecimal.valueOf(100))
+                        .divide(BigDecimal.valueOf(toutesLesVentes), 1, RoundingMode.HALF_UP);
+
+        return VenteStatistiquesDTO.builder()
+                .ventesDuJour(ventesDuJour)
+                .variationVentesHier(ventesDuJour - ventesHier)
+                .chiffreAffairesMois(chiffreAffairesMois)
+                .ventesEnAttente(venteRepository.compterVentesEnAttente())
+                .tauxConversion(tauxConversion)
+                .build();
+    }
+
+    @Transactional
+    public VenteDTO validerPaiement(Long id) {
+        Vente vente = venteRepository.findById(id)
+                .orElseThrow(() -> VenteNotFoundException.parId(id));
+        
+        StatutVente statutValide = statutVenteRepository.findByLibelleIgnoreCase("Validée")
+                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("Validée")));
+        
+        vente.setStatutVente(statutValide);
+        vente = venteRepository.save(vente);
+        
+        return versDTO(vente);
     }
 
     public VenteDTO creer(VenteFormDTO requete, List<PanierItemDTO> panier, Integer idEmploye) {
@@ -82,60 +139,45 @@ public class VenteService {
         ModePaiement modePaiement = modePaiementRepository.findById(requete.getIdModePaiement())
                 .orElseThrow(() -> new IllegalArgumentException("Mode de paiement introuvable"));
 
-        StatutVente statutVente = statutVenteRepository.findByLibelleIgnoreCase("Validée")
-                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("Validée")));
-
-        StatutCommande statutCommande = statutCommandeRepository.findByLibelleIgnoreCase("Validée")
-                .orElseGet(() -> statutCommandeRepository.save(creerStatutCommande("Validée")));
-
-        Commande commande = new Commande();
-        commande.setClient(client);
-        commande.setStatutCommande(statutCommande);
-        commande.setCommentaire("Commande créée depuis le module ventes");
-        commande = commandeRepository.save(commande);
+        StatutVente statutVente = statutVenteRepository.findByLibelleIgnoreCase("En attente de paiement")
+                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("En attente de paiement")));
 
         BigDecimal montantTotal = panier.stream()
-                .map(item -> item.getPrixUnitaire().multiply(item.getQuantite()))
+                .map(item -> {
+                    Produit produit = produitRepository.findById(item.getIdProduit())
+                            .orElseThrow(() -> ProduitNotFoundException.parId(item.getIdProduit()));
+                    return produit.getPrixVente().multiply(item.getQuantite());
+                })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Vente vente = new Vente();
-        vente.setCommande(commande);
+        vente.setClient(client);
         vente.setModePaiement(modePaiement);
         vente.setStatutVente(statutVente);
         vente.setMontantTotal(montantTotal);
         vente = venteRepository.save(vente);
 
-        Commande commandeFinal = commande;
         Vente venteFinal = vente;
+        String referenceDocument = "VENTE-" + vente.getId();
 
         for (PanierItemDTO item : panier) {
             Produit produit = produitRepository.findById(item.getIdProduit())
                     .orElseThrow(() -> ProduitNotFoundException.parId(item.getIdProduit()));
 
-            LigneCommande ligneCommande = new LigneCommande();
-            ligneCommande.setCommande(commandeFinal);
-            ligneCommande.setProduit(produit);
-            ligneCommande.setQuantite(item.getQuantite());
-            ligneCommande.setPrixUnitaire(item.getPrixUnitaire());
-            ligneCommandeRepository.save(ligneCommande);
-
             LigneVente ligneVente = new LigneVente();
             ligneVente.setVente(venteFinal);
             ligneVente.setProduit(produit);
             ligneVente.setQuantite(item.getQuantite());
-            ligneVente.setPrixUnitaire(item.getPrixUnitaire());
-            ligneVente.setMontant(item.getPrixUnitaire().multiply(item.getQuantite()));
-            ligneVente = ligneVenteRepository.save(ligneVente);
+            ligneVente.setPrixUnitaire(produit.getPrixVente());
+            ligneVente.setMontant(produit.getPrixVente().multiply(item.getQuantite()));
+            ligneVenteRepository.save(ligneVente);
 
-            for (SortieProduitService.Allocation allocation : sortieProduitService.allouerLots(
-                    produit.getId(), item.getQuantite(), idEmploye,
-                    "VENTE-" + venteFinal.getId())) {
-                LigneVenteLot ligneVenteLot = new LigneVenteLot();
-                ligneVenteLot.setLigneVente(ligneVente);
-                ligneVenteLot.setLotProduit(allocation.getLotProduit());
-                ligneVenteLot.setQuantite(allocation.getQuantite());
-                ligneVenteLotRepository.save(ligneVenteLot);
-            }
+            List<SortieProduitService.Allocation> allocations = sortieProduitService.allouerLots(
+                    produit.getId(),
+                    item.getQuantite(),
+                    idEmploye,
+                    referenceDocument
+            );
         }
 
         Facture facture = new Facture();
@@ -157,12 +199,6 @@ public class VenteService {
         return statut;
     }
 
-    private StatutCommande creerStatutCommande(String libelle) {
-        StatutCommande statut = new StatutCommande();
-        statut.setLibelle(libelle);
-        return statut;
-    }
-
     private String genererNumeroFacture() {
         return "FACT-" + System.currentTimeMillis();
     }
@@ -177,7 +213,7 @@ public class VenteService {
                 .map(this::versFactureDTO)
                 .orElse(null);
 
-        Client client = vente.getCommande().getClient();
+        Client client = vente.getClient();
 
         return VenteDTO.builder()
                 .id(vente.getId())
@@ -185,6 +221,7 @@ public class VenteService {
                 .clientPrenom(client.getPrenom())
                 .clientTelephone(client.getNumeroTelephone())
                 .clientAdresse(client.getAdresse())
+                .clientZoneLivraison(client.getIdZoneLivraison())
                 .dateVente(vente.getDateVente())
                 .modePaiement(vente.getModePaiement().getLibelle())
                 .statutVente(vente.getStatutVente().getLibelle())
@@ -195,9 +232,12 @@ public class VenteService {
     }
 
     private LigneVenteDTO versLigneDTO(LigneVente ligne) {
+        String unite = ligne.getProduit().getUnite() != null ? 
+                ligne.getProduit().getUnite().getLibelle() : "";
         return LigneVenteDTO.builder()
                 .nomProduit(ligne.getProduit().getNom())
                 .quantite(ligne.getQuantite())
+                .unite(unite)
                 .prixUnitaire(ligne.getPrixUnitaire())
                 .montant(ligne.getMontant())
                 .build();
@@ -212,6 +252,7 @@ public class VenteService {
                 .tauxTva(facture.getTauxTva())
                 .montantTva(facture.getMontantTva())
                 .montantTtc(facture.getMontantTtc())
+                .remise(facture.getRemise() != null ? facture.getRemise() : BigDecimal.ZERO)
                 .build();
     }
 }

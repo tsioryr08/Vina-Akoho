@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VINA AKOHO - Liste des livraisons</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="vina-body">
+    <div th:replace="~{layout/sidebar-livraison::sidebar-livraison}"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header" th:replace="~{layout/header}"></div>
+        
+        <div id="vina-content">
+            <section class="page-header">
+                <div>
+                    <p class="eyebrow">RO04 - Responsable Commercial</p>
+                    <h1>Livraisons</h1>
+                    <p>Suivi de toutes les expéditions.</p>
+                </div>
+                <span class="role-badge">Livraisons</span>
+            </section>
+
+            <div class="tab-list">
+                <a class="tab-link" th:href="@{/api/livraisons}">Liste</a>
+                <a class="tab-link" th:href="@{/api/livraisons/historique}">Historique</a>
+                <a class="tab-link" th:href="@{/api/livraisons/nouvelle}">Nouvelle livraison</a>
+            </div>
+
+            <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+            <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
+
+            <section class="table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Vente</th>
+                            <th>Client</th>
+                            <th>Livreur</th>
+                            <th>Statut</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="liv : ${livraisons}">
+                            <td th:text="${liv.referenceVente}">V001</td>
+                            <td th:text="${liv.clientNom + ' ' + liv.clientPrenom}">Nom client</td>
+                            <td th:text="${liv.livreurNom != null ? liv.livreurNom + ' ' + liv.livreurPrenom : '-'}">-</td>
+                            <td th:text="${liv.statutLivraison}">En préparation</td>
+                            <td th:text="${liv.dateLivraison}">2026-01-01</td>
+                            <td>
+                                <a class="link-action" th:href="@{'/api/livraisons/' + ${liv.id}}">Détail</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${livraisons.isEmpty()}">
+                            <td colspan="6" class="muted-text">Aucune livraison enregistrée.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+    <script th:src="@{/static/assets/js/auth.js}"></script>
+    <script th:src="@{/static/assets/js/app-shell.js}"></script>
+</body>
+</html>

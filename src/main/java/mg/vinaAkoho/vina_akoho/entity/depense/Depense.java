@@ -93,8 +93,8 @@ public class Depense {
 
     @PrePersist
     protected void onCreate() {
-        if (date == null) {
-            date = LocalDate.now();
+        if (this.date == null) {
+            this.date = LocalDate.now();
         }
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

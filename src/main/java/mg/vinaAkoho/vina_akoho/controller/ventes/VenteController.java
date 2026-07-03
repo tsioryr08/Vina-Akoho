@@ -1,10 +1,14 @@
 package mg.vinaAkoho.vina_akoho.controller.ventes;
 
 import java.math.BigDecimal;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,9 +17,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
+import mg.vinaAkoho.vina_akoho.dto.ventes.LigneVenteDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientResumeDTO;
@@ -29,6 +35,8 @@ import mg.vinaAkoho.vina_akoho.repository.clients.ClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.security.SessionFilter;
+import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
+import mg.vinaAkoho.vina_akoho.service.ventes.ExportVenteService;
 import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
 
 @Controller
@@ -39,9 +47,11 @@ public class VenteController {
     private static final String SESSION_PANIER = "panier";
 
     private final VenteService venteService;
+    private final RecetteVenteService recetteVenteService;
     private final ClientRepository clientRepository;
     private final ProduitRepository produitRepository;
     private final ModePaiementRepository modePaiementRepository;
+    private final ExportVenteService exportVenteService;
 
     @ModelAttribute("clientsDisponibles")
     public List<ClientResumeDTO> getClientsDisponibles() {
@@ -89,20 +99,222 @@ public class VenteController {
     }
 
     @GetMapping
-    public String listerTous(Model model) {
-        model.addAttribute("ventes", venteService.listerToutes());
+    public String listerTous(
+            @RequestParam(required = false) String client,
+            @RequestParam(required = false) String statut,
+            @RequestParam(required = false) String dateDebut,
+            @RequestParam(required = false) String dateFin,
+            Model model) {
+        
+        List<VenteDTO> toutesVentes = venteService.listerToutes();
+        
+        // Filtrer les ventes selon les critères
+        List<VenteDTO> ventesFiltrees = toutesVentes.stream()
+                .filter(v -> {
+                    boolean match = true;
+                    if (client != null && !client.isEmpty()) {
+                        match = match && (v.getClientNom() != null && v.getClientNom().toLowerCase().contains(client.toLowerCase()));
+                    }
+                    if (statut != null && !statut.isEmpty()) {
+                        match = match && statut.equals(v.getStatutVente());
+                    }
+                    if (dateDebut != null && !dateDebut.isEmpty() && v.getDateVente() != null) {
+                        LocalDate debut = LocalDate.parse(dateDebut);
+                        match = match && !v.getDateVente().toLocalDate().isBefore(debut);
+                    }
+                    if (dateFin != null && !dateFin.isEmpty() && v.getDateVente() != null) {
+                        LocalDate fin = LocalDate.parse(dateFin);
+                        match = match && !v.getDateVente().toLocalDate().isAfter(fin);
+                    }
+                    return match;
+                })
+                .collect(Collectors.toList());
+        
+        model.addAttribute("ventes", ventesFiltrees);
+        
+        // Calculer les statistiques sur les ventes filtrées
+        LocalDate aujourdHui = LocalDate.now();
+        LocalDate debutMois = aujourdHui.withDayOfMonth(1);
+        
+        BigDecimal ventesJour = ventesFiltrees.stream()
+                .filter(v -> v.getDateVente() != null && 
+                           v.getDateVente().toLocalDate().equals(aujourdHui))
+                .map(VenteDTO::getMontantTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        BigDecimal caMois = ventesFiltrees.stream()
+                .filter(v -> v.getDateVente() != null && 
+                           !v.getDateVente().toLocalDate().isBefore(debutMois))
+                .map(VenteDTO::getMontantTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        long commandesEnAttente = ventesFiltrees.stream()
+                .filter(v -> "En attente de paiement".equals(v.getStatutVente()))
+                .count();
+        
+        long totalVentes = ventesFiltrees.size();
+        double tauxConversion = totalVentes > 0 ? 
+                (ventesFiltrees.stream().filter(v -> "Validée".equals(v.getStatutVente())).count() * 100.0 / totalVentes) : 0;
+        
+        model.addAttribute("ventesJour", ventesJour);
+        model.addAttribute("caMois", caMois);
+        model.addAttribute("commandesEnAttente", commandesEnAttente);
+        model.addAttribute("tauxConversion", String.format("%.0f%%", tauxConversion));
+        
         return "ventes/responsable-commercial-ventes";
     }
 
     @GetMapping("/historique")
-    public String historique(Model model) {
-        List<VenteDTO> ventes = venteService.listerToutes();
-        model.addAttribute("ventes", ventes);
-        model.addAttribute("totalVentesKg", ventes.size() * 1); // placeholder
-        model.addAttribute("chiffreAffaires", ventes.stream()
+    public String historique(
+            @RequestParam(required = false) String periode,
+            @RequestParam(required = false) String zone,
+            Model model) {
+        
+        List<VenteDTO> toutesVentes = venteService.listerToutes();
+        
+        // Filtrer les ventes - seulement celles payées (Validée)
+        List<VenteDTO> ventesPayees = toutesVentes.stream()
+                .filter(v -> "Validée".equals(v.getStatutVente()))
+                .collect(Collectors.toList());
+        
+        // Filtrer par zone si spécifié
+        if (zone != null && !zone.isEmpty() && !"Toutes les zones".equals(zone)) {
+            ventesPayees = ventesPayees.stream()
+                    .filter(v -> v.getClientZoneLivraison() != null && v.getClientZoneLivraison().equals(zone))
+                    .collect(Collectors.toList());
+        }
+        
+        // Filtrer par période si spécifié
+        LocalDate aujourdHui = LocalDate.now();
+        if (periode != null && !periode.isEmpty()) {
+            LocalDate dateDebut;
+            switch (periode) {
+                case "Ce mois":
+                    dateDebut = aujourdHui.withDayOfMonth(1);
+                    break;
+                case "Ce trimestre":
+                    dateDebut = aujourdHui.withMonth(aujourdHui.getMonthValue() - (aujourdHui.getMonthValue() - 1) % 3).withDayOfMonth(1);
+                    break;
+                case "6 derniers mois":
+                    dateDebut = aujourdHui.minusMonths(6);
+                    break;
+                default:
+                    dateDebut = null;
+            }
+            if (dateDebut != null) {
+                ventesPayees = ventesPayees.stream()
+                        .filter(v -> v.getDateVente() != null && !v.getDateVente().toLocalDate().isBefore(dateDebut))
+                        .collect(Collectors.toList());
+            }
+        }
+        
+        // Calculer les statistiques
+        BigDecimal chiffreAffaires = ventesPayees.stream()
                 .map(VenteDTO::getMontantTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        long totalVentesKg = ventesPayees.stream()
+                .flatMap(v -> v.getLignes() != null ? v.getLignes().stream() : java.util.stream.Stream.empty())
+                .mapToLong(l -> l.getQuantite() != null ? l.getQuantite().longValue() : 0)
+                .sum();
+        
+        long nombreTransactions = ventesPayees.size();
+        
+        // Calculer les produits les plus vendus
+        Map<String, BigDecimal> produitsVendus = ventesPayees.stream()
+                .flatMap(v -> v.getLignes() != null ? v.getLignes().stream() : java.util.stream.Stream.empty())
+                .collect(Collectors.groupingBy(
+                        LigneVenteDTO::getNomProduit,
+                        Collectors.reducing(BigDecimal.ZERO, LigneVenteDTO::getQuantite, BigDecimal::add)
+                ));
+        
+        Map<String, BigDecimal> produitsCA = ventesPayees.stream()
+                .flatMap(v -> v.getLignes() != null ? v.getLignes().stream() : java.util.stream.Stream.empty())
+                .collect(Collectors.groupingBy(
+                        LigneVenteDTO::getNomProduit,
+                        Collectors.reducing(BigDecimal.ZERO, LigneVenteDTO::getMontant, BigDecimal::add)
+                ));
+        
+        model.addAttribute("ventes", ventesPayees);
+        model.addAttribute("totalVentesKg", totalVentesKg);
+        model.addAttribute("chiffreAffaires", chiffreAffaires);
+        model.addAttribute("nombreTransactions", nombreTransactions);
+        model.addAttribute("produitsVendus", produitsVendus);
+        model.addAttribute("produitsCA", produitsCA);
+        model.addAttribute("periode", periode);
+        model.addAttribute("zone", zone);
+        
         return "ventes/responsable-commercial-ventes-historique";
+    }
+
+    @GetMapping("/recettes")
+    public String recettes(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate debut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin,
+            Model model) {
+        LocalDate dateDebut = debut != null ? debut : LocalDate.now().withDayOfMonth(1);
+        LocalDate dateFin = fin != null ? fin : LocalDate.now();
+
+        var recettes = recetteVenteService.listerParPeriode(dateDebut, dateFin);
+        model.addAttribute("debut", dateDebut);
+        model.addAttribute("fin", dateFin);
+        model.addAttribute("recettes", recettes);
+        model.addAttribute("recetteTotale", recetteVenteService.calculerTotal(recettes));
+        model.addAttribute("quantiteTotale", recetteVenteService.calculerQuantiteTotale(recettes));
+        model.addAttribute("nombreLignes", recettes.size());
+        return "ventes/responsable-commercial-recettes";
+    }
+
+    @GetMapping("/export/excel")
+    public void exporterVentesExcel(
+            @RequestParam(required = false) String periode,
+            @RequestParam(required = false) String zone,
+            jakarta.servlet.http.HttpServletResponse response) throws IOException {
+        
+        List<VenteDTO> toutesVentes = venteService.listerToutes();
+        
+        // Filtrer les ventes - seulement celles payées (Validée)
+        List<VenteDTO> ventesPayees = toutesVentes.stream()
+                .filter(v -> "Validée".equals(v.getStatutVente()))
+                .collect(Collectors.toList());
+        
+        // Filtrer par zone si spécifié
+        if (zone != null && !zone.isEmpty() && !"Toutes les zones".equals(zone)) {
+            ventesPayees = ventesPayees.stream()
+                    .filter(v -> v.getClientAdresse() != null && v.getClientAdresse().contains(zone))
+                    .collect(Collectors.toList());
+        }
+        
+        // Filtrer par période si spécifié
+        LocalDate aujourdHui = LocalDate.now();
+        if (periode != null && !periode.isEmpty()) {
+            LocalDate dateDebut;
+            switch (periode) {
+                case "Ce mois":
+                    dateDebut = aujourdHui.withDayOfMonth(1);
+                    break;
+                case "Ce trimestre":
+                    dateDebut = aujourdHui.withMonth(aujourdHui.getMonthValue() - (aujourdHui.getMonthValue() - 1) % 3).withDayOfMonth(1);
+                    break;
+                case "6 derniers mois":
+                    dateDebut = aujourdHui.minusMonths(6);
+                    break;
+                default:
+                    dateDebut = null;
+            }
+            if (dateDebut != null) {
+                ventesPayees = ventesPayees.stream()
+                        .filter(v -> v.getDateVente() != null && !v.getDateVente().toLocalDate().isBefore(dateDebut))
+                        .collect(Collectors.toList());
+            }
+        }
+        
+        byte[] excelData = exportVenteService.exporterVentesExcel(ventesPayees);
+        
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=ventes_" + LocalDate.now() + ".xlsx");
+        response.getOutputStream().write(excelData);
+        response.getOutputStream().flush();
     }
 
     @GetMapping("/nouvelle")
@@ -199,6 +411,17 @@ public class VenteController {
         VenteDTO vente = venteService.trouverParId(id);
         model.addAttribute("vente", vente);
         return "ventes/responsable-commercial-ventes-detail";
+    }
+
+    @PostMapping("/{id}/valider-paiement")
+    public String validerPaiement(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            venteService.validerPaiement(id);
+            redirectAttributes.addFlashAttribute("success", "Paiement validé avec succès.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Impossible de valider le paiement : " + e.getMessage());
+        }
+        return "redirect:/ventes/" + id;
     }
 
     @GetMapping("/{id}/facture")

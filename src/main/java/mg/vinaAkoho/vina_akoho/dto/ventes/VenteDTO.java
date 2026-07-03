@@ -22,6 +22,7 @@ public class VenteDTO {
     private String clientPrenom;
     private String clientTelephone;
     private String clientAdresse;
+    private String clientZoneLivraison;
     private LocalDateTime dateVente;
     private String modePaiement;
     private String statutVente;

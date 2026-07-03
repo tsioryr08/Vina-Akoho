@@ -94,6 +94,36 @@
                     </div>
                 </div>
 
+                <div class="nutrition-panel">
+                    <h3 class="nutrition-title">Historique des prix</h3>
+                    <div th:if="${historiquePrix != null and !historiquePrix.isEmpty()}">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Ancien prix</th>
+                                    <th>Nouveau prix</th>
+                                    <th>Modification</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="historique : ${historiquePrix}">
+                                    <td th:text="${#temporals.format(historique.dateModification, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
+                                    <td th:text="'Ar ' + ${#numbers.formatDecimal(historique.ancienPrix, 0, 0)}">Ar 40 000</td>
+                                    <td th:text="'Ar ' + ${#numbers.formatDecimal(historique.nouveauPrix, 0, 0)}">Ar 45 000</td>
+                                    <td>
+                                        <span th:if="${historique.nouveauPrix > historique.ancienPrix}" class="badge badge-success">+Ar ${#numbers.formatDecimal(historique.nouveauPrix - historique.ancienPrix, 0, 0)}</span>
+                                        <span th:if="${historique.nouveauPrix < historique.ancienPrix}" class="badge badge-danger">-Ar ${#numbers.formatDecimal(historique.ancienPrix - historique.nouveauPrix, 0, 0)}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:if="${historiquePrix == null or historiquePrix.isEmpty()}" class="empty-text">
+                        Aucun historique de prix disponible
+                    </div>
+                </div>
+
                 <div class="meta-info">
                     <span>Créé le : <strong th:text="${#temporals.format(produit.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</strong></span>
                     <span>Modifié le : <strong th:text="${#temporals.format(produit.updatedAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</strong></span>
