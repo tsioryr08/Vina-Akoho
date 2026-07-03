@@ -7,60 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body>
-    <aside class="sidebar" id="vina-sidebar">
-      <div class="sidebar-brand">
-        <img
-          th:src="@{/images/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        />
-        <div>
-          <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">RO01 - Administrateur</div>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link active" href="#"
-          >Dashboard <span class="sidebar-code">A1</span></a
-        >
-
-        <div class="sidebar-section">Utilisateurs</div>
-        <a class="sidebar-link" href="#"
-          >Gestion des comptes <span class="sidebar-code">A2</span></a
-        >
-
-        <div class="sidebar-section">Finances</div>
-        <a class="sidebar-link" href="#"
-          >Rapports & Trésorerie <span class="sidebar-code">A3</span></a
-        >
-
-        <div class="sidebar-section">Statistiques</div>
-        <a class="sidebar-link" href="#"
-          >Vue globale & Analytics <span class="sidebar-code">A4</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Production <span class="sidebar-code">A4a</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Ventes <span class="sidebar-code">A4b</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Géographie <span class="sidebar-code">A4c</span></a
-        >
-
-        <div class="sidebar-section">Configuration</div>
-        <a class="sidebar-link" href="#"
-          >Paramètres système <span class="sidebar-code">A5</span></a
-        >
-
-        <div class="sidebar-section">Prévisions</div>
-        <a class="sidebar-link" href="#"
-          >Prévisions <span class="sidebar-code">A6</span></a
-        >
-      </nav>
-    </aside>
+    <div th:replace="~{layout/admin :: sidebar}"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 

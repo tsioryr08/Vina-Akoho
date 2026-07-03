@@ -139,43 +139,20 @@ select {
   min-height: 100vh;
   display: block;
   padding: 0;
-  background: #f5f5f5;
-}
-
-.login-split {
-  display: flex;
-  min-height: 100vh;
-}
-
-.login-photo-side {
-  width: 60%;
-  min-height: 100vh;
   background-image: url('/images/chiken.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  position: relative;
 }
 
-.login-photo-side::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 120px;
-  height: 100%;
-  background: linear-gradient(to right, transparent, rgb(250, 250, 250));
-  pointer-events: none;
-}
-
-.login-form-side {
-  width: 40%;
+.login-wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 60px;
-  background: #f5f5f54b;
+  padding: 40px 20px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(2px);
 }
 
 .login-page.login-page-bg {
@@ -187,7 +164,7 @@ select {
   padding: 36px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.917);
+  background: rgba(255, 255, 255, 0.65);
   color: #3e2f1c;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(18px) saturate(1.3);

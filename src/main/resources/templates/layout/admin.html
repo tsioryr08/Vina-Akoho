@@ -1,6 +1,6 @@
-<aside class="sidebar">
+<aside class="sidebar" id="vina-sidebar" th:fragment="sidebar">
 <div class="sidebar-brand">
-<img src="../assets/VINA_AKOHO_LOGO.png" alt="VINA AKOHO" class="brand-mark">
+<img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark">
 <div>
 <div class="brand-title">VINA AKOHO</div>
 <div class="brand-subtitle">RO01 - Administrateur</div>
@@ -20,7 +20,7 @@
 
 <div class="sidebar-section">Statistiques</div>
 <a class="sidebar-link" href="statistiques.html">Vue globale & Analytics <span class="sidebar-code">A4</span></a>
-<a class="sidebar-link" href="produits.html">Production <span class="sidebar-code">A4a</span></a>
+<a class="sidebar-link" th:href="@{/api/produits}">Production <span class="sidebar-code">v</span></a>
 <a class="sidebar-link" href="ventes.html">Ventes <span class="sidebar-code">A4b</span></a>
 <a class="sidebar-link" href="responsable-commercial-zones.html">Géographie <span class="sidebar-code">A4c</span></a>
 
