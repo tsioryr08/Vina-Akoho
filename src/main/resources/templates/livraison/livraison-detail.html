@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VINA AKOHO - Détail livraison</title>
-    <link rel="stylesheet" th:href="@{/static/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div th:replace="~{layout/responsableCommercial}"></div>
+    <div th:replace="~{layout/sidebar-livraison::sidebar-livraison}"></div>
     <div class="app-main-wrapper">
         <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
@@ -62,6 +62,59 @@
                             <label>Commentaire</label>
                             <textarea class="form-control textarea" rows="5" readonly th:text="${livraison.commentaire}"></textarea>
                         </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-heading">
+                        <span>2</span>
+                        <div>
+                            <h2>Modifier le statut</h2>
+                        </div>
+                    </div>
+                    <form class="form-grid" th:action="@{/api/livraisons/{id}/statut(id=${livraison.id})}" method="post">
+                        <div class="field field-full">
+                            <label for="nouveauStatut">Nouveau statut</label>
+                            <select id="nouveauStatut" name="nouveauStatut" class="form-control" required>
+                                <option value="">Sélectionner un statut</option>
+                                <option th:each="statut : ${statutsDisponibles}"
+                                        th:value="${statut.libelle}"
+                                        th:text="${statut.libelle}"></option>
+                            </select>
+                        </div>
+                        <div class="form-actions field-full">
+                            <button type="submit" class="btn btn-green">Mettre à jour</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-heading">
+                        <span>3</span>
+                        <div>
+                            <h2>Historique des statuts</h2>
+                        </div>
+                    </div>
+                    <div class="table-card">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Ancien statut</th>
+                                    <th>Nouveau statut</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="changement : ${historiquesLivraison}">
+                                    <td th:text="${changement.ancienStatut ?: '-'}">-</td>
+                                    <td th:text="${changement.nouveauStatut}">En préparation</td>
+                                    <td th:text="${changement.dateChangement}">2026-01-01</td>
+                                </tr>
+                                <tr th:if="${historiquesLivraison.isEmpty()}">
+                                    <td colspan="3" class="muted-text">Aucun changement de statut enregistré.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

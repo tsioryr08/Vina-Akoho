@@ -1,6 +1,8 @@
 package mg.vinaAkoho.vina_akoho.service.livraison;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.livraison.HistoriqueChangementDTO;
 import mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonDTO;
 import mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonFormDTO;
 import mg.vinaAkoho.vina_akoho.entity.livraison.historique_statut_livraison;
@@ -76,6 +79,8 @@ public class LivraisonService {
 
         historique_statut_livraison historique = new historique_statut_livraison();
         historique.setIdLivraison(livraison.getId().intValue());
+        historique.setDateChangement(LocalDateTime.now());
+        historique.setCreatedAt(LocalDateTime.now());
         historique.setNouveauStatut(statut);
         historiqueChangementRepository.save(historique);
 
@@ -99,12 +104,26 @@ public class LivraisonService {
 
         historique_statut_livraison historique = new historique_statut_livraison();
         historique.setIdLivraison(livraison.getId().intValue());
-        historique.setAncienStatut(null);
+                historique.setDateChangement(LocalDateTime.now());
+                historique.setCreatedAt(LocalDateTime.now());
+                historique.setAncienStatut(livraison.getStatutLivraison());
         historique.setNouveauStatut(statut);
         historiqueChangementRepository.save(historique);
 
         return versDTO(livraison);
     }
+
+        public List<HistoriqueChangementDTO> listerHistorique() {
+                return historiqueChangementRepository.findAllByOrderByDateChangementDesc().stream()
+                                .map(this::versHistoriqueDTO)
+                                .collect(Collectors.toList());
+        }
+
+        public List<HistoriqueChangementDTO> listerHistoriquePourLivraison(Long idLivraison) {
+                return historiqueChangementRepository.findByIdLivraisonOrderByDateChangementDesc(idLivraison.intValue()).stream()
+                                .map(this::versHistoriqueDTO)
+                                .collect(Collectors.toList());
+        }
 
     private LivraisonDTO versDTO(livraison livraison) {
         Vente vente = livraison.getVente();
@@ -135,4 +154,14 @@ public class LivraisonService {
                 .createdAt(livraison.getCreatedAt())
                 .build();
     }
+
+        private HistoriqueChangementDTO versHistoriqueDTO(historique_statut_livraison historique) {
+                return HistoriqueChangementDTO.builder()
+                                .id(historique.getId())
+                                .idLivraison(historique.getIdLivraison())
+                                .ancienStatut(historique.getAncienStatut() != null ? historique.getAncienStatut().getLibelle() : null)
+                                .nouveauStatut(historique.getNouveauStatut() != null ? historique.getNouveauStatut().getLibelle() : null)
+                                .dateChangement(historique.getDateChangement() != null ? historique.getDateChangement() : historique.getCreatedAt())
+                                .build();
+        }
 }

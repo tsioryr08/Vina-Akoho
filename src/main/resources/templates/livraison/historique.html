@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VINA AKOHO - Historique livraisons</title>
-    <link rel="stylesheet" th:href="@{/static/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div th:replace="~{layout/responsableCommercial}"></div>
+    <div th:replace="~{layout/sidebar-livraison::sidebar-livraison}"></div>
     <div class="app-main-wrapper">
         <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
@@ -30,25 +30,25 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Vente</th>
-                            <th>Client</th>
-                            <th>Dernier statut</th>
+                            <th>Livraison</th>
+                            <th>Ancien statut</th>
+                            <th>Nouveau statut</th>
                             <th>Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="liv : ${livraisons}">
-                            <td th:text="${liv.referenceVente}">V001</td>
-                            <td th:text="${liv.clientNom + ' ' + liv.clientPrenom}">Nom client</td>
-                            <td th:text="${liv.statutLivraison}">En préparation</td>
-                            <td th:text="${liv.createdAt}">2026-01-01</td>
+                        <tr th:each="changement : ${historiques}">
+                            <td th:text="${changement.idLivraison}">1</td>
+                            <td th:text="${changement.ancienStatut ?: '-'}">-</td>
+                            <td th:text="${changement.nouveauStatut}">En préparation</td>
+                            <td th:text="${changement.dateChangement}">2026-01-01</td>
                             <td>
-                                <a class="link-action" th:href="@{'/api/livraisons/' + ${liv.id}}">Détail</a>
+                                <a class="link-action" th:href="@{'/api/livraisons/' + ${changement.idLivraison}}">Détail</a>
                             </td>
                         </tr>
-                        <tr th:if="${livraisons.isEmpty()}">
-                            <td colspan="5" class="muted-text">Aucune livraison enregistrée.</td>
+                        <tr th:if="${historiques.isEmpty()}">
+                            <td colspan="5" class="muted-text">Aucun changement de statut enregistré.</td>
                         </tr>
                     </tbody>
                 </table>

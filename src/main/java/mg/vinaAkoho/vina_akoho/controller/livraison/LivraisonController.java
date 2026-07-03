@@ -93,6 +93,7 @@ public class LivraisonController {
     @GetMapping("/{id}")
     public String detailLivraison(@PathVariable Long id, Model model) {
         model.addAttribute("livraison", livraisonService.trouverParId(id));
+        model.addAttribute("historiquesLivraison", livraisonService.listerHistoriquePourLivraison(id));
         return "livraison/livraison-detail";
     }
 
@@ -122,7 +123,7 @@ public class LivraisonController {
 
     @GetMapping("/historique")
     public String historique(Model model) {
-        model.addAttribute("livraisons", livraisonService.listerToutes());
+        model.addAttribute("historiques", livraisonService.listerHistorique());
         return "livraison/historique";
     }
 }
