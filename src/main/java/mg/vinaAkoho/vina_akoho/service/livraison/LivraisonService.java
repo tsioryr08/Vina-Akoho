@@ -2,7 +2,6 @@ package mg.vinaAkoho.vina_akoho.service.livraison;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,9 +90,7 @@ public class LivraisonService {
         livraison livraison = livraisonRepository.findById(idLivraison)
                 .orElseThrow(() -> LivraisonNotFoundException.parId(idLivraison));
 
-        String ancienStatut = livraison.getStatutLivraison() != null
-                ? livraison.getStatutLivraison().getLibelle()
-                : null;
+        statutLivraison ancienStatut = livraison.getStatutLivraison();
 
         statutLivraison statut = statutLivraisonRepository.findByLibelleIgnoreCase(nouveauStatutLibelle)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -104,35 +101,35 @@ public class LivraisonService {
 
         historique_statut_livraison historique = new historique_statut_livraison();
         historique.setIdLivraison(livraison.getId().intValue());
-                historique.setDateChangement(LocalDateTime.now());
-                historique.setCreatedAt(LocalDateTime.now());
-                historique.setAncienStatut(livraison.getStatutLivraison());
+        historique.setDateChangement(LocalDateTime.now());
+        historique.setCreatedAt(LocalDateTime.now());
+        historique.setAncienStatut(ancienStatut);
         historique.setNouveauStatut(statut);
         historiqueChangementRepository.save(historique);
 
         return versDTO(livraison);
     }
 
-        public List<HistoriqueChangementDTO> listerHistorique() {
-                return historiqueChangementRepository.findAllByOrderByDateChangementDesc().stream()
-                                .map(this::versHistoriqueDTO)
-                                .collect(Collectors.toList());
-        }
+    public List<HistoriqueChangementDTO> listerHistorique() {
+        return historiqueChangementRepository.findAllByOrderByDateChangementDesc().stream()
+                .map(this::versHistoriqueDTO)
+                .collect(Collectors.toList());
+    }
 
-        public List<HistoriqueChangementDTO> listerHistoriquePourLivraison(Long idLivraison) {
-                return historiqueChangementRepository.findByIdLivraisonOrderByDateChangementDesc(idLivraison.intValue()).stream()
-                                .map(this::versHistoriqueDTO)
-                                .collect(Collectors.toList());
-        }
+    public List<HistoriqueChangementDTO> listerHistoriquePourLivraison(Long idLivraison) {
+        return historiqueChangementRepository.findByIdLivraisonOrderByDateChangementDesc(idLivraison.intValue()).stream()
+                .map(this::versHistoriqueDTO)
+                .collect(Collectors.toList());
+    }
 
     private LivraisonDTO versDTO(livraison livraison) {
         Vente vente = livraison.getVente();
         String referenceVente = vente != null ? "V" + vente.getId() : null;
-        String clientNom = vente != null && vente.getCommande() != null
-                ? vente.getCommande().getClient().getNom()
+        String clientNom = vente != null && vente.getClient() != null
+                ? vente.getClient().getNom()
                 : null;
-        String clientPrenom = vente != null && vente.getCommande() != null
-                ? vente.getCommande().getClient().getPrenom()
+        String clientPrenom = vente != null && vente.getClient() != null
+                ? vente.getClient().getPrenom()
                 : null;
 
         livreur livreur = livraison.getLivreur();
