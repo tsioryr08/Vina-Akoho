@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "employe")
@@ -27,12 +28,21 @@ public class Employe {
     @Column(name = "email", unique = true, length = 150)
     private String email;
 
+    @Column(name = "contact", length = 20)
+    private String contact;
+
     @Column(name = "mdp", nullable = false, length = 255)
     private String mdp;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_role", nullable = false)
     private Role role;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public Employe() {
     }
@@ -69,6 +79,14 @@ public class Employe {
         this.email = email;
     }
 
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
     public String getMdp() {
         return mdp;
     }
@@ -83,5 +101,21 @@ public class Employe {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

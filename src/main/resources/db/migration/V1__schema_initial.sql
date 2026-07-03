@@ -227,7 +227,7 @@ CREATE UNIQUE INDEX uq_recette_active_par_categorie
 CREATE TABLE mouvement_stock_mp (
     id SERIAL PRIMARY KEY,
     id_type_mouvement INTEGER NOT NULL,
-    date_mouvement TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_mouvement DATE DEFAULT CURRENT_DATE,
     id_lot_mp INTEGER NOT NULL,
     quantite DECIMAL(10, 2) NOT NULL CHECK (quantite <> 0),
     id_unite INTEGER NOT NULL,
@@ -248,7 +248,7 @@ CREATE INDEX idx_mvt_mp_employe ON mouvement_stock_mp(id_employe);
 CREATE TABLE mouvement_stock_produit (
     id SERIAL PRIMARY KEY,
     id_type_mouvement INTEGER NOT NULL,
-    date_mouvement TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_mouvement DATE DEFAULT CURRENT_DATE,
     id_lot_produit INTEGER NOT NULL,
     quantite DECIMAL(10, 2) NOT NULL CHECK (quantite <> 0),
     id_unite INTEGER NOT NULL,
@@ -543,4 +543,3 @@ CREATE TABLE depense_lot (
 CREATE INDEX idx_depense_lot_depense ON depense_lot(id_depense);
 CREATE INDEX idx_depense_lot_lot_produit ON depense_lot(id_lot_produit);
 CREATE INDEX idx_depense_lot_lot_mp ON depense_lot(id_lot_mp);
-

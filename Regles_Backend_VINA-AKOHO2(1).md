@@ -320,4 +320,13 @@ Commentaire :
 
 ---
 
+## 11. Migration des donnees:
+.Quand il y a une modification de la base comme ALTER etc , creer un fichier dans " ressources/db/migration"  et mettre les commade sql dedans
+### Format du fichier:
+```
+Vx__schema_initial.sql
+```
+Avec lequelle x est le chiffre suivant du dernier .sql 
+ ### NB: Ne jamais corriger ou modifier les anciens .sql  directement , toujours creer une nouvelle s'il y a une modification
+
 _Document de référence — Architectes Backend VINA-AKOHO — Sprint 1_
