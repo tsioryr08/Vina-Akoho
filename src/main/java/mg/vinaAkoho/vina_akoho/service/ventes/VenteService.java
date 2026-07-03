@@ -172,7 +172,7 @@ public class VenteService {
             ligneVente.setMontant(produit.getPrixVente().multiply(item.getQuantite()));
             ligneVenteRepository.save(ligneVente);
 
-            SortieProduitService.Allocation allocation = sortieProduitService.allouerLots(
+            List<SortieProduitService.Allocation> allocations = sortieProduitService.allouerLots(
                     produit.getId(),
                     item.getQuantite(),
                     idEmploye,
