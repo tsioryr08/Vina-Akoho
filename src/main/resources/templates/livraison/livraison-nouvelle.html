@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VINA AKOHO - Nouvelle livraison</title>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
+</head>
+<body class="vina-body">
+    <div th:replace="~{layout/responsableCommercial}"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-content">
+            <section class="page-header">
+                <div>
+                    <p class="eyebrow">RO04 - Responsable Commercial</p>
+                    <h1>Nouvelle livraison</h1>
+                    <p>Créer une livraison associée à une vente.</p>
+                </div>
+                <span class="role-badge">Livraisons</span>
+            </section>
+
+            <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+            <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
+
+            <section class="form-card">
+                <form th:action="@{/api/livraisons/creer}" th:object="${livraisonForm}" method="post">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="idVente">Vente *</label>
+                            <select id="idVente" th:field="*{idVente}" class="form-control" required>
+                                <option value="">Sélectionner une vente</option>
+                                <option th:each="vente : ${ventesDisponibles}"
+                                        th:value="${vente.id}"
+                                        th:text="'V' + ${vente.id}"></option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="idStatutLivraison">Statut *</label>
+                            <select id="idStatutLivraison" th:field="*{idStatutLivraison}" class="form-control" required>
+                                <option value="">Sélectionner un statut</option>
+                                <option th:each="statut : ${statutsDisponibles}"
+                                        th:value="${statut.id}"
+                                        th:text="${statut.libelle}"></option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="idLivreur">Livreur</label>
+                            <select id="idLivreur" th:field="*{idLivreur}" class="form-control">
+                                <option value="">Aucun livreur</option>
+                                <option th:each="livreur : ${livreursDisponibles}"
+                                        th:value="${livreur.id}"
+                                        th:text="${livreur.nom + ' ' + livreur.prenom}"></option>
+                            </select>
+                        </div>
+
+                        <div class="field field-full">
+                            <label for="lieuExact">Lieu de livraison</label>
+                            <input id="lieuExact" class="form-control" type="text" th:field="*{lieuExact}" placeholder="Adresse exacte">
+                        </div>
+
+                        <div class="field">
+                            <label for="contact">Contact</label>
+                            <input id="contact" class="form-control" type="text" th:field="*{contact}" placeholder="Téléphone" maxlength="20">
+                        </div>
+
+                        <div class="field">
+                            <label for="dateLivraison">Date de livraison</label>
+                            <input id="dateLivraison" class="form-control" type="date" th:field="*{dateLivraison}">
+                        </div>
+
+                        <div class="field field-full">
+                            <label for="commentaire">Commentaire</label>
+                            <textarea id="commentaire" class="form-control textarea" rows="5" th:field="*{commentaire}" placeholder="Consignes particulières"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-green">Créer la livraison</button>
+                        <a class="btn btn-ghost" th:href="@{/api/livraisons}">Annuler</a>
+                    </div>
+                </form>
+            </section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+    <script th:src="@{/static/assets/js/auth.js}"></script>
+    <script th:src="@{/static/assets/js/app-shell.js}"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VINA AKOHO - Détail livraison</title>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
+</head>
+<body class="vina-body">
+    <div th:replace="~{layout/responsableCommercial}"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-content">
+            <section class="page-header">
+                <div>
+                    <p class="eyebrow">RO04 - Responsable Commercial</p>
+                    <h1>Détail de la livraison #<span th:text="${livraison.id}">1</span></h1>
+                </div>
+            </section>
+
+            <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+            <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
+
+            <section class="form-card">
+                <div class="form-section">
+                    <div class="form-section-heading">
+                        <span>1</span>
+                        <div>
+                            <h2>Informations générales</h2>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Vente</label>
+                            <input class="form-control" type="text" th:value="${livraison.referenceVente}" readonly>
+                        </div>
+                        <div class="field">
+                            <label>Client</label>
+                            <input class="form-control" type="text" th:value="${livraison.clientNom + ' ' + livraison.clientPrenom}" readonly>
+                        </div>
+                        <div class="field">
+                            <label>Livreur</label>
+                            <input class="form-control" type="text" th:value="${livraison.livreurNom != null ? livraison.livreurNom + ' ' + livraison.livreurPrenom : '-'}" readonly>
+                        </div>
+                        <div class="field">
+                            <label>Statut</label>
+                            <input class="form-control" type="text" th:value="${livraison.statutLivraison}" readonly>
+                        </div>
+                        <div class="field">
+                            <label>Lieu exact</label>
+                            <input class="form-control" type="text" th:value="${livraison.lieuExact}" readonly>
+                        </div>
+                        <div class="field">
+                            <label>Contact</label>
+                            <input class="form-control" type="text" th:value="${livraison.contact}" readonly>
+                        </div>
+                        <div class="field">
+                            <label>Date de livraison</label>
+                            <input class="form-control" type="text" th:value="${livraison.dateLivraison}" readonly>
+                        </div>
+                        <div class="field field-full">
+                            <label>Commentaire</label>
+                            <textarea class="form-control textarea" rows="5" readonly th:text="${livraison.commentaire}"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a class="btn btn-primary" th:href="@{/api/livraisons}">Retour à la liste</a>
+                </div>
+            </section>
+            <div id="vina-footer"></div>
+        </div>
+    </div>
+    <script th:src="@{/static/assets/js/auth.js}"></script>
+    <script th:src="@{/static/assets/js/app-shell.js}"></script>
+</body>
+</html>
