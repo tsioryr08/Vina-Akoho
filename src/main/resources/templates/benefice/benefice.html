@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Calcul des Bénéfices</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+      .filter-row { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px; }
+      .filter-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 150px; }
+      .filter-input, .filter-select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+      .btn-submit { padding: 9px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar" id="vina-sidebar">
+      <div class="sidebar-brand">
+        <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
+        <div>
+          <div class="brand-title">VINA AKOHO</div>
+          <div class="brand-subtitle">RO05 - Comptable</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a class="sidebar-link" th:href="@{/}">Dashboard <span class="sidebar-code">F9</span></a>
+
+        <div class="sidebar-section">Finance</div>
+        <a class="sidebar-link active" th:href="@{/finances/benefices}">Vue d'ensemble financière <span class="sidebar-code">F1</span></a>
+        <a class="sidebar-link" href="#">Registre des Dépenses <span class="sidebar-code">F2</span></a>
+        <a class="sidebar-link" href="#">Coût de revient <span class="sidebar-code">F3</span></a>
+        <a class="sidebar-link" href="#">Rapports financiers <span class="sidebar-code">F5</span></a>
+        <a class="sidebar-link" href="#">Voir créances <span class="sidebar-code">F5</span></a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="vina-menu-button" type="button">☰</button>
+          <span class="breadcrumb">Rapports Financiers / Bénéfices</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="role-pill">RO05 - Comptable</span>
+          <button class="btn btn-ghost btn-small" id="vina-logout-button" onclick="window.location.href = '/'" type="button">Déconnexion</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="page-header theme-blue">
+          <div>
+            <p class="eyebrow">FINANCES</p>
+            <h1>Calcul des Bénéfices</h1>
+            <p>Ajustez les dates et filtrez par catégorie pour analyser la rentabilité analytique.</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2 class="card-title">Filtres de recherche</h2>
+          </div>
+          <form th:action="@{benefices}" method="get">
+            <div class="filter-row">
+              <div class="filter-group">
+                <label for="dateDebut">Date de début :</label>
+                <input type="date" id="dateDebut" name="dateDebut" class="filter-input" th:value="${rapport.dateDebut}" required>
+              </div>
+              <div class="filter-group">
+                <label for="dateFin">Date de fin :</label>
+                <input type="date" id="dateFin" name="dateFin" class="filter-input" th:value="${rapport.dateFin}" required>
+              </div>
+              <div class="filter-group">
+                <label for="categorieId">Catégorie de dépense :</label>
+                <select id="categorieId" name="categorieId" class="filter-select">
+                  <option value="">-- Toutes les catégories --</option>
+                  <option th:each="cat : ${rapport.categories}" 
+                          th:value="${cat.id}" 
+                          th:text="${cat.libelle}"
+                          th:selected="${cat.id == rapport.categorieId}"></option>
+                </select>
+              </div>
+              <div>
+                <button type="submit" class="btn btn-primary btn-submit">Recalculer</button>
+              </div>
+            </div>
+          </form>
+          <div th:if="${erreur}" style="color: red; margin-top: 10px;" th:text="${erreur}"></div>
+        </section>
+
+        <section class="stats-grid" th:if="${rapport != null}">
+          <article class="stat-card">
+            <div class="stat-label">Total Recettes (Ventes)</div>
+            <div class="stat-value">
+              <span class="text-success" th:text="${'+ ' + #numbers.formatDecimal(rapport.totalRecettes, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}">+ 0.00 Ar</span>
+            </div>
+            <div class="stat-trend trend-positive">Sur la période sélectionnée</div>
+          </article>
+          
+          <article class="stat-card">
+            <div class="stat-label">Total Dépenses</div>
+            <div class="stat-value">
+              <span class="text-danger" th:text="${'- ' + #numbers.formatDecimal(rapport.totalDepenses, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}">- 0.00 Ar</span>
+            </div>
+            <div class="stat-trend trend-negative">Filtre appliqué</div>
+          </article>
+          
+          <article class="stat-card">
+            <div class="stat-label">Bénéfice Net</div>
+            <div class="stat-value">
+              <span th:class="${rapport.benefice >= 0} ? 'text-success' : 'text-danger'" 
+                    th:text="${#numbers.formatDecimal(rapport.benefice, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}">0.00 Ar</span>
+            </div>
+            <div class="stat-trend" th:classappend="${rapport.benefice >= 0} ? 'trend-positive' : 'trend-negative'">
+              Solde disponible estimé
+            </div>
+          </article>
+        </section>
+      </div>
+
+      <div class="app-footer">VINA AKOHO — Comptabilité & Encaissements</div>
+    </div>
+    <script src="/assets/js/script_content.js"></script>
+  </body>
+</html>

@@ -15,7 +15,7 @@
                 <div>
                     <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
                     <h1>Gestion des Ventes</h1>
-                    <p class="muted-text">Suivi des commandes clients, facturation et coordination avec le service livraison.</p>
+                    <p class="muted-text">Suivi des ventes clients, facturation et coordination avec le service livraison.</p>
                 </div>
                 <div class="header-actions">
                     <a class="btn btn-green" th:href="@{/ventes/nouvelle}">+ Nouvelle Vente</a>
@@ -39,8 +39,8 @@
                     <div class="stat-trend trend-positive">Ventes validées</div>
                 </article>
                 <article class="stat-card">
-                    <div class="stat-label">Commandes en attente</div>
-                    <div class="stat-value" th:text="${statistiques.commandesEnAttente}">0</div>
+                    <div class="stat-label">Ventes en attente</div>
+                    <div class="stat-value" th:text="${statistiques.ventesEnAttente}">0</div>
                     <div class="stat-trend trend-warning">À valider</div>
                 </article>
                 <article class="stat-card">
@@ -60,7 +60,7 @@
                         <input type="text" class="form-control" placeholder="Nom du client...">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Statut commande</label>
+                        <label class="form-label">Statut vente</label>
                         <select class="form-control">
                             <option>Tous</option>
                             <option>Validée</option>
@@ -119,7 +119,7 @@
                                     <tr th:if="${ventes == null or #lists.isEmpty(ventes)}">
                                         <td colspan="7" class="empty-state">
                                             <p>📦 Aucune vente enregistrée.</p>
-                                            <p>Créez une vente pour afficher les commandes ici.</p>
+                                            <p>Créez une vente pour afficher les lignes ici.</p>
                                         </td>
                                     </tr>
                                 </tbody>
