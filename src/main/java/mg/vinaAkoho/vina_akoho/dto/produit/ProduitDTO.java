@@ -25,6 +25,8 @@ public class ProduitDTO {
     private Integer seuilAlerte;
     private String description;
     private Boolean actif;
+    private BigDecimal quantiteStock;
+    private String statut;
     private BigDecimal margePourcentage;
     private BigDecimal pourcentageProteine;
     private BigDecimal pourcentageMatiereGrasses;

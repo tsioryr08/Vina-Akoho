@@ -21,10 +21,10 @@
     <a class="sidebar-link" href="#"
       >Ajouter Matières <span class="sidebar-code">M1</span></a
     >
-    <a class="sidebar-link" href="#"
+    <a class="sidebar-link" th:href="@{/matieres-premieres}"
       >Suivi Stock Matières <span class="sidebar-code">M2</span></a
     >
-    <a class="sidebar-link" href="#"
+    <a class="sidebar-link" th:href="@{/matieres-premieres/nouveau}"
       >Créer Fiche Produit <span class="sidebar-code">M3</span></a
     >
     <a class="sidebar-link" href="#"
@@ -40,6 +40,17 @@
     <div class="sidebar-section">Stocks</div>
     <a class="sidebar-link" href="#"
       >Suivi Produits Finis <span class="sidebar-code">S1</span></a
+    >
+
+    <div class="sidebar-section">Surveillance</div>
+    <a class="sidebar-link" th:href="@{/matieres-premieres/alertes}"
+      >Alertes de Seuil <span class="sidebar-code">S3</span></a
+    >
+    <a class="sidebar-link" th:href="@{/matieres-premieres/entree-stock}"
+      >Entree matiere premiere en stock <span class="sidebar-code">S3</span></a
+    >
+    <a class="sidebar-link" href="#"
+      >Inventaire Périodique <span class="sidebar-code">S4</span></a
     >
   </nav>
 </aside>

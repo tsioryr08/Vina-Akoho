@@ -1,104 +1,170 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profil Client - VINA AKOHO</title>
-    
-    <link rel="stylesheet" th:href="@{/static/css/style.css}">
-</head>
-<body class="vina-body">
-    <div id="vina-sidebar"></div>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="vina-body">
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header"></div>
-        <div id="vina-content">
-            <section class="page-header theme-green">
-                <div>
-                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
-                    <h1>Detail Client</h1>
-                    <p class="muted-text">Informations commerciales et logistiques du client.</p>
-                </div>
-                <div class="header-actions">
-                    <a class="btn btn-white" th:href="@{/clients/espace}">Retour</a>
-                    <a class="btn btn-green" th:href="@{/clients/{id}/modifier(id=${client.id})}">Modifier</a>
-                    <form method="post" th:action="@{/clients/{id}/supprimer(id=${client.id})}" class="form-inline">
-                        <button class="btn btn-red" type="submit" onclick="return confirm('Supprimer ce client de la liste ?')">Supprimer</button>
-                    </form>
-                </div>
-            </section>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-content">
+        <section class="page-header theme-green">
+          <div>
+            <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
+            <h1>Detail Client</h1>
+            <p class="muted-text">
+              Informations commerciales et logistiques du client.
+            </p>
+          </div>
+          <div class="header-actions">
+            <a class="btn btn-white" th:href="@{/clients/espace}">Retour</a>
+            <a
+              class="btn btn-green"
+              th:href="@{/clients/{id}/modifier(id=${client.id})}"
+              >Modifier</a
+            >
+            <form
+              method="post"
+              th:action="@{/clients/{id}/supprimer(id=${client.id})}"
+              class="form-inline"
+            >
+              <button
+                class="btn btn-red"
+                type="submit"
+                onclick="return confirm('Supprimer ce client de la liste ?');"
+              >
+                Supprimer
+              </button>
+            </form>
+          </div>
+        </section>
 
-            <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
+        <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
 
-            <div class="profile-header-card">
-                <div class="profile-identity">
-                    <div class="avatar-circle" th:text="${#strings.substring(client.nom, 0, 1) + #strings.substring(client.prenom, 0, 1)}">RJ</div>
-                    <div class="profile-info">
-                        <h1 th:text="${client.nom + ' ' + client.prenom}">Rakoto Jean</h1>
-                        <p th:text="${client.dateInscription == null ? 'Date inscription non renseignee' : 'Client depuis ' + client.dateInscription}">Client depuis 2026-06-26</p>
-                    </div>
-                </div>
-                <div class="profile-status">
-                    <span class="badge badge-blue" th:text="${client.isActif ? 'Client actif' : 'Client inactif'}">Client actif</span>
-                </div>
+        <div class="profile-header-card">
+          <div class="profile-identity">
+            <div
+              class="avatar-circle"
+              th:text="${#strings.substring(client.nom, 0, 1) + #strings.substring(client.prenom, 0, 1)}"
+            >
+              RJ
             </div>
-
-            <section class="stats-grid">
-                <article class="stat-card">
-                    <div class="stat-label">Code client</div>
-                    <div class="stat-value" th:text="${'CLT-' + #numbers.formatInteger(client.id, 3)}">CLT-001</div>
-                    <div class="stat-trend trend-info">Identifiant unique</div>
-                </article>
-                <article class="stat-card">
-                    <div class="stat-label">Type client</div>
-                    <div class="stat-value" th:text="${client.typeClient == null ? '--' : client.typeClient}">Eleveur</div>
-                    <div class="stat-trend trend-positive">Profil commercial</div>
-                </article>
-                <article class="stat-card">
-                    <div class="stat-label">Cheptel</div>
-                    <div class="stat-value" th:text="${client.tailleCheptel == null ? '--' : client.tailleCheptel}">40</div>
-                    <div class="stat-trend trend-info">Nombre de tetes</div>
-                </article>
-            </section>
-
-             <div class="card card-spaced">
-                 <div class="card-header">
-                     <h2 class="card-title">Coordonnees & Informations</h2>
-                 </div>
-                 <div class="card-body">
-                     <div class="info-grid">
-                         <div class="contact-box">
-                             <label>Telephone</label>
-                             <div th:text="${client.numeroTelephone == null ? '--' : client.numeroTelephone}">0341111111</div>
-                         </div>
-                         <div class="contact-box">
-                             <label>Service</label>
-                             <div th:text="${client.service == null ? '--' : client.service}">Livraison</div>
-                         </div>
-                         <div class="contact-box">
-                             <label>Zone de livraison</label>
-                             <div th:text="${client.idZoneLivraison == null ? '--' : client.idZoneLivraison}">ZONE002</div>
-                         </div>
-                         <div class="contact-box">
-                             <label>Localite</label>
-                             <div th:text="${client.idLocalite == null ? '--' : client.idLocalite}">LOC002</div>
-                         </div>
-                         <div class="contact-box col-span-2">
-                             <label>Adresse</label>
-                             <div th:text="${client.adresse == null ? '--' : client.adresse}">Antananarivo</div>
-                         </div>
-                         <div class="notes-area">
-                             <strong>Notes commerciales :</strong><br>
-                             <span th:text="${client.notes == null ? 'Aucune note.' : client.notes}">Client modifie</span>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-
-            <div id="vina-footer"></div>
+            <div class="profile-info">
+              <h1 th:text="${client.nom + ' ' + client.prenom}">Rakoto Jean</h1>
+              <p
+                th:text="${client.dateInscription == null ? 'Date inscription non renseignee' : 'Client depuis ' + client.dateInscription}"
+              >
+                Client depuis 2026-06-26
+              </p>
+            </div>
+          </div>
+          <div class="profile-status">
+            <span
+              class="badge badge-blue"
+              th:text="${client.isActif ? 'Client actif' : 'Client inactif'}"
+              >Client actif</span
+            >
+          </div>
         </div>
+
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Code client</div>
+            <div
+              class="stat-value"
+              th:text="${'CLT-' + #numbers.formatInteger(client.id, 3)}"
+            >
+              CLT-001
+            </div>
+            <div class="stat-trend trend-info">Identifiant unique</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Type client</div>
+            <div
+              class="stat-value"
+              th:text="${client.typeClient == null ? '--' : client.typeClient}"
+            >
+              Eleveur
+            </div>
+            <div class="stat-trend trend-positive">Profil commercial</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Cheptel</div>
+            <div
+              class="stat-value"
+              th:text="${client.tailleCheptel == null ? '--' : client.tailleCheptel}"
+            >
+              40
+            </div>
+            <div class="stat-trend trend-info">Nombre de tetes</div>
+          </article>
+        </section>
+
+        <div class="card card-spaced">
+          <div class="card-header">
+            <h2 class="card-title">Coordonnees & Informations</h2>
+          </div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="contact-box">
+                <label>Telephone</label>
+                <div
+                  th:text="${client.numeroTelephone == null ? '--' : client.numeroTelephone}"
+                >
+                  0341111111
+                </div>
+              </div>
+              <div class="contact-box">
+                <label>Service</label>
+                <div
+                  th:text="${client.service == null ? '--' : client.service}"
+                >
+                  Livraison
+                </div>
+              </div>
+              <div class="contact-box">
+                <label>Zone de livraison</label>
+                <div
+                  th:text="${client.idZoneLivraison == null ? '--' : client.idZoneLivraison}"
+                >
+                  ZONE002
+                </div>
+              </div>
+              <div class="contact-box">
+                <label>Localite</label>
+                <div
+                  th:text="${client.idLocalite == null ? '--' : client.idLocalite}"
+                >
+                  LOC002
+                </div>
+              </div>
+              <div class="contact-box col-span-2">
+                <label>Adresse</label>
+                <div
+                  th:text="${client.adresse == null ? '--' : client.adresse}"
+                >
+                  Antananarivo
+                </div>
+              </div>
+              <div class="notes-area">
+                <strong>Notes commerciales :</strong><br />
+                <span
+                  th:text="${client.notes == null ? 'Aucune note.' : client.notes}"
+                  >Client modifie</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="vina-footer"></div>
+      </div>
     </div>
     <script th:src="@{/static/js/auth.js}"></script>
     <script th:src="@{/static/js/app-shell.js}"></script>
-</body>
+  </body>
 </html>

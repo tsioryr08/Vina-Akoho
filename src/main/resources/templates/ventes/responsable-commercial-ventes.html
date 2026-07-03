@@ -15,7 +15,7 @@
                 <div>
                     <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
                     <h1>Gestion des Ventes</h1>
-                    <p class="muted-text">Suivi des commandes clients, facturation et coordination avec le service livraison.</p>
+                    <p class="muted-text">Suivi des ventes clients, facturation et coordination avec le service livraison.</p>
                 </div>
                 <div class="header-actions">
                     <a class="btn btn-green" th:href="@{/ventes/nouvelle}">+ Nouvelle Vente</a>
@@ -29,22 +29,23 @@
             <section class="stats-grid">
                 <article class="stat-card">
                     <div class="stat-label">Ventes du jour</div>
-                    <div class="stat-value">0</div>
-                    <div class="stat-trend trend-positive">+0 vs hier</div>
+                    <div class="stat-value" th:text="${statistiques.ventesDuJour}">0</div>
+                    <div class="stat-trend trend-positive"
+                         th:text="${statistiques.variationVentesHier >= 0 ? '+' + statistiques.variationVentesHier : statistiques.variationVentesHier} + ' vs hier'">+0 vs hier</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Chiffre d'affaires (Mois)</div>
-                    <div class="stat-value">0 Ar</div>
-                    <div class="stat-trend trend-positive">Objectif 0%</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(statistiques.chiffreAffairesMois, 0, 'COMMA', 0, 'POINT')} + ' Ar'">0 Ar</div>
+                    <div class="stat-trend trend-positive">Ventes validées</div>
                 </article>
                 <article class="stat-card">
-                    <div class="stat-label">Commandes en attente</div>
-                    <div class="stat-value">0</div>
+                    <div class="stat-label">Ventes en attente</div>
+                    <div class="stat-value" th:text="${statistiques.ventesEnAttente}">0</div>
                     <div class="stat-trend trend-warning">À valider</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Taux de conversion</div>
-                    <div class="stat-value">0%</div>
+                    <div class="stat-value" th:text="${#numbers.formatDecimal(statistiques.tauxConversion, 0, 'COMMA', 1, 'POINT')} + '%'">0%</div>
                     <div class="stat-trend trend-info">Stable</div>
                 </article>
             </section>
@@ -59,7 +60,7 @@
                         <input type="text" class="form-control" placeholder="Nom du client...">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Statut commande</label>
+                        <label class="form-label">Statut vente</label>
                         <select class="form-control">
                             <option>Tous</option>
                             <option>Validée</option>
@@ -103,7 +104,10 @@
                                         <td><span class="code-ref" th:text="${'V-' + vente.id}"></span></td>
                                         <td><strong th:text="${vente.clientNom}"></strong><br><small class="muted-text" th:text="${vente.clientPrenom}"></small></td>
                                         <td th:text="${#temporals.format(vente.dateVente, 'dd MMM yyyy')}"></td>
-                                        <td>-</td>
+                                        <td>
+                                            <span th:each="ligne, iter : ${vente.lignes}"
+                                                  th:text="${ligne.nomProduit + (iter.last ? '' : ', ')}">Produit</span>
+                                        </td>
                                         <td><strong th:text="${#numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></strong></td>
                                         <td><span class="badge badge-success" th:text="${vente.statutVente}"></span></td>
                                         <td>
@@ -115,7 +119,7 @@
                                     <tr th:if="${ventes == null or #lists.isEmpty(ventes)}">
                                         <td colspan="7" class="empty-state">
                                             <p>📦 Aucune vente enregistrée.</p>
-                                            <p>Créez une vente pour afficher les commandes ici.</p>
+                                            <p>Créez une vente pour afficher les lignes ici.</p>
                                         </td>
                                     </tr>
                                 </tbody>

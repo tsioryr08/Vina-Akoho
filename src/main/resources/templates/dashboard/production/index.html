@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,24 +13,7 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="menu-button" id="vina-menu-button" type="button">
-            ☰
-          </button>
-          <span class="breadcrumb">Dashboard Production</span>
-        </div>
-        <div class="topbar-actions">
-          <span class="role-pill">RO02 - Responsable Production</span>
-          <button
-            class="btn btn-ghost btn-small"
-            id="vina-logout-button" onclick="window.location.href='/'"
-            type="button"
-          >
-            Déconnexion
-          </button>
-        </div>
-      </div>
+      <div th:replace="~{layout/header-production :: header}"></div>
 
       <div class="content">
         <section class="page-header theme-orange">
@@ -44,7 +27,7 @@
           </div>
         </section>
 
-        <section class="stats-grid">
+        <section class="stats-grid stats-grid-5">
           <article class="stat-card">
             <div class="stat-label">Capacité utilisée</div>
             <div class="stat-value">84 %</div>
@@ -64,6 +47,11 @@
             <div class="stat-label">Charges fixes / kg</div>
             <div class="stat-value">98 Ar</div>
             <div class="stat-trend trend-positive">En baisse</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Recettes du mois</div>
+            <div class="stat-value" th:text="${#numbers.formatDecimal(recetteMensuelle, 0, 'COMMA', 0, 'POINT')} + ' Ar'">0 Ar</div>
+            <div class="stat-trend trend-positive">Ventes validées</div>
           </article>
         </section>
 

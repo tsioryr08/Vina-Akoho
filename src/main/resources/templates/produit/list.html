@@ -1,139 +1,222 @@
 <!-- src/main/resources/templates/produit/list.html -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestion des Produits - VINA AKOHO</title>
-    
-    <link rel="stylesheet" th:href="@{/static/css/style.css}">
-</head>
-<body class="vina-body">
-<div th:replace="~{layout/sidebar::sidebar}"></div>
-<div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
-<div class="app-main-wrapper">
-     <header th:replace="~{layout/header-produit :: header}"></header>
-    <div id="vina-content">
 
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="vina-body">
+    <div th:replace="~{layout/admin :: sidebar}"></div>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="app-main-wrapper">
+      <div th:replace="~{layout/header-admin :: header}"></div>
+      <div id="vina-content">
         <section class="page-header theme-orange">
-            <div>
-                <p class="eyebrow">ADMINISTRATION</p>
-                <h1>Gestion des Produits</h1>
-                <p class="muted-text">Vue administrative pour la configuration des prix et des références du catalogue.</p>
-            </div>
+          <div>
+            <p class="eyebrow">ADMINISTRATION</p>
+            <h1>Gestion des Produits</h1>
+            <p class="muted-text">
+              Vue administrative pour la configuration des prix et des
+              références du catalogue.
+            </p>
+          </div>
         </section>
 
         <!-- Messages flash -->
-        <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
-        <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
+        <div
+          th:if="${success}"
+          class="info-banner success"
+          th:text="${success}"
+        ></div>
+        <div
+          th:if="${error}"
+          class="info-banner error"
+          th:text="${error}"
+        ></div>
 
         <!-- Barre de recherche et filtres -->
         <div class="filter-bar">
-            <form th:action="@{/api/produits/recherche}" method="get" class="filter-form">
-                <input type="text" name="q" th:value="${q != null ? q : ''}"
-                       placeholder="Rechercher un produit..." class="search-input">
+          <form
+            th:action="@{/api/produits/recherche}"
+            method="get"
+            class="filter-form"
+          >
+            <input
+              type="text"
+              name="q"
+              th:value="${q != null ? q : ''}"
+              placeholder="Rechercher un produit..."
+              class="search-input"
+            />
 
-                <select name="idCategorie" class="filter-select">
-                    <option value="">Toutes les catégories</option>
-                    <option th:each="cat : ${categories}"
-                            th:value="${cat.id}"
-                            th:text="${cat.libelle}"
-                            th:selected="${idCategorie != null and idCategorie == cat.id}">
-                    </option>
-                </select>
+            <select name="idCategorie" class="filter-select">
+              <option value="">Toutes les catégories</option>
+              <option
+                th:each="cat : ${categories}"
+                th:value="${cat.id}"
+                th:text="${cat.libelle}"
+                th:selected="${idCategorie != null and idCategorie == cat.id}"
+              ></option>
+            </select>
 
-                <input type="number" name="prixMin" th:value="${prixMin != null ? prixMin : ''}"
-                       placeholder="Prix min" step="0.01" class="filter-input">
-                <input type="number" name="prixMax" th:value="${prixMax != null ? prixMax : ''}"
-                       placeholder="Prix max" step="0.01" class="filter-input">
+            <input
+              type="number"
+              name="prixMin"
+              th:value="${prixMin != null ? prixMin : ''}"
+              placeholder="Prix min"
+              step="0.01"
+              class="filter-input"
+            />
+            <input
+              type="number"
+              name="prixMax"
+              th:value="${prixMax != null ? prixMax : ''}"
+              placeholder="Prix max"
+              step="0.01"
+              class="filter-input"
+            />
 
-                <button type="submit" class="btn btn-filter">Filtrer</button>
-                <a th:href="@{/api/produits}" class="btn btn-reset">Réinitialiser</a>
-            </form>
+            <button type="submit" class="btn btn-filter">Filtrer</button>
+            <a th:href="@{/api/produits}" class="btn btn-reset"
+              >Réinitialiser</a
+            >
+          </form>
         </div>
 
         <div class="table-card">
-            <div class="card-header">
-                <div class="card-header-left">
-                    <h2 class="card-title">Base de données Produits</h2>
-                    <p class="product-count">
-                        <span th:text="${produits != null ? produits.totalElements : 0}">0</span>
-                        produit(s) trouvé(s)
-                    </p>
-                </div>
-                <button class="btn btn-black btn-small" onclick="window.location.href='/api/produits/nouveau'">+ Ajouter une référence</button>
+          <div class="card-header">
+            <div class="card-header-left">
+              <h2 class="card-title">Base de données Produits</h2>
+              <p class="product-count">
+                <span th:text="${produits != null ? produits.totalElements : 0}"
+                  >0</span
+                >
+                produit(s) trouvé(s)
+              </p>
             </div>
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                    <tr>
-                        <th>Référence</th>
-                        <th>Désignation</th>
-                        <th>Catégorie</th>
-                        <th>Prix Public</th>
-                        <th>Marge</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="produit : ${produits}">
-                        <td><span class="code-ref" th:text="${produit.ref}"></span></td>
-                        <td><strong th:text="${produit.nom}"></strong></td>
-                        <td th:text="${produit.libelleCategorie}"></td>
-                        <td><strong th:text="'Ar ' + ${#numbers.formatDecimal(produit.prixVente, 0, 0)}"></strong></td>
-                        <!-- Pour la marge, vous devez la calculer ou l'ajouter dans votre DTO -->
-                        <td th:text="${produit.margePourcentage != null ? produit.margePourcentage + '%' : 'N/A'}"></td>
-                        <td>
-                            <span th:if="${produit.actif}" class="badge badge-success">Actif</span>
-                            <span th:unless="${produit.actif}" class="badge badge-danger">Inactif</span>
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <a th:href="@{/api/produits/{id}(id=${produit.id})}"
-                                   class="btn-sm btn-view"
-                                   title="Voir les détails">voir plus</a>
-                                <a th:href="@{/api/produits/{id}/modifier(id=${produit.id})}"
-                                   class="btn-sm btn-edit"
-                                   title="Modifier">modifier</a>
-                                <a th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}"
-                                   class="btn-sm btn-delete"
-                                   title="Supprimer"
-                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.')">🗑️</a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${produits == null or produits.isEmpty()}">
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <p>📦 Aucun produit trouvé</p>
-                                <p>Commencez par ajouter votre premier produit au catalogue.</p>
-                                <button class="btn btn-black btn-small" onclick="window.location.href='/api/produits/nouveau'">
-                                    + Ajouter une référence
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <button
+              class="btn btn-black btn-small"
+              onclick="window.location.href = '/api/produits/nouveau'"
+            >
+              + Ajouter une référence
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Référence</th>
+                  <th>Désignation</th>
+                  <th>Catégorie</th>
+                  <th>Prix Public</th>
+                  <th>Marge</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="produit : ${produits}">
+                  <td>
+                    <span class="code-ref" th:text="${produit.ref}"></span>
+                  </td>
+                  <td><strong th:text="${produit.nom}"></strong></td>
+                  <td th:text="${produit.libelleCategorie}"></td>
+                  <td>
+                    <strong
+                      th:text="'Ar ' + ${#numbers.formatDecimal(produit.prixVente, 0, 0)}"
+                    ></strong>
+                  </td>
+                  <!-- Pour la marge, vous devez la calculer ou l'ajouter dans votre DTO -->
+                  <td
+                    th:text="${produit.margePourcentage != null ? produit.margePourcentage + '%' : 'N/A'}"
+                  ></td>
+                  <td>
+                    <span th:if="${produit.actif}" class="badge badge-success"
+                      >Actif</span
+                    >
+                    <span
+                      th:unless="${produit.actif}"
+                      class="badge badge-danger"
+                      >Inactif</span
+                    >
+                  </td>
+                  <td>
+                    <div class="action-btns">
+                      <a
+                        th:href="@{/api/produits/{id}(id=${produit.id})}"
+                        class="btn-sm btn-view"
+                        title="Voir les détails"
+                        >voir plus</a
+                      >
+                      <a
+                        th:href="@{/api/produits/{id}/modifier(id=${produit.id})}"
+                        class="btn-sm btn-edit"
+                        title="Modifier"
+                        >modifier</a
+                      >
+                      <a
+                        th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}"
+                        class="btn-sm btn-delete"
+                        title="Supprimer"
+                        onclick="
+                          return confirm(
+                            'Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.',
+                          );
+                        "
+                        >🗑️</a
+                      >
+                    </div>
+                  </td>
+                </tr>
+                <tr th:if="${produits == null or produits.isEmpty()}">
+                  <td colspan="7">
+                    <div class="empty-state">
+                      <p>📦 Aucun produit trouvé</p>
+                      <p>
+                        Commencez par ajouter votre premier produit au
+                        catalogue.
+                      </p>
+                      <button
+                        class="btn btn-black btn-small"
+                        onclick="window.location.href = '/api/produits/nouveau'"
+                      >
+                        + Ajouter une référence
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-            <!-- Pagination -->
-            <div th:if="${produits != null and produits.totalPages > 1}" class="pagination">
-                <span th:each="i : ${#numbers.sequence(0, produits.totalPages - 1)}">
-                    <a th:href="@{/api/produits/recherche(page=${i}, size=20, q=${q != null ? q : ''}, idCategorie=${idCategorie != null ? idCategorie : ''}, prixMin=${prixMin != null ? prixMin : ''}, prixMax=${prixMax != null ? prixMax : ''})}"
-                       th:text="${i + 1}"
-                       th:class="${i == produits.number} ? 'active' : ''">
-                    </a>
-                </span>
-            </div>
+          <!-- Pagination -->
+          <div
+            th:if="${produits != null and produits.totalPages > 1}"
+            class="pagination"
+          >
+            <span
+              th:each="i : ${#numbers.sequence(0, produits.totalPages - 1)}"
+            >
+              <a
+                th:href="@{/api/produits/recherche(page=${i}, size=20, q=${q != null ? q : ''}, idCategorie=${idCategorie != null ? idCategorie : ''}, prixMin=${prixMin != null ? prixMin : ''}, prixMax=${prixMax != null ? prixMax : ''})}"
+                th:text="${i + 1}"
+                th:class="${i == produits.number} ? 'active' : ''"
+              >
+              </a>
+            </span>
+          </div>
         </div>
 
         <div id="vina-footer"></div>
-    </div>
+      </div>
 
-    <script src="/assets/js/auth.js"></script>
-    <script src="/assets/js/app-shell.js"></script>
-</div>
-</body>
+      <script src="/assets/js/auth.js"></script>
+      <script src="/assets/js/app-shell.js"></script>
+    </div>
+  </body>
 </html>
