@@ -1,6 +1,7 @@
 package mg.vinaAkoho.vina_akoho.service.ventes;
 
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.clients.ClientHistoriqueAchatsDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.FactureDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.LigneVenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.PanierItemDTO;
@@ -58,6 +59,27 @@ public class VenteService {
         return venteRepository.findById(id)
                 .map(this::versDTO)
                 .orElseThrow(() -> VenteNotFoundException.parId(id));
+    }
+
+    @Transactional(readOnly = true)
+    public ClientHistoriqueAchatsDTO obtenirHistoriqueClient(Integer clientId) {
+        clientRepository.findByIdAndEstSupprimerFalse(clientId)
+                .orElseThrow(() -> ClientNotFoundException.parId(clientId));
+
+        List<VenteDTO> ventes = venteRepository.findByClientIdOrderByDateVenteDesc(clientId)
+                .stream()
+                .map(this::versDTO)
+                .collect(Collectors.toList());
+
+        BigDecimal totalAchats = venteRepository.sommeAchatsClient(clientId);
+        BigDecimal totalRegle = venteRepository.sommeReglementsClient(clientId);
+
+        return ClientHistoriqueAchatsDTO.builder()
+                .ventes(ventes)
+                .totalAchats(totalAchats)
+                .totalRegle(totalRegle)
+                .soldeRestant(totalAchats.subtract(totalRegle))
+                .build();
     }
 
     public VenteStatistiquesDTO obtenirStatistiques() {

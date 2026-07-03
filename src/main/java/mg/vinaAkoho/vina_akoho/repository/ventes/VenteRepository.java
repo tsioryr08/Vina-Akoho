@@ -20,6 +20,24 @@ BigDecimal sumRecettesEntreDeuxDates(@Param("startDate") LocalDateTime startDate
 
     List<Vente> findAllByOrderByDateVenteDesc();
 
+    List<Vente> findByClientIdOrderByDateVenteDesc(Integer clientId);
+
+    @Query("""
+            SELECT COALESCE(SUM(v.montantTotal), 0)
+            FROM Vente v
+            WHERE v.client.id = :clientId
+              AND LOWER(v.statutVente.libelle) NOT IN ('annulée', 'annulee')
+            """)
+    BigDecimal sommeAchatsClient(@Param("clientId") Integer clientId);
+
+    @Query("""
+            SELECT COALESCE(SUM(v.montantTotal), 0)
+            FROM Vente v
+            WHERE v.client.id = :clientId
+              AND LOWER(v.statutVente.libelle) IN ('validée', 'validee')
+            """)
+    BigDecimal sommeReglementsClient(@Param("clientId") Integer clientId);
+
     @Query("""
             SELECT COUNT(v)
             FROM Vente v

@@ -1,3 +1,4 @@
+-- Réparer les horodatages du personnel
 ALTER TABLE employe
 ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
