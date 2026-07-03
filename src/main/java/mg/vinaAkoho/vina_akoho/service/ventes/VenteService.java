@@ -25,6 +25,7 @@ import mg.vinaAkoho.vina_akoho.repository.ventes.LigneVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.StatutVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
+import mg.vinaAkoho.vina_akoho.service.stockproduit.SortieProduitService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +48,7 @@ public class VenteService {
     private final ProduitRepository produitRepository;
     private final ModePaiementRepository modePaiementRepository;
     private final StatutVenteRepository statutVenteRepository;
+    private final SortieProduitService sortieProduitService;
 
     public List<VenteDTO> listerToutes() {
         return venteRepository.findAllByOrderByDateVenteDesc()
@@ -156,6 +158,7 @@ public class VenteService {
         vente = venteRepository.save(vente);
 
         Vente venteFinal = vente;
+        String referenceDocument = "VENTE-" + vente.getId();
 
         for (PanierItemDTO item : panier) {
             Produit produit = produitRepository.findById(item.getIdProduit())
@@ -168,6 +171,13 @@ public class VenteService {
             ligneVente.setPrixUnitaire(produit.getPrixVente());
             ligneVente.setMontant(produit.getPrixVente().multiply(item.getQuantite()));
             ligneVenteRepository.save(ligneVente);
+
+            SortieProduitService.Allocation allocation = sortieProduitService.allouerLots(
+                    produit.getId(),
+                    item.getQuantite(),
+                    idEmploye,
+                    referenceDocument
+            );
         }
 
         Facture facture = new Facture();
