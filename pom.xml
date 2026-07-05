@@ -119,13 +119,26 @@
         </dependency>
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+				<plugin>
+					<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-maven-plugin</artifactId>
+					<version>12.4.0</version>
+					<configuration>
+						<url>jdbc:postgresql://localhost:5433/vinakoho</url>
+						<user>vinakoho</user>
+						<password>vinakoho</password>
+						<schemas>
+							<schema>public</schema>
+						</schemas>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
 
 </project>

@@ -9,5 +9,6 @@ INSERT INTO zone_livraison (id, libelle) VALUES
 ('ITAOSY', 'Itaosy'),
 ('MAHITSY', 'Mahitsy'),
 ('AMBOHIDRATRIMO', 'Ambohidratrimo'),
-('ANKAZOBE', 'Ankazobe')
+('ANKAZOBE', 'Ankazobe'),
+('ZONE-VTE-01', 'Zone Vente 01')
 ON CONFLICT (id) DO NOTHING;

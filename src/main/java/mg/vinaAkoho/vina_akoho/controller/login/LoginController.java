@@ -44,7 +44,7 @@ public class LoginController {
             } else if (role != null && role.equalsIgnoreCase("Gestionnaire de stock")) {
                 return "redirect:/stock";
             } else if (role != null && role.equalsIgnoreCase("Responsable commercial")) {
-                return "redirect:/commercial";
+                return "redirect:/ventes";
             } else if (role != null && role.equalsIgnoreCase("Comptable")) {
                 return "redirect:/comptabilite";
             } else {
