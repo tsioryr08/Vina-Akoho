@@ -52,33 +52,36 @@
             <div class="simulation-grid" style="grid-template-columns: 300px 1fr;">
                 <aside class="side-panel">
                     <div class="side-panel-heading">
-                        <h2>Filtres avancés</h2>
+                        <h2>Recherche</h2>
                     </div>
-<<<<<<< HEAD
-                    <div class="form-group">
-                        <label class="form-label">Client</label>
-                        <input type="text" class="form-control" placeholder="Nom du client...">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Statut vente</label>
-                        <select class="form-control">
-                            <option>Tous</option>
-                            <option>Validée</option>
-                            <option>En attente de paiement</option>
-                            <option>Annulée</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Période</label>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <input type="date" class="form-control">
-                            <input type="date" class="form-control">
-=======
                     <form th:action="@{/ventes}" method="get">
                         <div class="form-group">
-                            <label class="form-label">Client</label>
-                            <input type="text" name="client" class="form-control" placeholder="Nom du client..." th:value="${param.client}">
->>>>>>> 3ecc192 (fix : modification de lien css et quelque ameliorations)
+                            <label class="form-label">Rechercher</label>
+                            <input type="text" name="recherche" class="form-control" placeholder="Client, produit, facture..." th:value="${param.recherche}">
+                        </div>
+                        <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
+                        <div class="form-actions" style="margin-top: 10px;">
+                            <button class="btn btn-green w-100" type="submit">Rechercher</button>
+                        </div>
+                    </form>
+
+                    <div class="side-panel-heading" style="margin-top: 30px;">
+                        <h2>Filtres</h2>
+                    </div>
+                    <form th:action="@{/ventes}" method="get">
+                        <input type="hidden" name="recherche" th:value="${param.recherche}">
+                        <input type="hidden" name="triPar" th:value="${param.triPar}">
+                        <input type="hidden" name="ordreTri" th:value="${param.ordreTri}">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Mode de paiement</label>
+                            <select name="modePaiement" class="form-control">
+                                <option value="">Tous</option>
+                                <option th:each="mode : ${modesPaiementDisponibles}" 
+                                        th:value="${mode.libelle}" 
+                                        th:text="${mode.libelle}"
+                                        th:selected="${param.modePaiement == mode.libelle}"></option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Statut commande</label>
@@ -87,6 +90,14 @@
                                 <option value="Validée" th:selected="${param.statut == 'Validée'}">Validée</option>
                                 <option value="En attente de paiement" th:selected="${param.statut == 'En attente de paiement'}">En attente de paiement</option>
                                 <option value="Annulée" th:selected="${param.statut == 'Annulée'}">Annulée</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Livraison</label>
+                            <select name="avecLivraison" class="form-control">
+                                <option value="">Toutes</option>
+                                <option value="true" th:selected="${param.avecLivraison == 'true'}">Avec livraison</option>
+                                <option value="false" th:selected="${param.avecLivraison == 'false'}">Sans livraison</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -99,6 +110,37 @@
                         <div class="form-actions" style="margin-top: 20px;">
                             <button class="btn btn-green w-100" type="submit">Filtrer</button>
                             <button class="btn btn-white w-100" type="button" onclick="window.location.href='/ventes'">Réinitialiser</button>
+                        </div>
+                    </form>
+
+                    <div class="side-panel-heading" style="margin-top: 30px;">
+                        <h2>Tri</h2>
+                    </div>
+                    <form th:action="@{/ventes}" method="get">
+                        <input type="hidden" name="recherche" th:value="${param.recherche}">
+                        <input type="hidden" name="modePaiement" th:value="${param.modePaiement}">
+                        <input type="hidden" name="statut" th:value="${param.statut}">
+                        <input type="hidden" name="dateDebut" th:value="${param.dateDebut}">
+                        <input type="hidden" name="dateFin" th:value="${param.dateFin}">
+                        <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Trier par</label>
+                            <select name="triPar" class="form-control">
+                                <option value="dateVente" th:selected="${param.triPar == 'dateVente'}">Date</option>
+                                <option value="montantTotal" th:selected="${param.triPar == 'montantTotal'}">Montant</option>
+                                <option value="clientNom" th:selected="${param.triPar == 'clientNom'}">Client</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ordre</label>
+                            <select name="ordreTri" class="form-control">
+                                <option value="desc" th:selected="${param.ordreTri == 'desc'}">Décroissant</option>
+                                <option value="asc" th:selected="${param.ordreTri == 'asc'}">Croissant</option>
+                            </select>
+                        </div>
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <button class="btn btn-green w-100" type="submit">Trier</button>
                         </div>
                     </form>
                 </aside>
@@ -117,6 +159,7 @@
                                         <th>Client</th>
                                         <th>Date</th>
                                         <th>Produit(s)</th>
+                                        <th>Mode paiement</th>
                                         <th>Total (Ar)</th>
                                         <th>Statut</th>
                                         <th>Actions</th>
@@ -131,6 +174,7 @@
                                             <span th:each="ligne, iter : ${vente.lignes}"
                                                   th:text="${ligne.nomProduit + (iter.last ? '' : ', ')}">Produit</span>
                                         </td>
+                                        <td th:text="${vente.modePaiement}"></td>
                                         <td><strong th:text="${#numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></strong></td>
                                         <td><span class="badge badge-success" th:text="${vente.statutVente}"></span></td>
                                         <td>
@@ -140,7 +184,7 @@
                                         </td>
                                     </tr>
                                     <tr th:if="${ventes == null or #lists.isEmpty(ventes)}">
-                                        <td colspan="7" class="empty-state">
+                                        <td colspan="8" class="empty-state">
                                             <p>📦 Aucune vente enregistrée.</p>
                                             <p>Créez une vente pour afficher les lignes ici.</p>
                                         </td>

@@ -5,6 +5,7 @@ import mg.vinaAkoho.vina_akoho.dto.clients.ClientHistoriqueAchatsDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.FactureDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.LigneVenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.PanierItemDTO;
+import mg.vinaAkoho.vina_akoho.dto.ventes.RechercheVenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteFormDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteStatistiquesDTO;
@@ -26,6 +27,14 @@ import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.StatutVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
 import mg.vinaAkoho.vina_akoho.service.stockproduit.SortieProduitService;
+import mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonFormDTO;
+import mg.vinaAkoho.vina_akoho.repository.livraison.LivraisonRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.StatutLivraisonRepository;
+import mg.vinaAkoho.vina_akoho.service.livraison.LivraisonService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +58,9 @@ public class VenteService {
     private final ModePaiementRepository modePaiementRepository;
     private final StatutVenteRepository statutVenteRepository;
     private final SortieProduitService sortieProduitService;
+    private final LivraisonService livraisonService;
+    private final LivraisonRepository livraisonRepository;
+    private final StatutLivraisonRepository statutLivraisonRepository;
 
     public List<VenteDTO> listerToutes() {
         return venteRepository.findAllByOrderByDateVenteDesc()
@@ -114,17 +126,111 @@ public class VenteService {
                 .build();
     }
 
+public Page<VenteDTO> rechercherVentesAvecPagination(RechercheVenteDTO recherche) {
+        if (recherche == null) {
+            recherche = RechercheVenteDTO.parDefaut();
+        }
+
+        LocalDateTime dateDebut = null;
+        LocalDateTime dateFin = null;
+
+        if (recherche.getDateDebut() != null) {
+            dateDebut = recherche.getDateDebut().atStartOfDay();
+        }
+        if (recherche.getDateFin() != null) {
+            dateFin = recherche.getDateFin().atTime(23, 59, 59);
+        }
+
+        Sort.Direction direction = "desc".equalsIgnoreCase(recherche.getOrdreTri())
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        // IMPORTANT : la requête JPQL de VenteRepository.rechercherVentes utilise
+        // les alias v (Vente), c (Client), mp (ModePaiement), sv (StatutVente).
+        // Le Sort transmis à un Pageable pour une requête @Query doit utiliser
+        // ces MEMES alias, sinon Hibernate ne sait pas résoudre la colonne de tri
+        // (erreur 500) ou ignore silencieusement le tri.
+        String champTriDemande = recherche.getTriPar();
+        String champTri;
+        if (champTriDemande == null || champTriDemande.isBlank()) {
+            champTri = "v.dateVente";
+        } else {
+            switch (champTriDemande) {
+                case "dateVente" -> champTri = "v.dateVente";
+                case "montantTotal" -> champTri = "v.montantTotal";
+                case "client.nom" -> champTri = "c.nom";
+                default -> champTri = "v.dateVente"; // valeur inconnue -> tri par défaut sûr
+            }
+        }
+
+        Pageable pageable = PageRequest.of(
+                recherche.getPage() != null ? recherche.getPage() : 0,
+                recherche.getTaille() != null ? recherche.getTaille() : 10,
+                Sort.by(direction, champTri)
+        );
+
+        Page<Vente> pageVentes = venteRepository.rechercherVentes(
+                recherche.getClient(),
+                recherche.getProduit(),
+                recherche.getNumeroFacture(),
+                dateDebut,
+                dateFin,
+                recherche.getModePaiement(),
+                recherche.getStatut(),
+                recherche.getMontantMin(),
+                recherche.getMontantMax(),
+                pageable
+        );
+
+        return pageVentes.map(this::versDTO);
+    }
+    
     @Transactional
     public VenteDTO validerPaiement(Long id) {
         Vente vente = venteRepository.findById(id)
                 .orElseThrow(() -> VenteNotFoundException.parId(id));
-        
-        StatutVente statutValide = statutVenteRepository.findByLibelleIgnoreCase("Validée")
-                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("Validée")));
-        
-        vente.setStatutVente(statutValide);
+
+        // Point 5 (option A) : si une livraison a été enregistrée pour cette
+        // vente (cf. creer()), le paiement validé fait passer la vente en
+        // "En livraison" plutôt que directement "Validée" (terminale).
+        // C'est LivraisonService.modifierStatut(..., "Livrée", ...) qui fera
+        // ensuite passer la vente à "Livrée" une fois la livraison effectuée.
+        boolean avecLivraison = livraisonRepository.findByVenteId(id).isPresent();
+        String libelleStatutCible = avecLivraison ? "En livraison" : "Validée";
+
+        StatutVente statutCible = statutVenteRepository.findByLibelleIgnoreCase(libelleStatutCible)
+                .orElseGet(() -> statutVenteRepository.save(creerStatutVente(libelleStatutCible)));
+
+        vente.setStatutVente(statutCible);
         vente = venteRepository.save(vente);
-        
+
+        return versDTO(vente);
+    }
+
+    /**
+     * Point 2 du markdown : annulation d'une commande tant qu'elle n'a pas été
+     * finalisée. On n'autorise l'annulation que si le paiement n'a pas encore
+     * été validé ("En attente de paiement") : une fois payée, une vente n'est
+     * plus une simple commande annulable (il faudrait un vrai flux de
+     * remboursement, hors périmètre ici).
+     */
+    @Transactional
+    public VenteDTO annulerVente(Long id) {
+        Vente vente = venteRepository.findById(id)
+                .orElseThrow(() -> VenteNotFoundException.parId(id));
+
+        String statutActuel = vente.getStatutVente() != null ? vente.getStatutVente().getLibelle() : null;
+        if (statutActuel == null || !"en attente de paiement".equalsIgnoreCase(statutActuel)) {
+            throw new IllegalStateException(
+                    "Seule une vente en attente de paiement peut être annulée (statut actuel : " + statutActuel + ")");
+        }
+
+        StatutVente statutAnnulee = statutVenteRepository.findByLibelleIgnoreCase("Annulée")
+                .orElseGet(() -> statutVenteRepository.save(creerStatutVente("Annulée")));
+
+        vente.setStatutVente(statutAnnulee);
+        vente = venteRepository.save(vente);
+
         return versDTO(vente);
     }
 
@@ -190,6 +296,31 @@ public class VenteService {
         facture.setMontantTtc(montantTotal);
         factureRepository.save(facture);
 
+        // Point 1 du markdown : "Livraison requise ?" - si oui, on enregistre
+        // tout de suite les informations de livraison en réutilisant le module
+        // livraison déjà existant (statut initial "En attente d'affectation").
+        // La vente elle-même reste "En attente de paiement" jusqu'à
+        // validerPaiement(...) ; c'est à ce moment-là qu'elle basculera sur
+        // "En livraison" (cf. validerPaiement()).
+        if (requete.isLivraisonRequise()) {
+            Integer idStatutInitial = statutLivraisonRepository.findByLibelleIgnoreCase("En attente d'affectation")
+                    .map(statut -> statut.getId())
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Statut de livraison \"En attente d'affectation\" introuvable : "
+                                    + "exécutez la migration V24 avant de créer une vente avec livraison."));
+
+            LivraisonFormDTO livraisonForm = LivraisonFormDTO.builder()
+                    .idVente(vente.getId())
+                    .lieuExact(requete.getAdresseLivraison())
+                    .contact(requete.getContactLivraison())
+                    .dateLivraison(requete.getDateLivraisonSouhaitee())
+                    .commentaire(requete.getCommentaireLivraison())
+                    .idStatutLivraison(idStatutInitial)
+                    .build();
+
+            livraisonService.creer(livraisonForm, idEmploye);
+        }
+
         return versDTO(vente);
     }
 
@@ -215,6 +346,33 @@ public class VenteService {
 
         Client client = vente.getClient();
 
+        // Récupérer les informations de livraison si elles existent
+        mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonDTO livraisonDTO = null;
+        try {
+            var livraisonOpt = livraisonRepository.findByVenteId(vente.getId());
+            if (livraisonOpt.isPresent()) {
+                var livraison = livraisonOpt.get();
+                try {
+                    livraisonDTO = livraisonService.versDTO(livraison);
+                } catch (Exception e) {
+                    // Si versDTO échoue, on crée un DTO minimal
+                    livraisonDTO = mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonDTO.builder()
+                            .id(livraison.getId())
+                            .lieuExact(livraison.getLieuExact())
+                            .contact(livraison.getContact())
+                            .dateLivraison(livraison.getDateLivraison())
+                            .commentaire(livraison.getCommentaire())
+                            .statutLivraison(livraison.getStatutLivraison() != null ? livraison.getStatutLivraison().getLibelle() : null)
+                            .livreurNom(livraison.getLivreur() != null ? livraison.getLivreur().getNom() : null)
+                            .livreurPrenom(livraison.getLivreur() != null ? livraison.getLivreur().getPrenom() : null)
+                            .build();
+                }
+            }
+        } catch (Exception e) {
+            // En cas d'erreur lors de la récupération de la livraison, on continue sans livraison
+            livraisonDTO = null;
+        }
+
         return VenteDTO.builder()
                 .id(vente.getId())
                 .clientNom(client.getNom())
@@ -228,6 +386,7 @@ public class VenteService {
                 .montantTotal(vente.getMontantTotal())
                 .lignes(lignes)
                 .facture(factureDTO)
+                .livraison(livraisonDTO)
                 .build();
     }
 

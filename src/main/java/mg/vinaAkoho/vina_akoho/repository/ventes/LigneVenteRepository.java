@@ -28,7 +28,7 @@ public interface LigneVenteRepository extends JpaRepository<LigneVente, Long> {
             JOIN statut_vente sv ON sv.id = v.id_statut_vente
             WHERE v.date_vente >= :debut
               AND v.date_vente < :fin
-              AND LOWER(sv.libelle) NOT IN ('annulée', 'annulee')
+              AND LOWER(sv.libelle) NOT IN ('annulée', 'annulee', 'en attente de paiement')
             GROUP BY CAST(v.date_vente AS date), p.id, p.nom, p.prix_vente
             ORDER BY CAST(v.date_vente AS date) DESC, p.nom ASC
             """, nativeQuery = true)

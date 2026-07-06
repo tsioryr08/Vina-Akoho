@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINA AKOHO - Historique des Ventes</title>
+<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="vina-body">
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
+    <div class="app-main-wrapper">
+        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-content">
+<section class="page-header">
+<div>
+<p class="eyebrow">Historique des ventes</p>
+<h1>Historique des ventes</h1>
+<p>Liste complète de toutes les ventes avec recherche, filtres et pagination.</p>
+</div>
+<span class="role-badge">Ny Antema</span>
+</section>
+
+<section class="tab-list" role="tablist">
+<a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
+<a class="tab-link active" th:href="@{/ventes/historique-ventes}">Historique complet</a>
+<a class="tab-link" th:href="@{/ventes/historique}">Statistiques</a>
+<a class="tab-link" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
+</section>
+
+<section class="card">
+<div class="filter-bar">
+<form th:action="@{/ventes/historique-ventes}" method="get" class="search-filters">
+<div class="filter-row">
+<div class="field">
+<label for="client">Client</label>
+<input type="text" id="client" name="client" th:value="${recherche.client}" class="form-control" placeholder="Nom ou prénom">
+</div>
+
+<div class="field">
+<label for="produit">Produit</label>
+<input type="text" id="produit" name="produit" th:value="${recherche.produit}" class="form-control" placeholder="Nom du produit">
+</div>
+
+<div class="field">
+<label for="numeroFacture">N° Facture</label>
+<input type="text" id="numeroFacture" name="numeroFacture" th:value="${recherche.numeroFacture}" class="form-control" placeholder="Numéro de facture">
+</div>
+</div>
+
+<div class="filter-row">
+<div class="field">
+<label for="dateDebut">Date début</label>
+<input type="date" id="dateDebut" name="dateDebut" th:value="${recherche.dateDebut}" class="form-control">
+</div>
+
+<div class="field">
+<label for="dateFin">Date fin</label>
+<input type="date" id="dateFin" name="dateFin" th:value="${recherche.dateFin}" class="form-control">
+</div>
+
+<div class="field">
+<label for="modePaiement">Mode de paiement</label>
+<select id="modePaiement" name="modePaiement" class="form-control">
+<option value="">Tous</option>
+<option th:each="mode : ${modesPaiement}" 
+        th:value="${mode.libelle}" 
+        th:text="${mode.libelle}"
+        th:selected="${recherche.modePaiement == mode.libelle}"></option>
+</select>
+</div>
+
+<div class="field">
+<label for="statut">Statut</label>
+<select id="statut" name="statut" class="form-control">
+<option value="">Tous</option>
+<option value="Validée" th:selected="${recherche.statut == 'Validée'}">Validée</option>
+<option value="En attente de paiement" th:selected="${recherche.statut == 'En attente de paiement'}">En attente de paiement</option>
+<option value="Annulée" th:selected="${recherche.statut == 'Annulée'}">Annulée</option>
+</select>
+</div>
+</div>
+
+<div class="filter-row">
+<div class="field">
+<label for="montantMin">Montant min (Ar)</label>
+<input type="number" id="montantMin" name="montantMin" th:value="${recherche.montantMin}" class="form-control" step="0.01">
+</div>
+
+<div class="field">
+<label for="montantMax">Montant max (Ar)</label>
+<input type="number" id="montantMax" name="montantMax" th:value="${recherche.montantMax}" class="form-control" step="0.01">
+</div>
+
+<div class="field">
+<label for="triPar">Trier par</label>
+<select id="triPar" name="triPar" class="form-control">
+<option value="dateVente" th:selected="${recherche.triPar == 'dateVente'}">Date</option>
+<option value="montantTotal" th:selected="${recherche.triPar == 'montantTotal'}">Montant</option>
+<option value="client.nom" th:selected="${recherche.triPar == 'client.nom'}">Client</option>
+</select>
+</div>
+
+<div class="field">
+<label for="ordreTri">Ordre</label>
+<select id="ordreTri" name="ordreTri" class="form-control">
+<option value="desc" th:selected="${recherche.ordreTri == 'desc'}">Décroissant</option>
+<option value="asc" th:selected="${recherche.ordreTri == 'asc'}">Croissant</option>
+</select>
+</div>
+
+<div class="field">
+<label for="taille">Éléments/page</label>
+<select id="taille" name="taille" class="form-control">
+<option value="5" th:selected="${recherche.taille == 5}">5</option>
+<option value="10" th:selected="${recherche.taille == 10}">10</option>
+<option value="20" th:selected="${recherche.taille == 20}">20</option>
+<option value="50" th:selected="${recherche.taille == 50}">50</option>
+</select>
+</div>
+</div>
+
+<div class="toolbar-actions">
+<button class="btn btn-green" type="submit">Rechercher</button>
+<button class="btn btn-ghost" type="button" onclick="resetFilters()">Réinitialiser</button>
+</div>
+</form>
+</div>
+</section>
+
+<section class="table-card">
+<div class="table-card-header">
+<div>
+<h2 class="card-title">Résultats</h2>
+<p class="card-subtitle" th:text="${pageVentes.totalElements} + ' vente(s) trouvée(s)'"></p>
+</div>
+</div>
+
+<div class="table-wrap">
+<table class="data-table">
+<thead>
+<tr>
+<th>N°</th>
+<th>Client</th>
+<th>Date</th>
+<th>Montant</th>
+<th>Mode de paiement</th>
+<th>Statut</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="vente, stat : ${pageVentes.content}">
+<td th:text="${vente.id}"></td>
+<td>
+<strong th:text="${vente.clientNom + ' ' + vente.clientPrenom}"></strong>
+<br>
+<small th:text="${vente.clientTelephone}"></small>
+</td>
+<td th:text="${#temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></td>
+<td th:text="${#numbers.formatDecimal(vente.montantTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
+<td th:text="${vente.modePaiement}"></td>
+<td>
+<span class="badge" 
+      th:classappend="${vente.statutVente == 'Validée' ? 'badge-green' : (vente.statutVente == 'En attente de paiement' ? 'badge-yellow' : 'badge-red')}"
+      th:text="${vente.statutVente}"></span>
+</td>
+<td>
+<a th:href="@{/ventes/{id}(id=${vente.id})}" class="btn btn-sm btn-ghost">Voir</a>
+<a th:href="@{/ventes/{id}/facture(id=${vente.id})}" class="btn btn-sm btn-ghost">Facture</a>
+</td>
+</tr>
+<tr th:if="${pageVentes.empty}">
+<td colspan="7" class="empty-state">Aucune vente trouvée.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="pagination" th:if="${!pageVentes.empty}">
+<div class="pagination-info">
+<span th:text="'Page ' + (${pageVentes.number} + 1) + ' / ' + ${pageVentes.totalPages}"></span>
+<span th:text="'(' + ${pageVentes.totalElements} + ' éléments)'"></span>
+</div>
+<div class="pagination-controls">
+<a th:href="@{/ventes/historique-ventes(page=${pageVentes.number}, client=${recherche.client}, produit=${recherche.produit}, numeroFacture=${recherche.numeroFacture}, dateDebut=${recherche.dateDebut}, dateFin=${recherche.dateFin}, modePaiement=${recherche.modePaiement}, statut=${recherche.statut}, montantMin=${recherche.montantMin}, montantMax=${recherche.montantMax}, triPar=${recherche.triPar}, ordreTri=${recherche.ordreTri}, taille=${recherche.taille})}" 
+   class="btn btn-sm btn-ghost"
+   th:disabled="${pageVentes.first}"
+   th:classappend="${pageVentes.first} ? 'disabled' : ''">Précédent</a>
+
+<th:block th:each="i : ${#numbers.sequence(0, pageVentes.totalPages - 1)}">
+<a th:if="${i == pageVentes.number}" 
+   class="btn btn-sm btn-green active" 
+   th:text="${i + 1}"></a>
+<a th:if="${i != pageVentes.number}"
+   th:href="@{/ventes/historique-ventes(page=${i + 1}, client=${recherche.client}, produit=${recherche.produit}, numeroFacture=${recherche.numeroFacture}, dateDebut=${recherche.dateDebut}, dateFin=${recherche.dateFin}, modePaiement=${recherche.modePaiement}, statut=${recherche.statut}, montantMin=${recherche.montantMin}, montantMax=${recherche.montantMax}, triPar=${recherche.triPar}, ordreTri=${recherche.ordreTri}, taille=${recherche.taille})}"
+   class="btn btn-sm btn-ghost"
+   th:text="${i + 1}"></a>
+</th:block>
+
+<a th:href="@{/ventes/historique-ventes(page=${pageVentes.number + 2}, client=${recherche.client}, produit=${recherche.produit}, numeroFacture=${recherche.numeroFacture}, dateDebut=${recherche.dateDebut}, dateFin=${recherche.dateFin}, modePaiement=${recherche.modePaiement}, statut=${recherche.statut}, montantMin=${recherche.montantMin}, montantMax=${recherche.montantMax}, triPar=${recherche.triPar}, ordreTri=${recherche.ordreTri}, taille=${recherche.taille})}"
+   class="btn btn-sm btn-ghost"
+   th:disabled="${pageVentes.last}"
+   th:classappend="${pageVentes.last} ? 'disabled' : ''">Suivant</a>
+</div>
+</div>
+</section>
+        </div>
+        <div id="vina-footer" th:replace="~{layout/footer}"></div>
+    </div>
+    <script th:src="@{/js/auth.js}"></script>
+    <script th:src="@{/js/app-shell.js}"></script>
+    <script>
+    function resetFilters() {
+        window.location.href = '/ventes/historique-ventes';
+    }
+    </script>
+</body>
+</html>

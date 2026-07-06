@@ -6,7 +6,7 @@
                 <tr>
                     <th>Produit</th>
                     <th>Quantité</th>
-                    <th>Prix/kg</th>
+                    <th>Prix unitaire</th>
                     <th>Total</th>
                     <th>Action</th>
                 </tr>
@@ -14,8 +14,8 @@
             <tbody>
                 <tr th:each="item : ${panier}">
                     <td th:text="${item.nomProduit}"></td>
-                    <td th:text="${item.quantite}"></td>
-                    <td th:text="${#numbers.formatDecimal(item.prixUnitaire,0,'COMMA',2,'POINT')}"></td>
+                    <td th:text="${item.quantite} + ' ' + (${item.unite} != null and ${item.unite} != '' ? item.unite : 'kg')"></td>
+                    <td th:text="${#numbers.formatDecimal(item.prixUnitaire,0,'COMMA',2,'POINT')} + ' / ' + (${item.unite} != null and ${item.unite} != '' ? item.unite : 'kg')"></td>
                     <td th:text="${#numbers.formatDecimal(item.montant,0,'COMMA',2,'POINT')}"></td>
                     <td>
                         <form th:action="@{/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}" method="post">
