@@ -20,4 +20,5 @@ public class PanierItemDTO {
     private BigDecimal quantite;
     private BigDecimal prixUnitaire;
     private BigDecimal montant;
+    private String unite;
 }

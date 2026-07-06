@@ -100,7 +100,7 @@ function exporterExcel() {
 <thead>
 <tr>
 <th>Produit</th>
-<th>Quantité (kg)</th>
+<th>Quantité</th>
 <th>Chiffre d'affaires (Ar)</th>
 <th>Part du CA</th>
 </tr>
@@ -109,11 +109,21 @@ function exporterExcel() {
 <th:block th:each="produit, stat : ${produitsVendus}">
 <tr>
 <td><strong th:text="${produit.key}"></strong></td>
-<td th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' kg'"></td>
+<td th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' ' + (${produitsUnite[produit.key]} != null ? produitsUnite[produit.key] : 'kg')"></td>
 <td th:text="${#numbers.formatDecimal(produitsCA[produit.key], 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
 <td>
+<!--
+  CORRECTIF : on n'appelle plus BigDecimal.divide(...) directement dans le
+  template (ex : produitsCA[produit.key].divide(chiffreAffaires)). Sans scale
+  ni RoundingMode explicites, cet appel lève une ArithmeticException
+  ("Non-terminating decimal expansion") dès que la division n'est pas exacte
+  en décimal (ex: 1/3), ce qui causait l'erreur 500.
+  Le pourcentage est maintenant précalculé côté VenteController dans la Map
+  "produitsPourcentage" (avec .divide(chiffreAffaires, 4, RoundingMode.HALF_UP)),
+  on se contente ici de l'afficher.
+-->
 <span class="badge badge-blue" th:if="${chiffreAffaires != null and chiffreAffaires > 0}"
-      th:text="${#numbers.formatPercent(produitsCA[produit.key].divide(chiffreAffaires), 1, 'COMMA')}"></span>
+      th:text="${#numbers.formatDecimal(produitsPourcentage[produit.key], 1, 'COMMA', 1, 'POINT')} + '%'"></span>
 <span class="badge badge-blue" th:unless="${chiffreAffaires != null and chiffreAffaires > 0}">0%</span>
 </td>
 </tr>

@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.math.RoundingMode;
 
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import mg.vinaAkoho.vina_akoho.dto.ventes.LigneVenteDTO;
+import mg.vinaAkoho.vina_akoho.dto.ventes.RechercheVenteDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientResumeDTO;
@@ -45,6 +49,20 @@ import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
 public class VenteController {
 
     private static final String SESSION_PANIER = "panier";
+
+    /**
+     * Point 4 du markdown : une vente compte comme "réalisée" pour les
+     * statistiques/CA tant qu'elle n'est ni en attente de paiement, ni annulée
+     * (Validée, En préparation, En livraison, Livrée comptent toutes).
+     */
+    private static boolean estVenteRealisee(VenteDTO vente) {
+        String statut = vente.getStatutVente();
+        if (statut == null) {
+            return false;
+        }
+        String s = statut.toLowerCase();
+        return !s.equals("en attente de paiement") && !s.equals("annulée") && !s.equals("annulee");
+    }
 
     private final VenteService venteService;
     private final RecetteVenteService recetteVenteService;
@@ -100,23 +118,51 @@ public class VenteController {
 
     @GetMapping
     public String listerTous(
-            @RequestParam(required = false) String client,
+            @RequestParam(required = false) String recherche,
+            @RequestParam(required = false) String modePaiement,
             @RequestParam(required = false) String statut,
+            @RequestParam(required = false) String avecLivraison,
             @RequestParam(required = false) String dateDebut,
             @RequestParam(required = false) String dateFin,
+            @RequestParam(required = false) String triPar,
+            @RequestParam(required = false) String ordreTri,
             Model model) {
         
         List<VenteDTO> toutesVentes = venteService.listerToutes();
         
-        // Filtrer les ventes selon les critères
-        List<VenteDTO> ventesFiltrees = toutesVentes.stream()
+        // Étape 1: Recherche textuelle (indépendante des filtres)
+        List<VenteDTO> ventesRecherchees = toutesVentes.stream()
+                .filter(v -> {
+                    if (recherche == null || recherche.isEmpty()) {
+                        return true;
+                    }
+                    String rechercheLower = recherche.toLowerCase();
+                    boolean matchClient = v.getClientNom() != null && v.getClientNom().toLowerCase().contains(rechercheLower);
+                    boolean matchProduit = v.getLignes() != null && v.getLignes().stream()
+                            .anyMatch(l -> l.getNomProduit() != null && l.getNomProduit().toLowerCase().contains(rechercheLower));
+                    boolean matchFacture = v.getFacture() != null && v.getFacture().getNumero() != null 
+                            && v.getFacture().getNumero().toLowerCase().contains(rechercheLower);
+                    return matchClient || matchProduit || matchFacture;
+                })
+                .collect(Collectors.toList());
+        
+        // Étape 2: Filtres (indépendants de la recherche et du tri)
+        List<VenteDTO> ventesFiltrees = ventesRecherchees.stream()
                 .filter(v -> {
                     boolean match = true;
-                    if (client != null && !client.isEmpty()) {
-                        match = match && (v.getClientNom() != null && v.getClientNom().toLowerCase().contains(client.toLowerCase()));
+                    if (modePaiement != null && !modePaiement.isEmpty()) {
+                        match = match && modePaiement.equals(v.getModePaiement());
                     }
                     if (statut != null && !statut.isEmpty()) {
                         match = match && statut.equals(v.getStatutVente());
+                    }
+                    if (avecLivraison != null && !avecLivraison.isEmpty()) {
+                        boolean hasLivraison = v.getLivraison() != null;
+                        if ("true".equals(avecLivraison)) {
+                            match = match && hasLivraison;
+                        } else if ("false".equals(avecLivraison)) {
+                            match = match && !hasLivraison;
+                        }
                     }
                     if (dateDebut != null && !dateDebut.isEmpty() && v.getDateVente() != null) {
                         LocalDate debut = LocalDate.parse(dateDebut);
@@ -130,21 +176,71 @@ public class VenteController {
                 })
                 .collect(Collectors.toList());
         
+        // Étape 3: Tri (indépendant de la recherche et des filtres)
+        if (triPar != null && !triPar.isEmpty()) {
+            boolean desc = "desc".equalsIgnoreCase(ordreTri);
+            switch (triPar) {
+                case "dateVente":
+                    ventesFiltrees.sort((v1, v2) -> {
+                        if (v1.getDateVente() == null && v2.getDateVente() == null) return 0;
+                        if (v1.getDateVente() == null) return desc ? 1 : -1;
+                        if (v2.getDateVente() == null) return desc ? -1 : 1;
+                        return desc ? v2.getDateVente().compareTo(v1.getDateVente()) : v1.getDateVente().compareTo(v2.getDateVente());
+                    });
+                    break;
+                case "montantTotal":
+                    ventesFiltrees.sort((v1, v2) -> {
+                        if (v1.getMontantTotal() == null && v2.getMontantTotal() == null) return 0;
+                        if (v1.getMontantTotal() == null) return desc ? 1 : -1;
+                        if (v2.getMontantTotal() == null) return desc ? -1 : 1;
+                        return desc ? v2.getMontantTotal().compareTo(v1.getMontantTotal()) : v1.getMontantTotal().compareTo(v2.getMontantTotal());
+                    });
+                    break;
+                case "clientNom":
+                    ventesFiltrees.sort((v1, v2) -> {
+                        String nom1 = v1.getClientNom() != null ? v1.getClientNom() : "";
+                        String nom2 = v2.getClientNom() != null ? v2.getClientNom() : "";
+                        return desc ? nom2.compareToIgnoreCase(nom1) : nom1.compareToIgnoreCase(nom2);
+                    });
+                    break;
+                default:
+                    // Tri par défaut par date décroissante
+                    ventesFiltrees.sort((v1, v2) -> {
+                        if (v1.getDateVente() == null && v2.getDateVente() == null) return 0;
+                        if (v1.getDateVente() == null) return 1;
+                        if (v2.getDateVente() == null) return -1;
+                        return v2.getDateVente().compareTo(v1.getDateVente());
+                    });
+            }
+        } else {
+            // Tri par défaut par date décroissante
+            ventesFiltrees.sort((v1, v2) -> {
+                if (v1.getDateVente() == null && v2.getDateVente() == null) return 0;
+                if (v1.getDateVente() == null) return 1;
+                if (v2.getDateVente() == null) return -1;
+                return v2.getDateVente().compareTo(v1.getDateVente());
+            });
+        }
+        
         model.addAttribute("ventes", ventesFiltrees);
         
         // Calculer les statistiques sur les ventes filtrées
         LocalDate aujourdHui = LocalDate.now();
         LocalDate debutMois = aujourdHui.withDayOfMonth(1);
         
+        // Point 4 du markdown : le CA affiché ne doit compter que les ventes
+        // réalisées (tout sauf "En attente de paiement" et "Annulée").
         BigDecimal ventesJour = ventesFiltrees.stream()
-                .filter(v -> v.getDateVente() != null && 
+                .filter(v -> v.getDateVente() != null &&
                            v.getDateVente().toLocalDate().equals(aujourdHui))
+                .filter(VenteController::estVenteRealisee)
                 .map(VenteDTO::getMontantTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+
         BigDecimal caMois = ventesFiltrees.stream()
-                .filter(v -> v.getDateVente() != null && 
+                .filter(v -> v.getDateVente() != null &&
                            !v.getDateVente().toLocalDate().isBefore(debutMois))
+                .filter(VenteController::estVenteRealisee)
                 .map(VenteDTO::getMontantTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
@@ -153,8 +249,8 @@ public class VenteController {
                 .count();
         
         long totalVentes = ventesFiltrees.size();
-        double tauxConversion = totalVentes > 0 ? 
-                (ventesFiltrees.stream().filter(v -> "Validée".equals(v.getStatutVente())).count() * 100.0 / totalVentes) : 0;
+        double tauxConversion = totalVentes > 0 ?
+                (ventesFiltrees.stream().filter(VenteController::estVenteRealisee).count() * 100.0 / totalVentes) : 0;
         
         model.addAttribute("ventesJour", ventesJour);
         model.addAttribute("caMois", caMois);
@@ -164,26 +260,28 @@ public class VenteController {
         return "ventes/responsable-commercial-ventes";
     }
 
-    @GetMapping("/historique")
+@GetMapping("/historique")
     public String historique(
             @RequestParam(required = false) String periode,
             @RequestParam(required = false) String zone,
             Model model) {
-        
+
         List<VenteDTO> toutesVentes = venteService.listerToutes();
-        
-        // Filtrer les ventes - seulement celles payées (Validée)
+
+        // Point 4 du markdown : on ne garde que les ventes réalisées (exclut
+        // "En attente de paiement" et "Annulée" ; inclut Validée, En
+        // préparation, En livraison, Livrée).
         List<VenteDTO> ventesPayees = toutesVentes.stream()
-                .filter(v -> "Validée".equals(v.getStatutVente()))
+                .filter(VenteController::estVenteRealisee)
                 .collect(Collectors.toList());
-        
+
         // Filtrer par zone si spécifié
         if (zone != null && !zone.isEmpty() && !"Toutes les zones".equals(zone)) {
             ventesPayees = ventesPayees.stream()
                     .filter(v -> v.getClientZoneLivraison() != null && v.getClientZoneLivraison().equals(zone))
                     .collect(Collectors.toList());
         }
-        
+
         // Filtrer par période si spécifié
         LocalDate aujourdHui = LocalDate.now();
         if (periode != null && !periode.isEmpty()) {
@@ -207,19 +305,19 @@ public class VenteController {
                         .collect(Collectors.toList());
             }
         }
-        
+
         // Calculer les statistiques
         BigDecimal chiffreAffaires = ventesPayees.stream()
                 .map(VenteDTO::getMontantTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+
         long totalVentesKg = ventesPayees.stream()
                 .flatMap(v -> v.getLignes() != null ? v.getLignes().stream() : java.util.stream.Stream.empty())
                 .mapToLong(l -> l.getQuantite() != null ? l.getQuantite().longValue() : 0)
                 .sum();
-        
+
         long nombreTransactions = ventesPayees.size();
-        
+
         // Calculer les produits les plus vendus
         Map<String, BigDecimal> produitsVendus = ventesPayees.stream()
                 .flatMap(v -> v.getLignes() != null ? v.getLignes().stream() : java.util.stream.Stream.empty())
@@ -227,24 +325,98 @@ public class VenteController {
                         LigneVenteDTO::getNomProduit,
                         Collectors.reducing(BigDecimal.ZERO, LigneVenteDTO::getQuantite, BigDecimal::add)
                 ));
-        
+
         Map<String, BigDecimal> produitsCA = ventesPayees.stream()
                 .flatMap(v -> v.getLignes() != null ? v.getLignes().stream() : java.util.stream.Stream.empty())
                 .collect(Collectors.groupingBy(
                         LigneVenteDTO::getNomProduit,
                         Collectors.reducing(BigDecimal.ZERO, LigneVenteDTO::getMontant, BigDecimal::add)
                 ));
-        
+
+        // Point 3 du markdown : chaque ligne du tableau correspond à un seul
+        // produit (regroupé par nom) -> on peut donc afficher son unité réelle
+        // au lieu du "kg" codé en dur dans le template.
+        Map<String, String> produitsUnite = ventesPayees.stream()
+                .flatMap(v -> v.getLignes() != null ? v.getLignes().stream() : java.util.stream.Stream.empty())
+                .collect(Collectors.toMap(
+                        LigneVenteDTO::getNomProduit,
+                        l -> l.getUnite() != null && !l.getUnite().isBlank() ? l.getUnite() : "kg",
+                        (existant, nouveau) -> existant
+                ));
+
+        // IMPORTANT : on calcule ici le pourcentage de CA par produit, avec une
+        // échelle et un arrondi explicites, au lieu de faire le .divide(...) dans
+        // le template Thymeleaf. Sans scale/RoundingMode, BigDecimal.divide()
+        // lève une ArithmeticException dès que le résultat n'est pas exact en
+        // décimal (ex: 1/3), ce qui provoquait l'erreur 500.
+        Map<String, BigDecimal> produitsPourcentage = new HashMap<>();
+        if (chiffreAffaires.compareTo(BigDecimal.ZERO) > 0) {
+            for (Map.Entry<String, BigDecimal> entry : produitsCA.entrySet()) {
+                BigDecimal pourcentage = entry.getValue()
+                        .divide(chiffreAffaires, 4, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100));
+                produitsPourcentage.put(entry.getKey(), pourcentage);
+            }
+        } else {
+            for (String nomProduit : produitsCA.keySet()) {
+                produitsPourcentage.put(nomProduit, BigDecimal.ZERO);
+            }
+        }
+
         model.addAttribute("ventes", ventesPayees);
         model.addAttribute("totalVentesKg", totalVentesKg);
         model.addAttribute("chiffreAffaires", chiffreAffaires);
         model.addAttribute("nombreTransactions", nombreTransactions);
         model.addAttribute("produitsVendus", produitsVendus);
         model.addAttribute("produitsCA", produitsCA);
+        model.addAttribute("produitsUnite", produitsUnite);
+        model.addAttribute("produitsPourcentage", produitsPourcentage);
         model.addAttribute("periode", periode);
         model.addAttribute("zone", zone);
-        
+
         return "ventes/responsable-commercial-ventes-historique";
+    }
+
+    @GetMapping("/historique-ventes")
+    public String historiqueVentes(
+            @RequestParam(required = false) String client,
+            @RequestParam(required = false) String produit,
+            @RequestParam(required = false) String numeroFacture,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+            @RequestParam(required = false) String modePaiement,
+            @RequestParam(required = false) String statut,
+            @RequestParam(required = false) BigDecimal montantMin,
+            @RequestParam(required = false) BigDecimal montantMax,
+            @RequestParam(required = false) String triPar,
+            @RequestParam(required = false) String ordreTri,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer taille,
+            Model model) {
+
+        RechercheVenteDTO recherche = RechercheVenteDTO.builder()
+                .client(client)
+                .produit(produit)
+                .numeroFacture(numeroFacture)
+                .dateDebut(dateDebut)
+                .dateFin(dateFin)
+                .modePaiement(modePaiement)
+                .statut(statut)
+                .montantMin(montantMin)
+                .montantMax(montantMax)
+                .triPar(triPar)
+                .ordreTri(ordreTri)
+                .page(page != null ? page - 1 : 0)
+                .taille(taille != null ? taille : 10)
+                .build();
+
+        Page<VenteDTO> pageVentes = venteService.rechercherVentesAvecPagination(recherche);
+
+        model.addAttribute("pageVentes", pageVentes);
+        model.addAttribute("recherche", recherche);
+        model.addAttribute("modesPaiement", modePaiementRepository.findAll());
+
+        return "ventes/historique-ventes";
     }
 
     @GetMapping("/recettes")
@@ -272,10 +444,10 @@ public class VenteController {
             jakarta.servlet.http.HttpServletResponse response) throws IOException {
         
         List<VenteDTO> toutesVentes = venteService.listerToutes();
-        
-        // Filtrer les ventes - seulement celles payées (Validée)
+
+        // Point 4 du markdown : seules les ventes réalisées sont exportées.
         List<VenteDTO> ventesPayees = toutesVentes.stream()
-                .filter(v -> "Validée".equals(v.getStatutVente()))
+                .filter(VenteController::estVenteRealisee)
                 .collect(Collectors.toList());
         
         // Filtrer par zone si spécifié
@@ -350,12 +522,14 @@ public class VenteController {
             item.setMontant(item.getPrixUnitaire().multiply(item.getQuantite()));
         } else {
             BigDecimal montant = produit.getPrixVente().multiply(form.getQuantite());
+            String unite = produit.getUnite() != null ? produit.getUnite().getLibelle() : "";
             item = PanierItemDTO.builder()
                     .idProduit(produit.getId())
                     .nomProduit(produit.getNom())
                     .quantite(form.getQuantite())
                     .prixUnitaire(produit.getPrixVente())
                     .montant(montant)
+                    .unite(unite)
                     .build();
             panier.add(item);
         }
@@ -420,6 +594,19 @@ public class VenteController {
             redirectAttributes.addFlashAttribute("success", "Paiement validé avec succès.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Impossible de valider le paiement : " + e.getMessage());
+        }
+        return "redirect:/ventes/" + id;
+    }
+
+    @PostMapping("/{id}/annuler")
+    public String annulerVente(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            venteService.annulerVente(id);
+            redirectAttributes.addFlashAttribute("success", "Commande annulée avec succès.");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Impossible d'annuler la commande : " + e.getMessage());
         }
         return "redirect:/ventes/" + id;
     }

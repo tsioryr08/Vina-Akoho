@@ -19,4 +19,21 @@ public class VenteFormDTO {
 
     @NotNull(message = "Le mode de paiement est obligatoire")
     private Long idModePaiement;
+
+    /**
+     * Point 1 du markdown : "Livraison requise ?". Si true, les champs
+     * ci-dessous sont utilisés pour créer automatiquement une livraison
+     * (module livraison existant) juste après la création de la vente.
+     */
+    private boolean livraisonRequise;
+
+    private String adresseLivraison;
+
+    private String contactLivraison;
+
+    /** Date de livraison souhaitée par le client (optionnelle). Format ISO yyyy-MM-dd. */
+    private String dateLivraisonSouhaitee;
+
+    /** Commentaire ou instructions de livraison (optionnel). */
+    private String commentaireLivraison;
 }

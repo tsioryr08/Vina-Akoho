@@ -29,4 +29,5 @@ public class VenteDTO {
     private BigDecimal montantTotal;
     private List<LigneVenteDTO> lignes;
     private FactureDTO facture;
+    private mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonDTO livraison;
 }
