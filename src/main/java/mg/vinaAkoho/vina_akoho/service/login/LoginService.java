@@ -7,6 +7,9 @@ import mg.vinaAkoho.vina_akoho.exception.login.IdentifiantsInvalidesException;
 import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
 import mg.vinaAkoho.vina_akoho.security.PasswordHasher;
 import jakarta.servlet.http.HttpSession;
+
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,9 @@ public class LoginService {
         if (!motDePasseCorrect) {
             throw new IdentifiantsInvalidesException("Email ou mot de passe incorrect");
         }
+        //ajout derniere connexion de l user
+        employe.setDerniereConnexion(LocalDateTime.now());
+        employeRepository.save(employe);
 
         session.setAttribute("idEmploye", employe.getId());
         session.setAttribute("role", employe.getRole().getPoste());
