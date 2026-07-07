@@ -12,6 +12,9 @@ import mg.vinaAkoho.vina_akoho.exception.produit.RecetteInexistanteException;
 import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitException;
 import mg.vinaAkoho.vina_akoho.exception.recetteproduit.RecetteProduitNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.stockmp.StockInsuffisantException;
+import mg.vinaAkoho.vina_akoho.exception.admin.EmployeNotFoundException;
+import mg.vinaAkoho.vina_akoho.exception.admin.EmailDejaUtiliseException;
+import mg.vinaAkoho.vina_akoho.exception.admin.MdpIdentifiqueException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -63,5 +66,26 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RecetteInexistanteException.class)
     public ResponseEntity<ApiResponse<Object>> handleRecetteInexistante(RecetteInexistanteException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(EmployeNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleEmployeNotFound(EmployeNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(EmailDejaUtiliseException.class)
+    public ResponseEntity<ApiResponse<Object>> handleEmailDejaUtilise(EmailDejaUtiliseException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(MdpIdentifiqueException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMdpIdentique(MdpIdentifiqueException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage()));
     }
 }

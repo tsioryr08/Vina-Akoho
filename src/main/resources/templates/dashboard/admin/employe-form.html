@@ -1,0 +1,188 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${modeEdition} ? 'Modifier un compte - VINA AKOHO' : 'Nouveau compte - VINA AKOHO'">Compte - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div th:replace="~{layout/admin :: sidebar}"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div th:replace="~{layout/header-admin :: header}"></div>
+
+      <div class="content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow">RO01 - Administrateur</p>
+            <h1 th:text="${modeEdition} ? 'Modifier un compte employé' : 'Créer un nouveau compte'">Compte employé</h1>
+            <p th:text="${modeEdition} ? 'Modifiez les informations du compte.' : 'Remplissez les informations pour créer un nouveau compte.'"></p>
+          </div>
+          <a class="btn btn-ghost" th:href="@{/admin/employes}">← Retour à la liste</a>
+        </section>
+
+        <div id="alerte" class="alert-box danger" style="display:none;"></div>
+        <div id="succes" class="alert-box" style="display:none; background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; border-radius:8px; padding:12px 16px; margin-bottom:16px;"></div>
+
+        <section class="card" style="max-width:600px;">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title" th:text="${modeEdition} ? 'Informations du compte' : 'Informations du nouveau compte'"></h2>
+              <p class="card-subtitle">Tous les champs marqués * sont obligatoires.</p>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:16px; padding-top:8px;">
+            <div style="display:flex; gap:12px;">
+              <div style="flex:1;">
+                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Nom *</label>
+                <input id="nom" type="text" placeholder="Nom de famille"
+                  style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
+              </div>
+              <div style="flex:1;">
+                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Prénom *</label>
+                <input id="prenom" type="text" placeholder="Prénom"
+                  style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Email *</label>
+              <input id="email" type="email" placeholder="email@vinaakoho.mg"
+                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
+            </div>
+
+            <div>
+              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Contact</label>
+              <input id="contact" type="text" placeholder="+261 34 00 000 00"
+                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
+            </div>
+
+            <!-- Mot de passe uniquement en création -->
+            <div th:if="${!modeEdition}">
+              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Mot de passe *</label>
+              <input id="mdp" type="password" placeholder="Mot de passe"
+                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
+            </div>
+
+            <div>
+              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Rôle *</label>
+              <select id="idRole"
+                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;">
+                <option value="">-- Sélectionner un rôle --</option>
+                <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.poste}"></option>
+              </select>
+            </div>
+
+            <div style="display:flex; gap:8px; justify-content:flex-end; padding-top:8px;">
+              <a class="btn btn-ghost" th:href="@{/admin/employes}">Annuler</a>
+              <button class="btn btn-purple" onclick="soumettre()">
+                <span th:text="${modeEdition} ? 'Enregistrer les modifications' : 'Créer le compte'"></span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-footer" style="padding:16px 24px; border-top:1px solid var(--border); background:#fff; color:var(--muted); font-size:12px; text-align:center;">
+        VINA AKOHO — Gestion des comptes
+      </div>
+    </div>
+
+    <script src="/assets/js/script_content.js"></script>
+    <script th:inline="javascript">
+      const modeEdition = /*[[${modeEdition}]]*/ false;
+      const idEmploye   = /*[[${idEmploye}]]*/ null;
+
+      // En mode édition, charger les données existantes
+      if (modeEdition && idEmploye) {
+        fetch(`/api/admin/employes/actifs`)
+          .then(r => r.json())
+          .then(json => {
+            // Chercher dans actifs puis désactivés
+            let employe = (json.data || []).find(e => e.id == idEmploye);
+            if (employe) remplirFormulaire(employe);
+            else {
+              return fetch(`/api/admin/employes/desactives`)
+                .then(r => r.json())
+                .then(j => {
+                  const e = (j.data || []).find(e => e.id == idEmploye);
+                  if (e) remplirFormulaire(e);
+                });
+            }
+          });
+      }
+
+      function remplirFormulaire(e) {
+        document.getElementById("nom").value     = e.nom;
+        document.getElementById("prenom").value  = e.prenom;
+        document.getElementById("email").value   = e.email;
+        document.getElementById("contact").value = e.contact ?? "";
+        // Sélectionner le bon rôle dans le select
+        const sel = document.getElementById("idRole");
+        for (let opt of sel.options) {
+          if (opt.text === e.role) { opt.selected = true; break; }
+        }
+      }
+
+      async function soumettre() {
+        const nom     = document.getElementById("nom").value.trim();
+        const prenom  = document.getElementById("prenom").value.trim();
+        const email   = document.getElementById("email").value.trim();
+        const contact = document.getElementById("contact").value.trim();
+        const idRole  = document.getElementById("idRole").value;
+
+        if (!nom || !prenom || !email || !idRole) {
+          afficherAlerte("Veuillez remplir tous les champs obligatoires.");
+          return;
+        }
+
+        let body, url, method;
+
+        if (modeEdition) {
+          body   = { nom, prenom, email, contact: contact || null, idRole: parseInt(idRole) };
+          url    = `/api/admin/employes/${idEmploye}`;
+          method = "PUT";
+        } else {
+          const mdp = document.getElementById("mdp").value.trim();
+          if (!mdp) { afficherAlerte("Le mot de passe est obligatoire."); return; }
+          body   = { nom, prenom, email, contact: contact || null, mdp, idRole: parseInt(idRole) };
+          url    = `/api/admin/employes`;
+          method = "POST";
+        }
+
+        try {
+          const rep  = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+          const json = await rep.json();
+          if (json.success) {
+            afficherSucces(modeEdition ? "Compte modifié avec succès." : "Compte créé avec succès.");
+            setTimeout(() => window.location.href = "/admin/employes", 1500);
+          } else {
+            afficherAlerte(json.message);
+          }
+        } catch (e) {
+          afficherAlerte("Erreur lors de l'envoi du formulaire.");
+        }
+      }
+
+      function afficherAlerte(msg) {
+        const el = document.getElementById("alerte");
+        el.textContent = msg;
+        el.style.display = "block";
+        setTimeout(() => el.style.display = "none", 4000);
+      }
+
+      function afficherSucces(msg) {
+        const el = document.getElementById("succes");
+        el.textContent = msg;
+        el.style.display = "block";
+      }
+    </script>
+  </body>
+</html>

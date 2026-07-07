@@ -8,7 +8,6 @@
   </head>
   <body>
     <div th:replace="~{layout/admin :: sidebar}"></div>
-
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
@@ -19,23 +18,32 @@
           <div>
             <p class="eyebrow">RO01 - Administrateur</p>
             <h1>Panneau d'Administration Système & Paramètres</h1>
-            <p>
-              Gestion des utilisateurs, rôles assignés, journal d'activité et
-              validations de clôture.
-            </p>
+            <p>Gestion des utilisateurs, rôles assignés, journal d'activité et validations de clôture.</p>
           </div>
           <span class="role-badge">RO01 - Administrateur</span>
         </section>
 
+        <!-- KPIs -->
+        <section class="stats-grid" style="margin-bottom: 24px;">
+          <article class="stat-card">
+            <div class="stat-label">Comptes actifs</div>
+            <div class="stat-value" th:text="${totalActifs}">0</div>
+            <div class="stat-trend trend-info">Utilisateurs actifs</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Comptes désactivés</div>
+            <div class="stat-value" th:text="${totalDesactives}">0</div>
+            <div class="stat-trend trend-warning">Accès suspendus</div>
+          </article>
+        </section>
+
         <section class="grid-2">
+          <!-- Tableau utilisateurs réels -->
           <div class="card">
             <div class="card-header">
               <div>
                 <h2 class="card-title">Utilisateurs actifs & Rôles assignés</h2>
-                <p class="card-subtitle">
-                  RG01 — Suivi des comptes actifs et permissions par rôle
-                  organisationnel.
-                </p>
+                <p class="card-subtitle">RG01 — Suivi des comptes actifs et permissions par rôle organisationnel.</p>
               </div>
             </div>
 
@@ -43,26 +51,19 @@
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Utilisateur</th>
-                    <th>Rôle Organigramme</th>
-                    <th>Dernier Accès</th>
+                    <th>Nom & Prénom</th>
+                    <th>Rôle</th>
+                    <th>Email</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr th:each="emp : ${employes}">
-                    <td th:text="${emp.nom + ' ' + emp.prenom}"></td>
-                    <td th:text="${emp.role.poste}"></td>
                     <td>
-                      <span th:if="${emp.derniereConnexion != null}"
-                            class="derniere-connexion"
-                            th:attr="data-ts=${emp.derniereConnexion}">
-                      </span>
-                      <span th:unless="${emp.derniereConnexion != null}"
-                            style="color:#94a3b8; font-style:italic;">
-                        Jamais connecté
-                      </span>
+                      <strong th:text="${emp.nom + ' ' + emp.prenom}"></strong>
                     </td>
+                    <td th:text="${emp.role.poste}"></td>
+                    <td th:text="${emp.email}"></td>
                     <td>
                       <a class="btn btn-ghost btn-small"
                          th:href="@{/admin/employes/{id}/modifier(id=${emp.id})}">
@@ -89,45 +90,23 @@
             <div class="card-header">
               <div>
                 <h2 class="card-title">Approbations de Clôture en attente</h2>
-                <p class="card-subtitle">
-                  Validation administrative avant clôture mensuelle.
-                </p>
+                <p class="card-subtitle">Validation administrative avant clôture mensuelle.</p>
               </div>
             </div>
-
             <div class="alert-box danger">
-              Le rapport financier mensuel de Mai 2026 a été généré par le
-              Comptable et attend votre validation.
+              Le rapport financier mensuel de Mai 2026 a été généré par le Comptable et attend votre validation.
             </div>
-
             <div class="card-actions">
               <a class="btn btn-green" th:href="@{/comptabilite}">Valider et Clôturer le Mois</a>
             </div>
           </div>
         </section>
 
-        <!-- KPIs -->
-        <section class="stats-grid" style="margin-bottom: 24px;">
-          <article class="stat-card">
-            <div class="stat-label">Comptes actifs</div>
-            <div class="stat-value" th:text="${totalActifs}">0</div>
-            <div class="stat-trend trend-info">Utilisateurs actifs</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Comptes désactivés</div>
-            <div class="stat-value" th:text="${totalDesactives}">0</div>
-            <div class="stat-trend trend-warning">Accès suspendus</div>
-          </article>
-        </section>
-
         <section class="card" style="margin-bottom: 28px">
           <div class="card-header">
             <div>
               <h2 class="card-title">Pages d'administration métier</h2>
-              <p class="card-subtitle">
-                Accès rapide aux formulaires et listes demandés pour le
-                commercial et le stock/production.
-              </p>
+              <p class="card-subtitle">Accès rapide aux formulaires et listes demandés pour le commercial et le stock/production.</p>
             </div>
           </div>
           <div class="grid-2">
@@ -135,9 +114,7 @@
               <div class="delivery-card-header">
                 <div>
                   <h2>Commercial — Clients</h2>
-                  <p class="card-subtitle">
-                    Enregistrement et base de données clients.
-                  </p>
+                  <p class="card-subtitle">Enregistrement et base de données clients.</p>
                 </div>
                 <span class="badge badge-light-green">Vert</span>
               </div>
@@ -150,9 +127,7 @@
               <div class="delivery-card-header">
                 <div>
                   <h2>Stock & Production — Catalogue</h2>
-                  <p class="card-subtitle">
-                    Création d'article et suivi du stock.
-                  </p>
+                  <p class="card-subtitle">Création d'article et suivi du stock.</p>
                 </div>
                 <span class="badge badge-orange">Orange</span>
               </div>
@@ -168,60 +143,25 @@
           <div class="card-header">
             <div>
               <h2 class="card-title">Journal d'activité Général</h2>
-              <p class="card-subtitle">
-                Audit Trail - RG01 — Liste chronologique des actions sensibles.
-              </p>
+              <p class="card-subtitle">Audit Trail - RG01 — Liste chronologique des actions sensibles.</p>
             </div>
           </div>
-
           <div class="log-list">
             <div class="log-item">
-              <div class="log-time">[09/06 20:12]</div>
-              <div class="log-action">
-                RO02 (Andry) a validé la production du LOT-CROIS-50-A.
-              </div>
-            </div>
-            <div class="log-item">
-              <div class="log-time">[09/06 18:45]</div>
-              <div class="log-action">
-                RO05 (Nekena) a modifié la fiche créance de Agro-Distribution.
+              <div class="log-time">[--]</div>
+              <div class="log-action" style="color:#64748b; font-style:italic;">
+                Le journal d'activité sera disponible dans une prochaine version.
               </div>
             </div>
           </div>
         </section>
       </div>
 
-      <div
-        class="app-footer"
-        style="
-          padding: 16px 24px;
-          border-top: 1px solid var(--border);
-          background: #fff;
-          color: var(--muted);
-          font-size: 12px;
-          text-align: center;
-        "
-      >
+      <div class="app-footer" style="padding:16px 24px; border-top:1px solid var(--border); background:#fff; color:var(--muted); font-size:12px; text-align:center;">
         VINA AKOHO — Panneau d'Administration
       </div>
     </div>
 
     <script src="/assets/js/script_content.js"></script>
-    <script>
-      function tempsRelatif(dateStr) {
-        const maintenant = new Date();
-        const date = new Date(dateStr);
-        const diffSec = Math.floor((maintenant - date) / 1000);
-        if (diffSec < 60)    return "À l'instant";
-        if (diffSec < 3600)  return "Il y a " + Math.floor(diffSec / 60) + " min";
-        if (diffSec < 86400) return "Il y a " + Math.floor(diffSec / 3600) + " h";
-        const jours = Math.floor(diffSec / 86400);
-        if (jours === 1)     return "Hier";
-        return "Il y a " + jours + " jours";
-      }
-      document.querySelectorAll(".derniere-connexion").forEach(el => {
-        el.textContent = tempsRelatif(el.getAttribute("data-ts"));
-      });
-    </script>
   </body>
 </html>

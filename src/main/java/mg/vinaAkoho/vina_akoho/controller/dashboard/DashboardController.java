@@ -1,12 +1,15 @@
 package mg.vinaAkoho.vina_akoho.controller.dashboard;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.entity.login.Employe;
+import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
 import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
 import mg.vinaAkoho.vina_akoho.service.produit.ProduitService;
 import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
@@ -18,9 +21,14 @@ public class DashboardController {
     private final RecetteVenteService recetteVenteService;
     private final ProduitService produitService;
     private final MatierePremiereService matierePremiereService;
+    private final EmployeRepository employeRepository;
 
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(Model model) {
+        List<Employe> actifs = employeRepository.findByActif(true);
+        model.addAttribute("employes", actifs);
+        model.addAttribute("totalActifs", actifs.size());
+        model.addAttribute("totalDesactives", employeRepository.findByActif(false).size());
         return "dashboard/admin/index";
     }
 
@@ -38,7 +46,6 @@ public class DashboardController {
         return "dashboard/production/index";
     }
 
-    // Rary — F2.2 : alertes de stock faible (produits + matières premières) affichées dans le Dashboard Stock
     @GetMapping("/stock")
     public String stock(Model model) {
         model.addAttribute("alertesMp", matierePremiereService.listerAlertes());

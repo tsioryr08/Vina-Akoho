@@ -1,0 +1,2 @@
+ALTER TABLE employe ADD COLUMN actif SMALLINT DEFAULT 1;
+UPDATE employe SET actif = 1 WHERE actif IS NULL;
