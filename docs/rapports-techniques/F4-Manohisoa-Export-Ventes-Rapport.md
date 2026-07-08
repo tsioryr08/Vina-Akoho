@@ -210,9 +210,3 @@ Le bouton de facture pointe vers `/ventes/{id}/facture/pdf` pour telecharger dir
   - `application/pdf` pour PDF.
 
 ---
-
-## 9. Limites connues
-
-- Les exports sont generes en memoire avec `ByteArrayOutputStream`. Cette approche convient aux listes courantes, mais devra etre revue si le volume de ventes devient tres important.
-- Les exports ne sont pas des endpoints JSON, donc ils ne suivent pas le format `ApiResponse`.
-- Les tests automatises unitaires ne sont pas encore ajoutes dans ces commits ; la validation documentee ici correspond aux tests fonctionnels manuels.
