@@ -153,4 +153,27 @@ public interface VenteRepository extends JpaRepository<Vente, Long> {
     @Query("SELECT FUNCTION('TO_CHAR', v.dateVente, 'YYYY-MM'), SUM(v.montantTotal) " +
             "FROM Vente v GROUP BY FUNCTION('TO_CHAR', v.dateVente, 'YYYY-MM') ORDER BY 1")
     List<Object[]> getRecettesParMois();
-}
+
+    @Query(value = """
+        SELECT date_trunc(:granularite, v.date_vente) AS periode,
+               COALESCE(SUM(v.montant_total), 0) AS montant,
+               COUNT(DISTINCT v.id) AS nombre_ventes,
+               COALESCE(SUM(lv.quantite), 0) AS quantite
+        FROM vente v
+        LEFT JOIN ligne_vente lv ON lv.id_vente = v.id
+        JOIN statut_vente sv ON sv.id = v.id_statut_vente
+        WHERE v.date_vente >= :debut AND v.date_vente <= :fin
+          AND LOWER(sv.libelle) NOT IN ('annulée', 'annulee', 'en attente de paiement')
+          AND (:idCategorie IS NULL OR EXISTS (
+                SELECT 1 FROM ligne_vente lv2
+                JOIN produit p2 ON p2.id = lv2.id_produit
+                WHERE lv2.id_vente = v.id AND p2.id_categorie = :idCategorie
+          ))
+        GROUP BY periode
+        ORDER BY periode ASC
+        """, nativeQuery = true)
+        List<Object[]> evolutionVentes(@Param("granularite") String granularite,
+                                        @Param("debut") LocalDateTime debut,
+                                        @Param("fin") LocalDateTime fin,
+                                        @Param("idCategorie") Long idCategorie);
+        }
