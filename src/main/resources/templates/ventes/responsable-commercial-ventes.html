@@ -19,7 +19,8 @@
                 </div>
                 <div class="header-actions">
                     <a class="btn btn-green" th:href="@{/ventes/nouvelle}">+ Nouvelle Vente</a>
-                    <button class="btn btn-white" type="button">Exporter Excel</button>
+                    <button class="btn btn-white" type="button" onclick="exporterExcel()">Exporter Excel</button>
+                    <button class="btn btn-white" type="button" onclick="exporterPdf()">Export PDF</button>
                 </div>
             </section>
 
@@ -200,5 +201,23 @@
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
+    <script>
+        function getFilters() {
+            const params = new URLSearchParams();
+            const inputs = document.querySelectorAll('input[name], select[name]');
+            inputs.forEach(input => {
+                if (input.value) {
+                    params.append(input.name, input.value);
+                }
+            });
+            return params.toString();
+        }
+        function exporterExcel() {
+            window.location.href = '/ventes/liste/export/excel?' + getFilters();
+        }
+        function exporterPdf() {
+            window.location.href = '/ventes/liste/export/pdf?' + getFilters();
+        }
+    </script>
 </body>
 </html>
