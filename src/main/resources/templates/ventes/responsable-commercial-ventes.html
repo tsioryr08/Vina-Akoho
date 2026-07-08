@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +7,13 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
+    <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
         <div id="vina-content">
             <section class="page-header theme-green">
                 <div>
-                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
+                    <p class="eyebrow" th:text="${currentUser != null ? currentUser.role.poste : ''}">${currentUser != null ? currentUser.role.poste : 'Commercial'}</p>
                     <h1>Gestion des Ventes</h1>
                     <p class="muted-text">Suivi des ventes clients, facturation et coordination avec le service livraison.</p>
                 </div>
@@ -35,12 +35,12 @@
                 <article class="stat-card">
                     <div class="stat-label">Chiffre d'affaires (Mois)</div>
                     <div class="stat-value" th:text="${#numbers.formatDecimal(caMois, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
-                    <div class="stat-trend trend-positive">Ventes validées</div>
+                    <div class="stat-trend trend-positive">Ventes validees</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Commandes en attente</div>
                     <div class="stat-value" th:text="${commandesEnAttente}"></div>
-                    <div class="stat-trend trend-warning">À valider</div>
+                    <div class="stat-trend trend-warning">A valider</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Taux de conversion</div>
@@ -49,65 +49,42 @@
                 </article>
             </section>
 
-            <div class="simulation-grid" style="grid-template-columns: 300px 1fr;">
+            <form th:action="@{/ventes}" method="get" class="simulation-grid" style="grid-template-columns: 300px 1fr;">
                 <aside class="side-panel">
                     <div class="side-panel-heading">
-                        <h2>Filtres avancés</h2>
+                        <h2>Filtres avances</h2>
                     </div>
-<<<<<<< HEAD
                     <div class="form-group">
                         <label class="form-label">Client</label>
-                        <input type="text" class="form-control" placeholder="Nom du client...">
+                        <input type="text" class="form-control" name="client" placeholder="Nom du client..." th:value="${param.client}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Statut vente</label>
-                        <select class="form-control">
-                            <option>Tous</option>
-                            <option>Validée</option>
-                            <option>En attente de paiement</option>
-                            <option>Annulée</option>
+                        <select class="form-control" name="statut">
+                            <option value="">Tous</option>
+                            <option value="Validee" th:selected="${param.statut == 'Validee'}">Validee</option>
+                            <option value="En attente de paiement" th:selected="${param.statut == 'En attente de paiement'}">En attente de paiement</option>
+                            <option value="Annulee" th:selected="${param.statut == 'Annulee'}">Annulee</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Période</label>
+                        <label class="form-label">Periode</label>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <input type="date" class="form-control">
-                            <input type="date" class="form-control">
-=======
-                    <form th:action="@{/ventes}" method="get">
-                        <div class="form-group">
-                            <label class="form-label">Client</label>
-                            <input type="text" name="client" class="form-control" placeholder="Nom du client..." th:value="${param.client}">
->>>>>>> 3ecc192 (fix : modification de lien css et quelque ameliorations)
+                            <input type="date" class="form-control" name="dateDebut" th:value="${param.dateDebut}">
+                            <input type="date" class="form-control" name="dateFin" th:value="${param.dateFin}">
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Statut commande</label>
-                            <select name="statut" class="form-control">
-                                <option value="">Tous</option>
-                                <option value="Validée" th:selected="${param.statut == 'Validée'}">Validée</option>
-                                <option value="En attente de paiement" th:selected="${param.statut == 'En attente de paiement'}">En attente de paiement</option>
-                                <option value="Annulée" th:selected="${param.statut == 'Annulée'}">Annulée</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Période</label>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <input type="date" name="dateDebut" class="form-control" th:value="${param.dateDebut}">
-                                <input type="date" name="dateFin" class="form-control" th:value="${param.dateFin}">
-                            </div>
-                        </div>
-                        <div class="form-actions" style="margin-top: 20px;">
-                            <button class="btn btn-green w-100" type="submit">Filtrer</button>
-                            <button class="btn btn-white w-100" type="button" onclick="window.location.href='/ventes'">Réinitialiser</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="form-actions" style="margin-top: 20px;">
+                        <button class="btn btn-green w-100" type="submit">Filtrer</button>
+                        <button class="btn btn-white w-100" type="button" onclick="window.location.href='/ventes'">Reinitialiser</button>
+                    </div>
                 </aside>
 
                 <main>
                     <div class="table-card">
                         <div class="card-header">
                             <h2 class="card-title">Flux des Ventes</h2>
-                            <div class="card-badge" style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;" th:text="${ventes != null ? ventes.size() + ' Ventes affichées' : '0 Ventes affichées'}"></div>
+                            <div class="card-badge" style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;" th:text="${ventes != null ? ventes.size() + ' Ventes affichees' : '0 Ventes affichees'}"></div>
                         </div>
                         <div class="table-wrap">
                             <table class="data-table">
@@ -135,13 +112,13 @@
                                         <td><span class="badge badge-success" th:text="${vente.statutVente}"></span></td>
                                         <td>
                                             <div style="display: flex; gap: 4px;">
-                                                <a class="btn-icon" th:href="@{/ventes/{id}(id=${vente.id})}">👁️</a>
+                                                <a class="btn-icon" th:href="@{/ventes/{id}(id=${vente.id})}">&#128065;</a>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr th:if="${ventes == null or #lists.isEmpty(ventes)}">
                                         <td colspan="7" class="empty-state">
-                                            <p>📦 Aucune vente enregistrée.</p>
+                                            <p>&#128230; Aucune vente enregistrée.</p>
                                             <p>Créez une vente pour afficher les lignes ici.</p>
                                         </td>
                                     </tr>
@@ -150,7 +127,7 @@
                         </div>
                     </div>
                 </main>
-            </div>
+            </form>
         </div>
         <div id="vina-footer" th:replace="~{layout/footer}"></div>
     </div>

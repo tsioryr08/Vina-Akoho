@@ -1,63 +1,39 @@
-<aside class="sidebar" id="vina-sidebar" th:fragment="sidebar">
-  <div class="sidebar-brand">
-    <img
-      th:src="@{/images/VINA_AKOHO_LOGO.png}"
-      alt="VINA AKOHO"
-      class="brand-mark"
-    />
-    <div>
-      <div class="brand-title">VINA AKOHO</div>
-      <div class="brand-subtitle">RO01 - Administrateur</div>
-    </div>
-  </div>
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
+      <div class="sidebar-brand">
+        <img
+          th:src="@{/images/VINA_AKOHO_LOGO.png}"
+          alt="VINA AKOHO"
+          class="brand-mark"
+        />
+        <div>
+          <div class="brand-title">VINA AKOHO</div>
+          <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO01</div>
+        </div>
+      </div>
 
-  <nav class="sidebar-nav">
-    <div class="sidebar-section">Principal</div>
-
-    <a class="sidebar-link" th:href="@{/admin}"
-      >Dashboard <span class="sidebar-code">A1</span></a
-    >
-
-    <div class="sidebar-section">Utilisateurs</div>
-    <a class="sidebar-link" th:href="@{/clients/espace}"
-      >Gestion des comptes <span class="sidebar-code">A2</span></a
-    >
-
-    <div class="sidebar-section">Finances</div>
-    <a class="sidebar-link" th:href="@{/comptabilite}"
-      >Rapports & Trésorerie <span class="sidebar-code">A3</span></a
-    >
-
-    <div class="sidebar-section">Statistiques</div>
-    <a class="sidebar-link" th:href="@{/admin}"
-      >Vue globale & Analytics <span class="sidebar-code">A4</span></a
-    >
-    <a class="sidebar-link" th:href="@{/production}"
-      >Production <span class="sidebar-code">A4a</span></a
-    >
-    <a class="sidebar-link" th:href="@{/ventes}"
-      >Ventes <span class="sidebar-code">A4b</span></a
-    >
-    <a class="sidebar-link" th:href="@{/commercial}"
-      >Géographie <span class="sidebar-code">A4c</span></a
-    >
-
-    <div class="sidebar-section">Configuration</div>
-    <a class="sidebar-link" th:href="@{/admin}"
-      >Paramètres système <span class="sidebar-code">A5</span></a
-    >
-
-    <div class="sidebar-section">Prévisions</div>
-    <a class="sidebar-link" th:href="@{/production}"
-      >Prévisions <span class="sidebar-code">A6</span></a
-    >
-
-    <div class="sidebar-section">Catégories</div>
-    <a class="sidebar-link" th:href="@{/api/categories}"
-      >Liste des categories<span class="sidebar-code">A7</span></a
-    >
-    <a class="sidebar-link" th:href="@{/api/categories/nouveau}"
-      >Ajout catégorie <span class="sidebar-code">A7b</span></a
-    >
-  </nav>
-</aside>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a class="sidebar-link" th:href="@{/admin}">Dashboard <span class="sidebar-code">A1</span></a>
+        <div class="sidebar-section">Utilisateurs</div>
+        <a class="sidebar-link" th:href="@{/clients/espace}">Gestion des comptes <span class="sidebar-code">A2</span></a>
+        <div class="sidebar-section">Finances</div>
+        <a class="sidebar-link" th:href="@{/comptabilite}">Rapports &amp; Tresorerie <span class="sidebar-code">A3</span></a>
+        <div class="sidebar-section">Statistiques</div>
+        <a class="sidebar-link" th:href="@{/admin}">Vue globale &amp; Analytics <span class="sidebar-code">A4</span></a>
+        <a class="sidebar-link" th:href="@{/production}">Production <span class="sidebar-code">A4a</span></a>
+        <a class="sidebar-link" th:href="@{/ventes}">Ventes <span class="sidebar-code">A4b</span></a>
+        <a class="sidebar-link" th:href="@{/commercial}">Geographie <span class="sidebar-code">A4c</span></a>
+        <div class="sidebar-section">Configuration</div>
+        <a class="sidebar-link" th:href="@{/admin}">Parametres systeme <span class="sidebar-code">A5</span></a>
+        <div class="sidebar-section">Previsions</div>
+        <a class="sidebar-link" th:href="@{/production}">Previsions <span class="sidebar-code">A6</span></a>
+        <div class="sidebar-section">Categories</div>
+        <a class="sidebar-link" th:href="@{/api/categories}">Liste des categories<span class="sidebar-code">A7</span></a>
+        <a class="sidebar-link" th:href="@{/api/categories/nouveau}">Ajout categorie <span class="sidebar-code">A7b</span></a>
+      </nav>
+    </aside>
+  </body>
+</html>

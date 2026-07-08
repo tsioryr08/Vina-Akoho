@@ -7,24 +7,24 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body>
-    <div th:replace="~{layout/admin :: sidebar}"></div>
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div th:replace="~{layout/header-admin :: header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
 
       <div class="content">
         <section class="page-header">
           <div>
-            <p class="eyebrow">RO01 - Administrateur</p>
+            <p class="eyebrow">${currentUser != null ? currentUser.role.poste : 'Administrateur'}</p>
             <h1>Panneau d'Administration Système & Paramètres</h1>
             <p>
               Gestion des utilisateurs, rôles assignés, journal d'activité et
               validations de clôture.
             </p>
           </div>
-          <span class="role-badge">RO01 - Administrateur</span>
+          <span class="role-badge">${currentUser != null ? currentUser.role.poste : 'Administrateur'}</span>
         </section>
 
         <section class="grid-2">
@@ -168,13 +168,13 @@
             <div class="log-item">
               <div class="log-time">[09/06 20:12]</div>
               <div class="log-action">
-                RO02 (Andry) a validé la production du LOT-CROIS-50-A.
+                ${currentUser != null ? currentUser.role.poste + ' (validation)' : 'Production (validation)'} du LOT-CROIS-50-A.
               </div>
             </div>
             <div class="log-item">
               <div class="log-time">[09/06 18:45]</div>
               <div class="log-action">
-                RO05 (Nekena) a modifié la fiche créance de Agro-Distribution.
+                ${currentUser != null ? currentUser.role.poste + ' (modification)' : 'Comptable (modification)'} de Agro-Distribution.
               </div>
             </div>
           </div>

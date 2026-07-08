@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
-@RequestMapping("api/produits")
+@RequestMapping("/api/produits")
 @RequiredArgsConstructor
 public class ProduitController {
 

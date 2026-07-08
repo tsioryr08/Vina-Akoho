@@ -23,7 +23,7 @@
 
         <div>
           <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">RO03 - Gestionnaire de Stock</div>
+          <div class="brand-subtitle">${currentUser != null ? currentUser.role.poste : 'Stock'}</div>
         </div>
       </div>
 
@@ -68,7 +68,7 @@
           <span class="breadcrumb">Dashboard Stock</span>
         </div>
         <div class="topbar-actions">
-          <span class="role-pill">RO03 - Gestionnaire de Stock</span>
+          <span class="role-pill">${currentUser != null ? currentUser.role.poste : 'Stock'}</span>
           <button
             class="btn btn-ghost btn-small"
             id="vina-logout-button"

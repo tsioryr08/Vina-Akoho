@@ -8,13 +8,13 @@
   </head>
   <body class="vina-body">
     <div
-      th:replace="~{layout/responsableProduction :: responsableProduction}"
+      th:replace="${sidebarTemplate} :: sidebar"
     ></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div th:replace="~{layout/header-production :: header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
@@ -54,7 +54,7 @@
             unitaire défini lors de la création de la matière première.
           </div>
 
-          <form method="post" th:action="@{/matieres-premieres/entree-stock}">
+          <form method="post" th:action="@{/api/matieres-premieres/entree-stock}">
             <div class="form-grid">
               <div class="field">
                 <label for="mpSelect">Sélectionner la matière première *</label>
@@ -123,7 +123,7 @@
               <button type="submit" class="btn btn-primary">
                 Valider l'entrée du Lot
               </button>
-              <a th:href="@{/matieres-premieres}" class="btn btn-secondary"
+              <a th:href="@{/api/matieres-premieres}" class="btn btn-secondary"
                 >Annuler</a
               >
             </div>

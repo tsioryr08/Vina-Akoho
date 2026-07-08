@@ -23,7 +23,7 @@
 
         <div>
           <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">RO06 - Responsable Achats</div>
+          <div class="brand-subtitle">${currentUser != null ? currentUser.role.poste : 'Achats'}</div>
         </div>
       </div>
 
@@ -67,7 +67,7 @@
           <span class="breadcrumb">Dashboard Achats</span>
         </div>
         <div class="topbar-actions">
-          <span class="role-pill">RO06 - Responsable Achats</span>
+          <span class="role-pill">${currentUser != null ? currentUser.role.poste : 'Achats'}</span>
           <button
             class="btn btn-ghost btn-small"
             id="vina-logout-button"

@@ -9,7 +9,7 @@
       <span class="breadcrumb">Dashboard Commercial</span>
     </div>
     <div class="topbar-actions">
-      <span class="role-pill">RO04 - Responsable Commercial</span>
+        <span class="role-pill" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO04</span>
       <button
         class="btn btn-ghost btn-small"
         id="vina-logout-button"

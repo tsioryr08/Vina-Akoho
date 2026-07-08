@@ -1,26 +1,29 @@
-<aside class="sidebar">
-<div class="sidebar-brand">
-<img src="../assets/VINA_AKOHO_LOGO.png" alt="VINA AKOHO" class="brand-mark">
-<div>
-<div class="brand-title">VINA AKOHO</div>
-<div class="brand-subtitle">RO03 - Gestionnaire de Stock</div>
-</div>
-</div>
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+<aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
+  <div class="sidebar-brand">
+    <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
+    <div>
+      <div class="brand-title">VINA AKOHO</div>
+      <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO03</div>
+      <div th:if="${currentUser != null}" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Utilisateur</div>
+    </div>
+  </div>
 
-<nav class="sidebar-nav">
-<div class="sidebar-section">Principal</div>
-<a class="sidebar-link" href="gestionnaire-stock-dashboard.html">Dashboard <span class="sidebar-code">F9</span></a>
-
-<div class="sidebar-section">Mouvements et Lot</div>
-<a class="sidebar-link" href="gestionnaire-stock-mouvements.html">Mouvements Stocks <span class="sidebar-code">S1</span></a>
-<a class="sidebar-link" href="gestionnaire-stock-lots.html">Gestion Lots & Peremptions <span class="sidebar-code">S2</span></a>
-
-<div class="sidebar-section">Surveillance</div>
-<a class="sidebar-link" href="gestionnaire-stock-alertes.html">Alertes de Seuil <span class="sidebar-code">S3</span></a>
-<a class="sidebar-link" href="gestionnaire-stock-inventaire.html">Inventaire Periodique <span class="sidebar-code">S4</span></a>
-
-<div class="sidebar-section">Reporting</div>
-<a class="sidebar-link" href="gestionnaire-stock-rapport.html">Rapport de Stock <span class="sidebar-code">S5</span></a>
-<a class="sidebar-link" href="gestionnaire-stock-suggestions.html">Suggestions Promotions</a>
-</nav>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Principal</div>
+    <a class="sidebar-link" href="gestionnaire-stock-dashboard.html">Dashboard <span class="sidebar-code">F9</span></a>
+    <div class="sidebar-section">Mouvements et Lot</div>
+    <a class="sidebar-link" href="gestionnaire-stock-mouvements.html">Mouvements Stocks <span class="sidebar-code">S1</span></a>
+    <a class="sidebar-link" href="gestionnaire-stock-lots.html">Gestion Lots &amp; Peremptions <span class="sidebar-code">S2</span></a>
+    <div class="sidebar-section">Surveillance</div>
+    <a class="sidebar-link" href="gestionnaire-stock-alertes.html">Alertes de Seuil <span class="sidebar-code">S3</span></a>
+    <a class="sidebar-link" href="gestionnaire-stock-inventaire.html">Inventaire Periodique <span class="sidebar-code">S4</span></a>
+    <div class="sidebar-section">Reporting</div>
+    <a class="sidebar-link" href="gestionnaire-stock-rapport.html">Rapport de Stock <span class="sidebar-code">S5</span></a>
+    <a class="sidebar-link" href="gestionnaire-stock-suggestions.html">Suggestions Promotions</a>
+  </nav>
 </aside>
+</body>
+</html>

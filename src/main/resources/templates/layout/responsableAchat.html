@@ -1,29 +1,31 @@
-<aside class="sidebar">
-<div class="sidebar-brand">
-<img src="../assets/VINA_AKOHO_LOGO.png" alt="VINA AKOHO" class="brand-mark">
-<div>
-<div class="brand-title">VINA AKOHO</div>
-<div class="brand-subtitle">RO06 - Responsable Achats</div>
-</div>
-</div>
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+<aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
+  <div class="sidebar-brand">
+    <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
+    <div>
+      <div class="brand-title">VINA AKOHO</div>
+      <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO06</div>
+      <div th:if="${currentUser != null}" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Utilisateur</div>
+    </div>
+  </div>
 
-<nav class="sidebar-nav">
-<div class="sidebar-section">Principal</div>
-<a class="sidebar-link" href="responsable-achat-dashboard.html">Dashboard <span class="sidebar-code">F9</span></a>
-
-<div class="sidebar-section">Phase 1: Analyse</div>
-<a class="sidebar-link" href="responsable-achat-previsions.html">Prévisions de Stocks <span class="sidebar-code">F8</span></a>
-
-<div class="sidebar-section">Phase 2: Commande</div>
-<a class="sidebar-link" href="responsable-achat-plan-achat.html">Plan d'Achat <span class="sidebar-code">F2</span></a>
-<a class="sidebar-link" href="responsable-achat-bon-commande.html">Bon de Commande <span class="sidebar-code">F3</span></a>
-
-<div class="sidebar-section">Phase 3: Réception</div>
-<a class="sidebar-link" href="responsable-achat-suivi-livraisons.html">Suivi des Livraisons</a>
-
-<div class="sidebar-section">Phase 4: Clôture</div>
-<a class="sidebar-link" href="responsable-achat-verification-livraison.html">Vérification Livraison</a>
-<a class="sidebar-link" href="responsable-achat-enregistrement-stock.html">Enregistrement Stock</a>
-<a class="sidebar-link" href="responsable-achat-suggestions.html">Suggestions Réapprovisionnement</a>
-</nav>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Principal</div>
+    <a class="sidebar-link" href="responsable-achat-dashboard.html">Dashboard <span class="sidebar-code">F9</span></a>
+    <div class="sidebar-section">Phase 1: Analyse</div>
+    <a class="sidebar-link" href="responsable-achat-previsions.html">Previsions de Stocks <span class="sidebar-code">F8</span></a>
+    <div class="sidebar-section">Phase 2: Commande</div>
+    <a class="sidebar-link" href="responsable-achat-plan-achat.html">Plan d'Achat <span class="sidebar-code">F2</span></a>
+    <a class="sidebar-link" href="responsable-achat-bon-commande.html">Bon de Commande <span class="sidebar-code">F3</span></a>
+    <div class="sidebar-section">Phase 3: Reception</div>
+    <a class="sidebar-link" href="responsable-achat-suivi-livraisons.html">Suivi des Livraisons</a>
+    <div class="sidebar-section">Phase 4: Cloture</div>
+    <a class="sidebar-link" href="responsable-achat-verification-livraison.html">Verification Livraison</a>
+    <a class="sidebar-link" href="responsable-achat-enregistrement-stock.html">Enregistrement Stock</a>
+    <a class="sidebar-link" href="responsable-achat-suggestions.html">Suggestions Reapprovisionnement</a>
+  </nav>
 </aside>
+</body>
+</html>

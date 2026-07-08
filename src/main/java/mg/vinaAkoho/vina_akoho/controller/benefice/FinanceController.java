@@ -14,7 +14,7 @@ import mg.vinaAkoho.vina_akoho.service.benefice.BeneficeService;
 import java.time.LocalDate;
 
 @Controller
-@RequestMapping("api/benefices")
+@RequestMapping("/api/benefices")
 public class FinanceController {
 
     private final BeneficeService beneficeService;

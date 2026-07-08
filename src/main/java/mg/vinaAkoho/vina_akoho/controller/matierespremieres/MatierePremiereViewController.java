@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/matieres-premieres")
+@RequestMapping("/api/matieres-premieres")
 public class MatierePremiereViewController {
 
     private final MatierePremiereService service;
@@ -62,10 +62,10 @@ public class MatierePremiereViewController {
             var fiche = service
                     .creer(new MatierePremiereRequestDTO(nom, idFournisseur, coutUnitaire, idUnite, seuilMinimum));
             redirectAttributes.addFlashAttribute("successMessage", "Matière première créée avec succès");
-            return "redirect:/matieres-premieres/" + fiche.id();
+            return "redirect:/api/matieres-premieres/" + fiche.id();
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-            return "redirect:/matieres-premieres/nouveau";
+            return "redirect:/api/matieres-premieres/nouveau";
         }
     }
 
@@ -76,7 +76,7 @@ public class MatierePremiereViewController {
             return "matieres-premieres/fiche";
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-            return "redirect:/matieres-premieres";
+            return "redirect:/api/matieres-premieres";
         }
     }
 
@@ -89,7 +89,7 @@ public class MatierePremiereViewController {
             return "matieres-premieres/formulaire-modification";
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-            return "redirect:/matieres-premieres";
+            return "redirect:/api/matieres-premieres";
         }
     }
 
@@ -109,7 +109,7 @@ public class MatierePremiereViewController {
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
-        return "redirect:/matieres-premieres/" + id;
+        return "redirect:/api/matieres-premieres/" + id;
     }
 
     @PostMapping("/{id}/supprimer")
@@ -117,10 +117,10 @@ public class MatierePremiereViewController {
         try {
             service.supprimer(id);
             redirectAttributes.addFlashAttribute("successMessage", "Matière première supprimée avec succès");
-            return "redirect:/matieres-premieres";
+            return "redirect:/api/matieres-premieres";
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-            return "redirect:/matieres-premieres/" + id;
+            return "redirect:/api/matieres-premieres/" + id;
         }
     }
 
@@ -140,10 +140,10 @@ public class MatierePremiereViewController {
         try {
             service.entreeStock(new EntreeStockDTO(idMatierePremiere, quantite, dateReception, 1, coutUnitaire));
             redirectAttributes.addFlashAttribute("successMessage", "Entrée en stock enregistrée avec succès");
-            return "redirect:/matieres-premieres/" + idMatierePremiere;
+            return "redirect:/api/matieres-premieres/" + idMatierePremiere;
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-            return "redirect:/matieres-premieres/entree-stock";
+            return "redirect:/api/matieres-premieres/entree-stock";
         }
     }
 }

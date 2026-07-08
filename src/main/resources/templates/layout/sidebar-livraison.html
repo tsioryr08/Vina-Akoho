@@ -6,7 +6,7 @@
     <img th:src="@{/static/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
     <div>
       <div class="brand-title">VINA AKOHO</div>
-      <div class="brand-subtitle">Livraisons</div>
+      <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : '}">RO</div>
     </div>
   </div>
 

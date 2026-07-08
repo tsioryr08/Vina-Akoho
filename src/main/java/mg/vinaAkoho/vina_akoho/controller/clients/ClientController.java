@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value = {"/clients", "/api/clients"},
+        value = "/api/clients",
         produces = MediaType.APPLICATION_JSON_VALUE
 )
 public class ClientController {

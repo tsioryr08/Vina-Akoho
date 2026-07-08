@@ -18,7 +18,7 @@
         <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
         <div>
           <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">RO05 - Comptable</div>
+          <div class="brand-subtitle">${currentUser != null ? currentUser.role.poste : 'Comptable'}</div>
         </div>
       </div>
       <nav class="sidebar-nav">
@@ -43,7 +43,7 @@
           <span class="breadcrumb">Rapports Financiers / Bénéfices</span>
         </div>
         <div class="topbar-actions">
-          <span class="role-pill">RO05 - Comptable</span>
+          <span class="role-pill">${currentUser != null ? currentUser.role.poste : 'Comptable'}</span>
           <button class="btn btn-ghost btn-small" id="vina-logout-button" onclick="window.location.href = '/'" type="button">Déconnexion</button>
         </div>
       </div>

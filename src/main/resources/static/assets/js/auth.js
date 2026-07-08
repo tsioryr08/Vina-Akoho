@@ -65,7 +65,7 @@ window.VinaAkohoAuth = {
             'LIVREUR': '/livraison'
         };
 
-        return routes[normalizedRole] || '/matieres-premieres';
+        return routes[normalizedRole] || '/api/matieres-premieres';
     },
 
     redirectIfAuthenticated: function () {

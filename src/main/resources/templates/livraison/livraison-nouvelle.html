@@ -7,13 +7,13 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div th:replace="~{layout/sidebar-livraison::sidebar-livraison}"></div>
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
         <div id="vina-content">
             <section class="page-header">
                 <div>
-                    <p class="eyebrow">RO04 - Responsable Commercial</p>
+                    <p class="eyebrow">${currentUser != null ? currentUser.role.poste : 'Commercial'}</p>
                     <h1>Nouvelle livraison</h1>
                     <p>Créer une livraison associée à une vente.</p>
                 </div>

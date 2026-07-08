@@ -6,16 +6,16 @@
     <img th:src="@{/static/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
     <div>
       <div class="brand-title">VINA AKOHO</div>
-      <div class="brand-subtitle">Matières Premières</div>
+      <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : '}">RO</div>
     </div>
   </div>
 
   <nav class="sidebar-nav">
     <div class="sidebar-section">Menu</div>
-    <a class="sidebar-link" th:href="@{/matieres-premieres}">Suivi Stock Matières <span class="sidebar-code">M2</span></a>
-    <a class="sidebar-link" th:href="@{/matieres-premieres/nouveau}">Ajouter Matières <span class="sidebar-code">M1</span></a>
-    <a class="sidebar-link" th:href="@{/matieres-premieres/alertes}">Suggestions <span class="sidebar-code">M4</span></a>
-    <a class="sidebar-link" th:href="@{/matieres-premieres/entree-stock}">Entrée Stock <span class="sidebar-code">M5</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres}">Suivi Stock Matières <span class="sidebar-code">M2</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/nouveau}">Ajouter Matières <span class="sidebar-code">M1</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/alertes}">Suggestions <span class="sidebar-code">M4</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/entree-stock}">Entrée Stock <span class="sidebar-code">M5</span></a>
   </nav>
 </aside>
 </body>

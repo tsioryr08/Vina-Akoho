@@ -9,12 +9,12 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body class="vina-body">
-    <div th:replace="~{layout/responsableProduction :: responsableProduction}"></div>
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div th:replace="~{layout/header-production :: header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
       <div id="vina-content">
         <section
           class="page-header theme-orange"
@@ -44,21 +44,21 @@
         <div
           style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px"
         >
-          <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small"
+          <a th:href="@{/api/matieres-premieres}" class="btn btn-ghost btn-small"
             >← Retour à la liste</a
           >
           <a
-            th:href="@{/matieres-premieres/{id}/modifier(id=${fiche.id})}"
+            th:href="@{/api/matieres-premieres/{id}/modifier(id=${fiche.id})}"
             class="btn btn-ghost btn-small"
             >Modifier</a
           >
           <a
-            th:href="@{/matieres-premieres/entree-stock}"
+            th:href="@{/api/matieres-premieres/entree-stock}"
             class="btn btn-primary btn-small"
             >Ajouter Matière</a
           >
           <a
-            th:href="@{/matieres-premieres/nouveau}"
+            th:href="@{/api/matieres-premieres/nouveau}"
             class="btn btn-ghost btn-small"
             >Créer Fiche Produit</a
           >
@@ -232,7 +232,7 @@
                     style="text-align: center; padding: 24px; color: #64748b"
                   >
                     Aucun lot en stock.
-                    <a th:href="@{/matieres-premieres/entree-stock}"
+                    <a th:href="@{/api/matieres-premieres/entree-stock}"
                       >Enregistrer une entrée →</a
                     >
                   </td>
@@ -280,7 +280,7 @@
             </div>
           </div>
           <a
-            th:href="@{/matieres-premieres/entree-stock}"
+            th:href="@{/api/matieres-premieres/entree-stock}"
             class="btn btn-primary"
             style="margin-top: 12px"
           >

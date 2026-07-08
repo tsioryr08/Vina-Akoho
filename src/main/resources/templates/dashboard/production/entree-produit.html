@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body>
-    <div th:replace="~{layout/responsableProduction :: responsableProduction}"></div>
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
@@ -18,7 +18,7 @@
           <span class="breadcrumb">Production / Entrée Produit</span>
         </div>
         <div class="topbar-actions">
-          <span class="role-pill">RO02 - Responsable Production</span>
+          <span class="role-pill">${currentUser != null ? currentUser.role.poste : 'Production'}</span>
           <button
             class="btn btn-ghost btn-small"
             id="vina-logout-button"

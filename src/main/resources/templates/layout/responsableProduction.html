@@ -1,56 +1,34 @@
-<aside th:fragment="responsableProduction" class="sidebar" id="vina-sidebar">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
   <div class="sidebar-brand">
-    <img
-      th:src="@{/images/VINA_AKOHO_LOGO.png}"
-      alt="VINA AKOHO"
-      class="brand-mark"
-    />
+    <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
     <div>
       <div class="brand-title">VINA AKOHO</div>
-      <div class="brand-subtitle">RO02 - Responsable Production</div>
+      <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO02</div>
+      <div th:if="${currentUser != null}" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Utilisateur</div>
     </div>
   </div>
 
   <nav class="sidebar-nav">
     <div class="sidebar-section">Principal</div>
-    <a class="sidebar-link" th:href="@{/production}"
-      >Dashboard <span class="sidebar-code">F10</span></a
-    >
-
-    <div class="sidebar-section">Matières Premières</div>
-    <a class="sidebar-link" href="#"
-      >Ajouter Matières <span class="sidebar-code">M1</span></a
-    >
-    <a class="sidebar-link" th:href="@{/matieres-premieres}"
-      >Suivi Stock Matières <span class="sidebar-code">M2</span></a
-    >
-    <a class="sidebar-link" th:href="@{/matieres-premieres/nouveau}"
-      >Créer Fiche Produit <span class="sidebar-code">M3</span></a
-    >
-    <a class="sidebar-link" href="#"
-      >Suggestions <span class="sidebar-code">M4</span></a
-    >
-    <a class="sidebar-link" href="#">Prévisions</a>
-
+    <a class="sidebar-link" th:href="@{/production}">Dashboard <span class="sidebar-code">F10</span></a>
+    <div class="sidebar-section">Matieres Premieres</div>
+    <a class="sidebar-link" href="#">Ajouter Matieres <span class="sidebar-code">M1</span></a>
+    <a class="sidebar-link" th:href="@{/matieres-premieres}">Suivi Stock Matieres <span class="sidebar-code">M2</span></a>
+    <a class="sidebar-link" th:href="@{/matieres-premieres/nouveau}">Creer Fiche Produit <span class="sidebar-code">M3</span></a>
+    <a class="sidebar-link" href="#">Suggestions <span class="sidebar-code">M4</span></a>
+    <a class="sidebar-link" href="#">Previsions</a>
     <div class="sidebar-section">Production</div>
-    <a class="sidebar-link" th:href="@{/production/entree-produit}"
-      >Entrée Produit <span class="sidebar-code">S2</span></a
-    >
-
+    <a class="sidebar-link" th:href="@{/production/entree-produit}">Entree Produit <span class="sidebar-code">S2</span></a>
     <div class="sidebar-section">Stocks</div>
-    <a class="sidebar-link" href="#"
-      >Suivi Produits Finis <span class="sidebar-code">S1</span></a
-    >
-
+    <a class="sidebar-link" href="#">Suivi Produits Finis <span class="sidebar-code">S1</span></a>
     <div class="sidebar-section">Surveillance</div>
-    <a class="sidebar-link" th:href="@{/matieres-premieres/alertes}"
-      >Alertes de Seuil <span class="sidebar-code">S3</span></a
-    >
-    <a class="sidebar-link" th:href="@{/matieres-premieres/entree-stock}"
-      >Entree matiere premiere en stock <span class="sidebar-code">S3</span></a
-    >
-    <a class="sidebar-link" href="#"
-      >Inventaire Périodique <span class="sidebar-code">S4</span></a
-    >
+    <a class="sidebar-link" th:href="@{/matieres-premieres/alertes}">Alertes de Seuil <span class="sidebar-code">S3</span></a>
+    <a class="sidebar-link" th:href="@{/matieres-premieres/entree-stock}">Entree matiere premiere en stock <span class="sidebar-code">S3b</span></a>
+    <a class="sidebar-link" href="#">Inventaire Periodique <span class="sidebar-code">S4</span></a>
   </nav>
 </aside>
+</body>
+</html>

@@ -4,7 +4,7 @@
     <span class="breadcrumb" th:text="${breadcrumb}">Comptabilité</span>
   </div>
   <div class="topbar-actions">
-    <span class="role-pill">RO05 - Comptable</span>
+    <span class="role-pill" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO05</span>
     <button
       class="btn btn-ghost btn-small"
       id="vina-logout-button"

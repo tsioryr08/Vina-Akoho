@@ -13,6 +13,6 @@
         <div class="breadcrumb">Produits</div>
     </div>
     <div class="topbar-right">
-        <span class="role-pill">Responsable Production</span>
+        <span class="role-pill" th:text="${currentUser != null ? currentUser.role.poste : '}">RO</span>
     </div>
 </header>

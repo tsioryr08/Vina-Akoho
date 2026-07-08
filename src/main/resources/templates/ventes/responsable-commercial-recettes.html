@@ -7,13 +7,13 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
+    <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
         <div id="vina-content">
             <section class="page-header theme-green">
                 <div>
-                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
+                    <p class="eyebrow">${currentUser != null ? currentUser.role.poste : "Commercial"}</p>
                     <h1>Recettes</h1>
                     <p class="muted-text">Recettes calculees automatiquement a partir des ventes non annulees et du prix de vente des produits.</p>
                 </div>

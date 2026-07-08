@@ -7,13 +7,13 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div th:replace="~{layout/sidebar-livraison::sidebar-livraison}"></div>
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
         <div id="vina-content">
             <section class="page-header">
                 <div>
-                    <p class="eyebrow">RO04 - Responsable Commercial</p>
+                    <p class="eyebrow">${currentUser != null ? currentUser.role.poste : 'Commercial'}</p>
                     <h1>Historique des livraisons</h1>
                     <p>Historique des changements de statut.</p>
                 </div>
@@ -44,7 +44,7 @@
                             <td th:text="${changement.nouveauStatut}">En préparation</td>
                             <td th:text="${changement.dateChangement}">2026-01-01</td>
                             <td>
-                                <a class="link-action" th:href="@{'/api/livraisons/' + ${changement.idLivraison}}">Détail</a>
+                                <a class="link-action" th:href="@{'/livraisons/' + ${changement.idLivraison}}">Détail</a>
                             </td>
                         </tr>
                         <tr th:if="${historiques.isEmpty()}">

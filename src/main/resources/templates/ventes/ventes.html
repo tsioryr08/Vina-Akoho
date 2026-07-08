@@ -7,9 +7,9 @@
 <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
+    <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="~{layout/header}"></div>
+        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
         <div id="vina-content">
 <section class="page-header">
 <div>
