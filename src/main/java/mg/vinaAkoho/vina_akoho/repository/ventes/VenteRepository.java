@@ -147,4 +147,10 @@ public interface VenteRepository extends JpaRepository<Vente, Long> {
             @Param("montantMax") BigDecimal montantMax,
             Pageable pageable
     );
+    @Query("SELECT FUNCTION('TO_CHAR', v.dateVente, 'YYYY-MM'), SUM(v.montantTotal) FROM Vente v GROUP BY FUNCTION('TO_CHAR', v.dateVente, 'YYYY-MM') ORDER BY 1")
+    List<Object[]> sumRecettesParMois();
+
+    @Query("SELECT FUNCTION('TO_CHAR', v.dateVente, 'YYYY-MM'), SUM(v.montantTotal) " +
+            "FROM Vente v GROUP BY FUNCTION('TO_CHAR', v.dateVente, 'YYYY-MM') ORDER BY 1")
+    List<Object[]> getRecettesParMois();
 }

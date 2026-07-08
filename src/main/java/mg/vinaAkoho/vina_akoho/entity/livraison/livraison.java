@@ -35,6 +35,10 @@ public class livraison {
     private Vente vente;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_zone_livraison")
+    private ZoneLivraison zoneLivraison;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_livreur")
     private livreur livreur;
 
