@@ -54,14 +54,20 @@
 <div class="toolbar-actions">
 <button class="btn btn-green" type="submit">Appliquer</button>
 <button class="btn btn-ghost" type="button" onclick="window.location.href='/ventes/historique'">Réinitialiser</button>
-<button class="btn btn-ghost" type="button" onclick="exporterExcel()">Exporter</button>
+<button class="btn btn-ghost" type="button" onclick="exporterExcel()">Export Excel</button>
+<button class="btn btn-ghost" type="button" onclick="exporterPdf()">Export PDF</button>
 </div>
 <script>
-function exporterExcel() {
+function getFilters() {
     var periode = document.getElementById('reportPeriod').value;
     var zone = document.getElementById('reportZone').value;
-    var url = '/ventes/export/excel?periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
-    window.location.href = url;
+    return 'periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
+}
+function exporterExcel() {
+    window.location.href = '/ventes/historique/export/excel?' + getFilters();
+}
+function exporterPdf() {
+    window.location.href = '/ventes/historique/export/pdf?' + getFilters();
 }
 </script>
 </form>
