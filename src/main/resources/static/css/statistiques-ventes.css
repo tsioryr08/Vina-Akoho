@@ -1,0 +1,75 @@
+/* ============================================================
+   STATISTIQUES VENTES — styles propres à cette page uniquement
+   Ne modifie AUCUNE règle globale de style.css.
+   Tout est scopé sous .page-stats-ventes pour ne rien casser
+   ailleurs dans l'application (même convention que
+   .page-comptable-finances / .page-comptable-depenses).
+   ============================================================ */
+
+/* --- 1. Formulaire de filtres : grille compacte au lieu de champs
+   empilés plein écran (le .form-grid global est en colonne) --- */
+.page-stats-ventes .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.page-stats-ventes .form-grid .field {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.page-stats-ventes .form-grid .field:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.page-stats-ventes .form-grid .field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.page-stats-ventes .form-grid .form-control {
+  height: 40px;
+  padding: 0 10px;
+}
+
+/* --- 2. Graphiques : hauteur fixe, plus de canvas qui grandit
+   sans limite ni barres étirées sur toute la largeur --- */
+.page-stats-ventes .chart-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-stats-ventes .chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* --- 3. Cartes de cette page un peu plus compactes --- */
+.page-stats-ventes .card-body {
+  padding: 18px 20px;
+}
+
+.page-stats-ventes .card-header {
+  padding: 16px 20px 0 20px;
+}
+
+/* --- 4. Responsive --- */
+@media (max-width: 640px) {
+  .page-stats-ventes .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .page-stats-ventes .chart-container {
+    height: 220px;
+  }
+}
