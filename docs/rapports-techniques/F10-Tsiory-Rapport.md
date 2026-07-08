@@ -35,7 +35,7 @@ templates/dashboard/admin/employe-form.html ← nouvelle page formulaire
 templates/layout/admin.html             ← lien A2 corrigé
 
 db/migration/V24__add_actif_emp.sql
-db/migration/V25__modif_col_actif_emp.sql
+db/migration/V27__modif_col_actif_emp.sql
 db/migration/V26__add_derniere_connexion_employe.sql
 ```
 
