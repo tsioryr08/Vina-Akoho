@@ -287,4 +287,68 @@ public class ExportVenteService {
 
         return outputStream.toByteArray();
     }
+
+    public byte[] exporterFactureVentePdf(VenteDTO vente) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document, outputStream);
+
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+        Paragraph title = new Paragraph("VINA AKOHO - Facture", titleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        title.setSpacingAfter(18);
+        document.add(title);
+
+        Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
+        Font textFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+
+        document.add(new Paragraph("Informations vente", sectionFont));
+        document.add(new Paragraph("ID Vente: " + (vente.getId() != null ? vente.getId() : ""), textFont));
+        document.add(new Paragraph("Client: " + ((vente.getClientNom() != null ? vente.getClientNom() : "") + (vente.getClientPrenom() != null ? " " + vente.getClientPrenom() : "")), textFont));
+        document.add(new Paragraph("Date: " + (vente.getDateVente() != null ? vente.getDateVente().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : ""), textFont));
+        document.add(new Paragraph("Mode paiement: " + (vente.getModePaiement() != null ? vente.getModePaiement() : ""), textFont));
+        document.add(new Paragraph("Statut: " + (vente.getStatutVente() != null ? vente.getStatutVente() : ""), textFont));
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Coordonnées & vente", sectionFont));
+        String factureNumero = vente.getFacture() != null && vente.getFacture().getNumero() != null ? vente.getFacture().getNumero() : "—";
+        String factureDate = vente.getFacture() != null && vente.getFacture().getDateEmission() != null ? vente.getFacture().getDateEmission().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "—";
+        String totalTtc = vente.getFacture() != null && vente.getFacture().getMontantTtc() != null ? vente.getFacture().getMontantTtc() + " Ar" : (vente.getMontantTotal() != null ? vente.getMontantTotal() + " Ar" : "0 Ar");
+        
+        document.add(new Paragraph("Facture: " + factureNumero, textFont));
+        document.add(new Paragraph("Date émission: " + factureDate, textFont));
+        document.add(new Paragraph("Total TTC: " + totalTtc, textFont));
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Articles vendus", sectionFont));
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[]{4f, 2.5f, 3f, 3f});
+
+        table.addCell(new Phrase("Produit", sectionFont));
+        table.addCell(new Phrase("Quantité", sectionFont));
+        table.addCell(new Phrase("Prix unitaire", sectionFont));
+        table.addCell(new Phrase("Total", sectionFont));
+
+        if (vente.getLignes() != null) {
+            for (var ligne : vente.getLignes()) {
+                table.addCell(new Phrase(ligne.getNomProduit() != null ? ligne.getNomProduit() : "", textFont));
+                table.addCell(new Phrase(ligne.getQuantite() != null ? ligne.getQuantite().toString() : "0", textFont));
+                table.addCell(new Phrase(ligne.getPrixUnitaire() != null ? ligne.getPrixUnitaire() + " Ar" : "0 Ar", textFont));
+                table.addCell(new Phrase(ligne.getMontant() != null ? ligne.getMontant() + " Ar" : "0 Ar", textFont));
+            }
+        }
+
+        document.add(table);
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Total facture", sectionFont));
+        document.add(new Paragraph(totalTtc, textFont));
+
+        document.close();
+
+        return outputStream.toByteArray();
+    }
 }
