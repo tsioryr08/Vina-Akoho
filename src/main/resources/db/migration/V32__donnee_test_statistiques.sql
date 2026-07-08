@@ -10,7 +10,7 @@ DECLARE
   v_id_mode INTEGER := (SELECT id FROM mode_paiement WHERE libelle = 'Espèces');
   v_id_valide INTEGER := (SELECT id FROM statut_vente WHERE libelle = 'Validée');
   v_id_annulee INTEGER := (SELECT id FROM statut_vente WHERE libelle = 'Annulée');
-  v_id_attente INTEGER := (SELECT id FROM statut_vente WHERE libelle = 'En attente de paiement');
+  v_id_attente INTEGER := (SELECT id FROM statut_vente WHERE libelle = 'En attente');
   v_id_poussin INTEGER := (SELECT id FROM produit WHERE ref = 'PRD-001');
   v_id_croissance INTEGER := (SELECT id FROM produit WHERE ref = 'TST-REC-001');
   v_id_finition INTEGER := (SELECT id FROM produit WHERE ref = 'TST-REC-002');

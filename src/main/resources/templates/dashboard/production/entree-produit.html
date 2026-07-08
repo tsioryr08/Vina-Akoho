@@ -196,6 +196,10 @@
         formSection.style.display = "none";
         resultSection.style.display = "block";
         resultSection.scrollIntoView({ behavior: "smooth" });
+
+        setTimeout(function () {
+          window.location.href = "/production";
+        }, 3000);
       }
 
       document.getElementById("nouvelleProductionBtn").addEventListener("click", function () {

@@ -140,10 +140,10 @@ public class MatierePremiereViewController {
         try {
             service.entreeStock(new EntreeStockDTO(idMatierePremiere, quantite, dateReception, 1, coutUnitaire));
             redirectAttributes.addFlashAttribute("successMessage", "Entrée en stock enregistrée avec succès");
-            return "redirect:/matieres-premieres/" + idMatierePremiere;
+            return "redirect:/production";
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-            return "redirect:/matieres-premieres/entree-stock";
+            return "redirect:/production";
         }
     }
 }

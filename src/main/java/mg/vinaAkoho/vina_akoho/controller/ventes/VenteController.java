@@ -1014,7 +1014,7 @@ public class VenteController {
             VenteDTO vente = venteService.creer(venteForm, panier, idEmploye);
             session.removeAttribute(SESSION_PANIER);
             redirectAttributes.addFlashAttribute("success", "Vente créée avec succès (#" + vente.getId() + ").");
-            return "redirect:/ventes";
+            return "redirect:/production";
         } catch (Exception e) {
             model.addAttribute("error", "Impossible de créer la vente : " + e.getMessage());
             return "ventes/responsable-commercial-ventes-nouvelles";
