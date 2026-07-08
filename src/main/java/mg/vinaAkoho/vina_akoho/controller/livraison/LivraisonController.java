@@ -126,4 +126,10 @@ public class LivraisonController {
         model.addAttribute("historiques", livraisonService.listerHistorique());
         return "livraison/historique";
     }
+
+    @GetMapping("/statistiques")
+    public String afficherPageStatistiques() {
+        // Cela pointe vers src/main/resources/templates/livraison/statistiques.html
+        return "livraison/statistique";
+    }
 }

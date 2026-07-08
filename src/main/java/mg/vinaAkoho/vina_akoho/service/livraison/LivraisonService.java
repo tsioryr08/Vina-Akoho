@@ -3,6 +3,7 @@ package mg.vinaAkoho.vina_akoho.service.livraison;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -181,4 +182,16 @@ public class LivraisonService {
                                 .dateChangement(historique.getDateChangement() != null ? historique.getDateChangement() : historique.getCreatedAt())
                                 .build();
         }
+
+    public Map<String, Long> getStatistiquesZones() {
+        return livraisonRepository.countLivraisonsByZone().stream()
+                .collect(Collectors.toMap(
+                        obj -> (String) obj[0],
+                        obj -> (Long) obj[1]
+                ));
+    }
+
+    public long countTotalLivraisons() {
+        return livraisonRepository.count();
+    }
 }
