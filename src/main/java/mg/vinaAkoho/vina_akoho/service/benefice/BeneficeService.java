@@ -11,6 +11,9 @@ import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Service
 public class BeneficeService {
@@ -40,6 +43,28 @@ public class BeneficeService {
 
     return rapport;
 }
+    public Map<String, BigDecimal> getEvolutionBeneficeParMois() {
+        List<Object[]> recettes = venteRepository.getRecettesParMois();
+        List<Object[]> depenses = depenseRepository.getDepensesParMois();
+
+        Map<String, BigDecimal> evolution = new TreeMap<>();
+
+        for (Object[] obj : recettes) {
+            String mois = (String) obj[0];
+            BigDecimal montant = (BigDecimal) obj[1];
+            evolution.put(mois, montant);
+        }
+
+        for (Object[] obj : depenses) {
+            String mois = (String) obj[0];
+            BigDecimal montantDepense = (BigDecimal) obj[1];
+
+            BigDecimal current = evolution.getOrDefault(mois, BigDecimal.ZERO);
+            evolution.put(mois, current.subtract(montantDepense));
+        }
+
+        return evolution;
+    }
 
     
 }
