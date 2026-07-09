@@ -18,20 +18,20 @@
                     <p class="muted-text">Recettes calculees automatiquement a partir des ventes non annulees et du prix de vente des produits.</p>
                 </div>
                 <div class="header-actions">
-                    <a class="btn btn-white" th:href="@{/ventes}">Liste des ventes</a>
-                    <a class="btn btn-green" th:href="@{/ventes/nouvelle}">+ Nouvelle Vente</a>
+                    <a class="btn btn-white" th:href="@{/api/ventes}">Liste des ventes</a>
+                    <a class="btn btn-green" th:href="@{/api/ventes/nouvelle}">+ Nouvelle Vente</a>
                 </div>
             </section>
 
             <section class="tab-list" role="tablist">
-                <a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
-                <a class="tab-link" th:href="@{/ventes/historique}">Historique</a>
-                <a class="tab-link active" th:href="@{/ventes/recettes}">Recettes</a>
-                <a class="tab-link" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
+                <a class="tab-link" th:href="@{/api/ventes}">Liste des ventes</a>
+                <a class="tab-link" th:href="@{/api/ventes/historique}">Historique</a>
+                <a class="tab-link active" th:href="@{/api/ventes/recettes}">Recettes</a>
+                <a class="tab-link" th:href="@{/api/ventes/nouvelle}">Nouvelle vente</a>
             </section>
 
             <section class="card">
-                <form class="filter-bar report-filters" th:action="@{/ventes/recettes}" method="get">
+                <form class="filter-bar report-filters" th:action="@{/api/ventes/recettes}" method="get">
                     <div class="field">
                         <label for="debut">Date debut</label>
                         <input id="debut" name="debut" type="date" class="form-control" th:value="${debut}">
@@ -42,7 +42,7 @@
                     </div>
                     <div class="toolbar-actions">
                         <button class="btn btn-green" type="submit">Appliquer</button>
-                        <a class="btn btn-ghost" th:href="@{/ventes/recettes}">Reinitialiser</a>
+                        <a class="btn btn-ghost" th:href="@{/api/ventes/recettes}">Reinitialiser</a>
                     </div>
                 </form>
             </section>

@@ -24,7 +24,7 @@
             </p>
           </div>
           <div class="header-actions">
-            <a class="btn btn-white" th:href="@{/clients/{id}(id=${client.id})}"
+            <a class="btn btn-white" th:href="@{/api/clients/{id}(id=${client.id})}"
               >Annuler</a
             >
           </div>
@@ -39,7 +39,7 @@
           <div class="card-body">
             <form
               method="post"
-              th:action="@{/clients/{id}/modifier(id=${client.id})}"
+              th:action="@{/api/clients/{id}/modifier(id=${client.id})}"
               th:object="${inscription}"
             >
               <div class="form-grid">
@@ -187,7 +187,7 @@
               <div class="form-actions-row">
                 <a
                   class="btn btn-ghost btn-large"
-                  th:href="@{/clients/{id}(id=${client.id})}"
+                  th:href="@{/api/clients/{id}(id=${client.id})}"
                   >Annuler</a
                 >
                 <button type="submit" class="btn btn-save-client btn-large">

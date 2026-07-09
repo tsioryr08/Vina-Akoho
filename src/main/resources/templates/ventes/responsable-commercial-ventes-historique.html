@@ -21,15 +21,15 @@
 </section>
 
 <section class="tab-list" role="tablist">
-<a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
-<a class="tab-link active" th:href="@{/ventes/historique}">Historique</a>
-<a class="tab-link" th:href="@{/ventes/recettes}">Recettes</a>
-<a class="tab-link" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
+<a class="tab-link" th:href="@{/api/ventes}">Liste des ventes</a>
+<a class="tab-link active" th:href="@{/api/ventes/historique}">Historique</a>
+<a class="tab-link" th:href="@{/api/ventes/recettes}">Recettes</a>
+<a class="tab-link" th:href="@{/api/ventes/nouvelle}">Nouvelle vente</a>
 </section>
 
 <section class="card">
 <div class="filter-bar report-filters">
-<form th:action="@{/ventes/historique}" method="get">
+<form th:action="@{/api/ventes/historique}" method="get">
 <div class="field">
 <label for="reportPeriod">Période</label>
 <select id="reportPeriod" name="periode" class="form-control">
@@ -53,14 +53,14 @@
 
 <div class="toolbar-actions">
 <button class="btn btn-green" type="submit">Appliquer</button>
-<button class="btn btn-ghost" type="button" onclick="window.location.href='/ventes/historique'">Réinitialiser</button>
+<button class="btn btn-ghost" type="button" onclick="window.location.href='/api/ventes/historique'">Réinitialiser</button>
 <button class="btn btn-ghost" type="button" onclick="exporterExcel()">Exporter</button>
 </div>
 <script>
 function exporterExcel() {
     var periode = document.getElementById('reportPeriod').value;
     var zone = document.getElementById('reportZone').value;
-    var url = '/ventes/export/excel?periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
+    var url = '/api/ventes/export/excel?periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
     window.location.href = url;
 }
 </script>
@@ -90,9 +90,9 @@ function exporterExcel() {
 <div class="table-card-header">
 <div>
 <h2 class="card-title">Produits les plus vendus</h2>
-<p class="card-subtitle">Classement des types d'aliments VINA-AKOHO par volume et chiffre d'affaires. <span th:text="${periode} != null ? periode : '6 derniers mois'"></span></p>
+<p class="card-subtitle">Classement des types d'aliments VINA-AKOHO par volume et chiffre d'affaires. <span th:text="${periode != null ? periode : '6 derniers mois'}"></span></p>
 </div>
-<span class="badge badge-light-green" th:text="${periode} != null ? periode : '6 derniers mois'"></span>
+<span class="badge badge-light-green" th:text="${periode != null ? periode : '6 derniers mois'}"></span>
 </div>
 
 <div class="table-wrap">
@@ -112,9 +112,9 @@ function exporterExcel() {
 <td th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' kg'"></td>
 <td th:text="${#numbers.formatDecimal(produitsCA[produit.key], 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
 <td>
-<span class="badge badge-blue" th:if="${chiffreAffaires != null and chiffreAffaires > 0}"
-      th:text="${#numbers.formatPercent(produitsCA[produit.key].divide(chiffreAffaires), 1, 'COMMA')}"></span>
-<span class="badge badge-blue" th:unless="${chiffreAffaires != null and chiffreAffaires > 0}">0%</span>
+<span class="badge badge-blue" th:if="${produitsPercent[produit.key] != null}"
+      th:text="${produitsPercent[produit.key]}"></span>
+<span class="badge badge-blue" th:unless="${produitsPercent[produit.key] != null}">0%</span>
 </td>
 </tr>
 </th:block>

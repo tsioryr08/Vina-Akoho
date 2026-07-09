@@ -11,7 +11,29 @@
     return null;
   }
 
-  const role = window.VinaAkohoAuth.getRole() || getDefaultRoleForCurrentPage();
+  function normalizeRenderedRole(label) {
+    const normalized = (label || "").trim().toLowerCase();
+
+    if (normalized === "administrateur") return "admin";
+    if (normalized === "responsable achat") return "responsableAchat";
+    if (normalized === "responsable de production") return "responsableProduction";
+    if (normalized === "gestionnaire de stock") return "gestionnaireStock";
+    if (normalized === "responsable commercial") return "responsableCommercial";
+    if (normalized === "comptable") return "comptable";
+    if (normalized === "livreur") return "livreur";
+
+    return null;
+  }
+
+  function getRoleFromRenderedPage() {
+    const rolePill = document.querySelector(".role-pill");
+    const brandSubtitle = document.querySelector(".brand-subtitle");
+    const roleLabel = (rolePill && rolePill.textContent) || (brandSubtitle && brandSubtitle.textContent);
+
+    return normalizeRenderedRole(roleLabel);
+  }
+
+  const role = window.VinaAkohoAuth.getRole() || getRoleFromRenderedPage() || getDefaultRoleForCurrentPage();
 
   if (!role) {
     window.location.href = window.VinaAkohoAuth.projectRelativeUrl("index.html");
@@ -171,15 +193,21 @@
   }
 
   function setupLogout() {
-    const button = document.getElementById("vina-logout-button");
-
-    if (!button) {
+    if (window.__vinaLogoutListenerAttached) {
       return;
     }
 
-    button.addEventListener("click", function () {
-    window.VinaAkohoAuth.logout();
-  });
+    window.__vinaLogoutListenerAttached = true;
+
+    document.addEventListener("click", function (event) {
+      const button = event.target.closest("#vina-logout-button");
+
+      if (!button) {
+        return;
+      }
+
+      window.VinaAkohoAuth.logout();
+    });
   }
 
   function setupMobileMenu() {
@@ -234,18 +262,30 @@
       .replace("/static/js/app-shell.js", "/");
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function initializeShell() {
     const rootUrl = getProjectRootUrl();
 
     Promise.all([
-      loadPartial(rootUrl + "layout/header.html"),
-      loadPartial(rootUrl + "layout/" + role + ".html"),
-      loadPartial(rootUrl + "layout/footer.html")
+      loadPartial(rootUrl + "api/layout/header.html"),
+      loadPartial(rootUrl + "api/layout/" + role + ".html"),
+      loadPartial(rootUrl + "api/layout/footer.html")
     ])
       .then(function (results) {
-        document.getElementById("vina-header").innerHTML = results[0];
-        document.getElementById("vina-sidebar").innerHTML = results[1];
-        document.getElementById("vina-footer").innerHTML = results[2];
+        const header = document.getElementById("vina-header");
+        const sidebar = document.getElementById("vina-sidebar");
+        const footer = document.getElementById("vina-footer");
+
+        if (header) {
+          header.innerHTML = results[0];
+        }
+
+        if (sidebar) {
+          sidebar.innerHTML = results[1];
+        }
+
+        if (footer) {
+          footer.innerHTML = results[2];
+        }
 
         updateRolePill();
         updateBreadcrumb();
@@ -256,5 +296,11 @@
       .catch(function (error) {
         console.warn(error.message);
       });
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeShell);
+  } else {
+    initializeShell();
+  }
 })();

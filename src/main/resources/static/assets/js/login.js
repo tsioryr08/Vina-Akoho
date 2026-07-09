@@ -70,6 +70,14 @@ window.VinaAkohoAuth = {
 
     logout: function () {
         sessionStorage.removeItem('vinaAkohoUser');
-        window.location.href = '/';
+
+        fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'same-origin'
+        }).catch(function () {
+            return null;
+        }).finally(function () {
+            window.location.href = '/';
+        });
     }
 };

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
@@ -12,6 +13,7 @@ import mg.vinaAkoho.vina_akoho.service.produit.ProduitService;
 import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
 
 @Controller
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class DashboardController {
 

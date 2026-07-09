@@ -160,7 +160,15 @@
 
   function logout() {
     localStorage.removeItem(ROLE_KEY);
-    window.location.href = projectRelativeUrl("index.html");
+
+    fetch(projectRelativeUrl("api/logout"), {
+      method: "POST",
+      credentials: "same-origin"
+    }).catch(function () {
+      return null;
+    }).finally(function () {
+      window.location.href = projectRelativeUrl("index.html");
+    });
   }
 
   function requireRole() {

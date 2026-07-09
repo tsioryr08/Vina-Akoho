@@ -30,11 +30,27 @@
   }
 
   function setupLogout() {
-    const button = document.getElementById("vina-logout-button");
-    if (!button) return;
+    if (window.__vinaLogoutListenerAttached) {
+      return;
+    }
 
-    button.addEventListener("click", function () {
-      window.location.href = '/';
+    window.__vinaLogoutListenerAttached = true;
+
+    document.addEventListener("click", function (event) {
+      const button = event.target.closest("#vina-logout-button");
+
+      if (!button) {
+        return;
+      }
+
+      fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+      }).catch(function () {
+        return null;
+      }).finally(function () {
+        window.location.href = '/';
+      });
     });
   }
 

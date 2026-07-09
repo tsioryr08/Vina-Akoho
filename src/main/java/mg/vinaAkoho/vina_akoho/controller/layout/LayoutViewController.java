@@ -3,21 +3,23 @@ package mg.vinaAkoho.vina_akoho.controller.layout;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/api/layout")
 public class LayoutViewController {
 
-    @GetMapping("/layout/header.html")
+    @GetMapping("/header.html")
     public String header() {
         return "layout/header";
     }
 
-    @GetMapping("/layout/footer.html")
+    @GetMapping("/footer.html")
     public String footer() {
         return "layout/footer";
     }
 
-    @GetMapping("/layout/{role}.html")
+    @GetMapping("/{role}.html")
     public String sidebar(@PathVariable String role) {
         return switch (role) {
             case "admin" -> "layout/admin";

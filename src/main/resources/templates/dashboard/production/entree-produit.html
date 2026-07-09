@@ -22,7 +22,7 @@
           <button
             class="btn btn-ghost btn-small"
             id="vina-logout-button"
-            onclick="window.location.href='/'"
+            
             type="button"
           >
             Déconnexion
@@ -79,7 +79,7 @@
                 <button type="submit" class="btn btn-primary" id="submitBtn">
                   Valider la production
                 </button>
-                <a th:href="@{/production}" class="btn btn-secondary">Annuler</a>
+                <a th:href="@{/api/production}" class="btn btn-secondary">Annuler</a>
               </div>
             </form>
           </div>
@@ -123,7 +123,7 @@
               <button type="button" class="btn btn-primary" id="nouvelleProductionBtn">
                 Nouvelle production
               </button>
-              <a th:href="@{/production}" class="btn btn-white">Retour au dashboard</a>
+              <a th:href="@{/api/production}" class="btn btn-white">Retour au dashboard</a>
             </div>
           </div>
         </section>

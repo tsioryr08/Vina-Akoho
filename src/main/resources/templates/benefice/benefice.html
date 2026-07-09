@@ -23,10 +23,10 @@
       </div>
       <nav class="sidebar-nav">
         <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link" th:href="@{/}">Dashboard <span class="sidebar-code">F9</span></a>
+        <a class="sidebar-link" th:href="@{/api/comptabilite}">Dashboard <span class="sidebar-code">F9</span></a>
 
         <div class="sidebar-section">Finance</div>
-        <a class="sidebar-link active" th:href="@{/finances/benefices}">Vue d'ensemble financière <span class="sidebar-code">F1</span></a>
+        <a class="sidebar-link active" th:href="@{/api/benefices}">Vue d'ensemble financière <span class="sidebar-code">F1</span></a>
         <a class="sidebar-link" href="#">Registre des Dépenses <span class="sidebar-code">F2</span></a>
         <a class="sidebar-link" href="#">Coût de revient <span class="sidebar-code">F3</span></a>
         <a class="sidebar-link" href="#">Rapports financiers <span class="sidebar-code">F5</span></a>
@@ -44,7 +44,7 @@
         </div>
         <div class="topbar-actions">
           <span class="role-pill">${currentUser != null ? currentUser.role.poste : 'Comptable'}</span>
-          <button class="btn btn-ghost btn-small" id="vina-logout-button" onclick="window.location.href = '/'" type="button">Déconnexion</button>
+          <button class="btn btn-ghost btn-small" id="vina-logout-button" type="button">Déconnexion</button>
         </div>
       </div>
 
@@ -61,7 +61,7 @@
           <div class="card-header">
             <h2 class="card-title">Filtres de recherche</h2>
           </div>
-          <form th:action="@{benefices}" method="get">
+          <form th:action="@{/api/benefices}" method="get">
             <div class="filter-row">
               <div class="filter-group">
                 <label for="dateDebut">Date de début :</label>

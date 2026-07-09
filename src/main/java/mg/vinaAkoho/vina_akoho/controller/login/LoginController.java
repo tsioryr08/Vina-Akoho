@@ -36,17 +36,17 @@ public class LoginController {
             session.setAttribute(SessionFilter.ATTRIBUT_ROLE, reponse.getRole());
             String role = reponse.getRole();
             if (role != null && role.equalsIgnoreCase("Administrateur")) {
-                return "redirect:/admin";
+                return "redirect:/api/admin";
             } else if (role != null && role.equalsIgnoreCase("Responsable achat")) {
-                return "redirect:/achats";
+                return "redirect:/api/achats";
             } else if (role != null && role.equalsIgnoreCase("Responsable de production")) {
-                return "redirect:/production";
+                return "redirect:/api/production";
             } else if (role != null && role.equalsIgnoreCase("Gestionnaire de stock")) {
-                return "redirect:/stock";
+                return "redirect:/api/stock";
             } else if (role != null && role.equalsIgnoreCase("Responsable commercial")) {
-                return "redirect:/ventes";
+                return "redirect:/api/ventes";
             } else if (role != null && role.equalsIgnoreCase("Comptable")) {
-                return "redirect:/comptabilite";
+                return "redirect:/api/comptabilite";
             } else {
                 return "redirect:/api/matieres-premieres";
             }

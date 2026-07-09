@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <body>
 <aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
   <div class="sidebar-brand">
@@ -7,26 +7,25 @@
     <div>
       <div class="brand-title">VINA AKOHO</div>
       <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO02</div>
-      <div th:if="${currentUser != null}" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Utilisateur</div>
     </div>
   </div>
 
   <nav class="sidebar-nav">
     <div class="sidebar-section">Principal</div>
-    <a class="sidebar-link" th:href="@{/production}">Dashboard <span class="sidebar-code">F10</span></a>
+    <a class="sidebar-link" th:href="@{/api/production}">Dashboard <span class="sidebar-code">F10</span></a>
     <div class="sidebar-section">Matieres Premieres</div>
-    <a class="sidebar-link" href="#">Ajouter Matieres <span class="sidebar-code">M1</span></a>
-    <a class="sidebar-link" th:href="@{/matieres-premieres}">Suivi Stock Matieres <span class="sidebar-code">M2</span></a>
-    <a class="sidebar-link" th:href="@{/matieres-premieres/nouveau}">Creer Fiche Produit <span class="sidebar-code">M3</span></a>
-    <a class="sidebar-link" href="#">Suggestions <span class="sidebar-code">M4</span></a>
-    <a class="sidebar-link" href="#">Previsions</a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/nouveau}">Ajouter Matieres <span class="sidebar-code">M1</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres}">Suivi Stock Matieres <span class="sidebar-code">M2</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/fiche}">Creer Fiche Produit <span class="sidebar-code">M3</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/alertes}">Suggestions <span class="sidebar-code">M4</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/previsions}">Previsions <span class="sidebar-code">M5</span></a>
     <div class="sidebar-section">Production</div>
-    <a class="sidebar-link" th:href="@{/production/entree-produit}">Entree Produit <span class="sidebar-code">S2</span></a>
+    <a class="sidebar-link" th:href="@{/api/production/entree-produit}">Entree Produit <span class="sidebar-code">S2</span></a>
     <div class="sidebar-section">Stocks</div>
-    <a class="sidebar-link" href="#">Suivi Produits Finis <span class="sidebar-code">S1</span></a>
+    <a class="sidebar-link" th:href="@{/api/produits}">Suivi Produits Finis <span class="sidebar-code">S1</span></a>
     <div class="sidebar-section">Surveillance</div>
-    <a class="sidebar-link" th:href="@{/matieres-premieres/alertes}">Alertes de Seuil <span class="sidebar-code">S3</span></a>
-    <a class="sidebar-link" th:href="@{/matieres-premieres/entree-stock}">Entree matiere premiere en stock <span class="sidebar-code">S3b</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/alertes}">Alertes de Seuil <span class="sidebar-code">S3</span></a>
+    <a class="sidebar-link" th:href="@{/api/matieres-premieres/entree-stock}">Entree matiere premiere en stock <span class="sidebar-code">S3b</span></a>
     <a class="sidebar-link" href="#">Inventaire Periodique <span class="sidebar-code">S4</span></a>
   </nav>
 </aside>

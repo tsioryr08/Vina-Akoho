@@ -81,6 +81,14 @@ window.VinaAkohoAuth = {
     logout: function () {
         localStorage.removeItem('vinaAkohoToken');
         localStorage.removeItem('vinaAkohoUser');
-        window.location.href = '/';
+
+        fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'same-origin'
+        }).catch(function () {
+            return null;
+        }).finally(function () {
+            window.location.href = '/';
+        });
     }
 };

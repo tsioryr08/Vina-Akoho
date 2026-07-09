@@ -21,15 +21,15 @@
             </p>
           </div>
           <div class="header-actions">
-            <a class="btn btn-white" th:href="@{/clients/espace}">Retour</a>
+            <a class="btn btn-white" th:href="@{/api/clients/espace}">Retour</a>
             <a
               class="btn btn-green"
-              th:href="@{/clients/{id}/modifier(id=${client.id})}"
+              th:href="@{/api/clients/{id}/modifier(id=${client.id})}"
               >Modifier</a
             >
             <form
               method="post"
-              th:action="@{/clients/{id}/supprimer(id=${client.id})}"
+              th:action="@{/api/clients/{id}/supprimer(id=${client.id})}"
               class="form-inline"
             >
               <button

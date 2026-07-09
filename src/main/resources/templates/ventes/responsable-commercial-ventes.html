@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,7 @@
                     <p class="muted-text">Suivi des ventes clients, facturation et coordination avec le service livraison.</p>
                 </div>
                 <div class="header-actions">
-                    <a class="btn btn-green" th:href="@{/ventes/nouvelle}">+ Nouvelle Vente</a>
+                    <a class="btn btn-green" th:href="@{/api/ventes/nouvelle}">+ Nouvelle Vente</a>
                     <button class="btn btn-white" type="button">Exporter Excel</button>
                 </div>
             </section>
@@ -49,7 +49,7 @@
                 </article>
             </section>
 
-            <form th:action="@{/ventes}" method="get" class="simulation-grid" style="grid-template-columns: 300px 1fr;">
+            <form th:action="@{/api/ventes}" method="get" class="simulation-grid" style="grid-template-columns: 300px 1fr;">
                 <aside class="side-panel">
                     <div class="side-panel-heading">
                         <h2>Filtres avances</h2>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="form-actions" style="margin-top: 20px;">
                         <button class="btn btn-green w-100" type="submit">Filtrer</button>
-                        <button class="btn btn-white w-100" type="button" onclick="window.location.href='/ventes'">Reinitialiser</button>
+                        <button class="btn btn-white w-100" type="button" onclick="window.location.href='/api/ventes'">Reinitialiser</button>
                     </div>
                 </aside>
 
@@ -112,7 +112,7 @@
                                         <td><span class="badge badge-success" th:text="${vente.statutVente}"></span></td>
                                         <td>
                                             <div style="display: flex; gap: 4px;">
-                                                <a class="btn-icon" th:href="@{/ventes/{id}(id=${vente.id})}">&#128065;</a>
+                                                <a class="btn-icon" th:href="@{/api/ventes/{id}(id=${vente.id})}">&#128065;</a>
                                             </div>
                                         </td>
                                     </tr>

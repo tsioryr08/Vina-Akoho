@@ -14,7 +14,7 @@
       <div id="vina-content">
         <div class="page-header-row">
           <h1 class="client-page-title">Base de donnees Clients</h1>
-          <a class="btn btn-add-client" th:href="@{/clients/nouveau}">
+          <a class="btn btn-add-client" th:href="@{/api/clients/nouveau}">
             + Ajouter un eleveur / client
           </a>
         </div>
@@ -158,7 +158,7 @@
                     <td>
                       <a
                         class="client-link-view"
-                        th:href="@{/clients/{id}(id=${client.id})}"
+                        th:href="@{/api/clients/{id}(id=${client.id})}"
                         >Voir</a
                       >
                     </td>

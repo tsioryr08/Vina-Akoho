@@ -18,7 +18,7 @@
                     <td th:text="${#numbers.formatDecimal(item.prixUnitaire,0,'COMMA',2,'POINT')}"></td>
                     <td th:text="${#numbers.formatDecimal(item.montant,0,'COMMA',2,'POINT')}"></td>
                     <td>
-                        <form th:action="@{/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}" method="post">
+                        <form th:action="@{/api/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}" method="post">
                             <button class="btn btn-red btn-small" type="submit">X</button>
                         </form>
                     </td>

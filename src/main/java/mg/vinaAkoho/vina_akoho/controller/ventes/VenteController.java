@@ -40,7 +40,7 @@ import mg.vinaAkoho.vina_akoho.service.ventes.ExportVenteService;
 import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
 
 @Controller
-@RequestMapping("/ventes")
+@RequestMapping("/api/ventes")
 @RequiredArgsConstructor
 public class VenteController {
 
@@ -234,13 +234,24 @@ public class VenteController {
                         LigneVenteDTO::getNomProduit,
                         Collectors.reducing(BigDecimal.ZERO, LigneVenteDTO::getMontant, BigDecimal::add)
                 ));
-        
+
+        Map<String, String> produitsPercent = produitsCA.entrySet().stream()
+                .filter(e -> chiffreAffaires != null && chiffreAffaires.compareTo(BigDecimal.ZERO) > 0 && e.getValue() != null)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> String.format("%.0f%%", e.getValue()
+                                .divide(chiffreAffaires, 4, java.math.RoundingMode.HALF_UP)
+                                .multiply(BigDecimal.valueOf(100))
+                                .doubleValue())
+                ));
+
         model.addAttribute("ventes", ventesPayees);
         model.addAttribute("totalVentesKg", totalVentesKg);
         model.addAttribute("chiffreAffaires", chiffreAffaires);
         model.addAttribute("nombreTransactions", nombreTransactions);
         model.addAttribute("produitsVendus", produitsVendus);
         model.addAttribute("produitsCA", produitsCA);
+        model.addAttribute("produitsPercent", produitsPercent);
         model.addAttribute("periode", periode);
         model.addAttribute("zone", zone);
         
@@ -329,14 +340,14 @@ public class VenteController {
                                   RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("error", "Quantité ou produit invalide.");
-            return "redirect:/ventes/nouvelle";
+            return "redirect:/api/ventes/nouvelle";
         }
 
         Produit produit = produitRepository.findById(form.getIdProduit())
                 .orElse(null);
         if (produit == null) {
             redirectAttributes.addFlashAttribute("error", "Produit introuvable.");
-            return "redirect:/ventes/nouvelle";
+            return "redirect:/api/ventes/nouvelle";
         }
 
         List<PanierItemDTO> panier = panier(session);
@@ -361,7 +372,7 @@ public class VenteController {
         }
 
         redirectAttributes.addFlashAttribute("success", "Produit ajouté au panier.");
-        return "redirect:/ventes/nouvelle";
+        return "redirect:/api/ventes/nouvelle";
     }
 
     @PostMapping("/panier/{idProduit}/supprimer")
@@ -371,7 +382,7 @@ public class VenteController {
         List<PanierItemDTO> panier = panier(session);
         panier.removeIf(item -> item.getIdProduit().equals(idProduit));
         redirectAttributes.addFlashAttribute("success", "Produit retiré du panier.");
-        return "redirect:/ventes/nouvelle";
+        return "redirect:/api/ventes/nouvelle";
     }
 
     @PostMapping("/valider")
@@ -399,7 +410,7 @@ public class VenteController {
             VenteDTO vente = venteService.creer(venteForm, panier, idEmploye);
             session.removeAttribute(SESSION_PANIER);
             redirectAttributes.addFlashAttribute("success", "Vente créée avec succès (#" + vente.getId() + ").");
-            return "redirect:/ventes";
+            return "redirect:/api/ventes";
         } catch (Exception e) {
             model.addAttribute("error", "Impossible de créer la vente : " + e.getMessage());
             return "ventes/responsable-commercial-ventes-nouvelles";
@@ -421,7 +432,7 @@ public class VenteController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Impossible de valider le paiement : " + e.getMessage());
         }
-        return "redirect:/ventes/" + id;
+        return "redirect:/api/ventes/" + id;
     }
 
     @GetMapping("/{id}/facture")

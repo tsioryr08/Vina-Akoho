@@ -74,13 +74,13 @@ public class CategorieController {
         try {
             categorieService.creer(requete);
             redirectAttributes.addFlashAttribute("success", "Catégorie créée avec succès.");
-            return "redirect:/categories";
+            return "redirect:/api/categories";
         } catch (CategorieDejaExistanteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/categories/nouveau";
+            return "redirect:/api/categories/nouveau";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la création : " + e.getMessage());
-            return "redirect:/categories/nouveau";
+            return "redirect:/api/categories/nouveau";
         }
     }
 
@@ -120,16 +120,16 @@ public class CategorieController {
         try {
             categorieService.modifier(id, requete);
             redirectAttributes.addFlashAttribute("success", "Catégorie modifiée avec succès.");
-            return "redirect:/categories";
+            return "redirect:/api/categories";
         } catch (CategorieDejaExistanteException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/categories/" + id + "/modifier";
+            return "redirect:/api/categories/" + id + "/modifier";
         } catch (CategorieNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", "Catégorie non trouvée.");
-            return "redirect:/categories";
+            return "redirect:/api/categories";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la modification : " + e.getMessage());
-            return "redirect:/categories/" + id + "/modifier";
+            return "redirect:/api/categories/" + id + "/modifier";
         }
     }
 

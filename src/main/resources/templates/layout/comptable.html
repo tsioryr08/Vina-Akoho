@@ -1,25 +1,25 @@
-<aside class="sidebar" id="vina-sidebar" th:fragment="sidebar">
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
   <div class="sidebar-brand">
-    <img
-      th:src="@{/images/VINA_AKOHO_LOGO.png}"
-      alt="VINA AKOHO"
-      class="brand-mark"
-    />
+    <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
     <div>
       <div class="brand-title">VINA AKOHO</div>
       <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO05</div>
-      <div th:if="${currentUser != null}" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Utilisateur</div>
     </div>
   </div>
 
   <nav class="sidebar-nav">
     <div class="sidebar-section">Principal</div>
-    <a class="sidebar-link" th:href="@{/comptabilite}">Dashboard <span class="sidebar-code">F9</span></a>
+    <a class="sidebar-link" th:href="@{/api/comptabilite}">Dashboard <span class="sidebar-code">F9</span></a>
     <div class="sidebar-section">Finance</div>
-    <a class="sidebar-link" href="comptable-finances.html">Vue d'ensemble financiere <span class="sidebar-code">F1</span></a>
+    <a class="sidebar-link" href="#">Vue d'ensemble financiere <span class="sidebar-code">F1</span></a>
     <a class="sidebar-link" th:href="@{/api/depenses/comptable-depenses}">Registre des Depenses <span class="sidebar-code">F2</span></a>
-    <a class="sidebar-link" href="comptable-cout-de-revient.html">Cout de revient<span class="sidebar-code">F3</span></a>
-    <a class="sidebar-link" href="comptable-rapports-financiers.html">Rapports financiers <span class="sidebar-code">F5</span></a>
-    <a class="sidebar-link" href="clients.html">voir creance <span class="sidebar-code">F5b</span></a>
+    <a class="sidebar-link" href="#">Cout de revient<span class="sidebar-code">F3</span></a>
+    <a class="sidebar-link" href="#">Rapports financiers <span class="sidebar-code">F5</span></a>
+    <a class="sidebar-link" href="#">Voir creances <span class="sidebar-code">F5b</span></a>
   </nav>
 </aside>
+</body>
+</html>

@@ -26,7 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/clients")
+@RequestMapping("/api/clients")
 public class ClientViewController {
 
     private final ClientService clientService;
@@ -46,7 +46,7 @@ public class ClientViewController {
 
     @GetMapping(value = "/connexion", produces = MediaType.TEXT_HTML_VALUE)
     public String connexion(Model model) {
-        return "redirect:/clients/nouveau";
+        return "redirect:/api/clients/nouveau";
     }
 
     @GetMapping(value = {"", "/"}, produces = MediaType.TEXT_HTML_VALUE)
@@ -69,7 +69,7 @@ public class ClientViewController {
         return clientService.connecter(connexion)
                 .map(client -> {
                     redirectAttributes.addFlashAttribute("client", new ClientResumeDTO(client));
-                    return "redirect:/clients/espace";
+                    return "redirect:/api/clients/espace";
                 })
                 .orElseGet(() -> {
                     model.addAttribute("erreur", "Identifiant client ou numero telephone incorrect");
@@ -170,7 +170,7 @@ public class ClientViewController {
     public String supprimer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         clientService.deleteClient(id);
         redirectAttributes.addFlashAttribute("succes", "Client supprime de la liste.");
-        return "redirect:/clients/espace";
+        return "redirect:/api/clients/espace";
     }
 
     @GetMapping("/recherche")
