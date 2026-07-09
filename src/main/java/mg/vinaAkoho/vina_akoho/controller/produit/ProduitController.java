@@ -117,10 +117,10 @@ public class ProduitController {
         try {
             produitService.creer(requete);
             redirectAttributes.addFlashAttribute("success", "Produit créé avec succès !");
-            return "redirect:/produits";
+            return "redirect:/api/produits";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la création : " + e.getMessage());
-            return "redirect:/produits/nouveau";
+            return "redirect:/api/produits/nouveau";
         }
     }
 
@@ -159,10 +159,10 @@ public class ProduitController {
         try {
             produitService.modifier(id, requete);
             redirectAttributes.addFlashAttribute("success", "Produit modifié avec succès !");
-            return "redirect:/produits";
+            return "redirect:/api/produits";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la modification : " + e.getMessage());
-            return "redirect:/produits/" + id + "/modifier";
+            return "redirect:/api/produits/" + id + "/modifier";
         }
     }
 
@@ -174,7 +174,7 @@ public class ProduitController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la désactivation : " + e.getMessage());
         }
-        return "redirect:/produits";
+        return "redirect:/api/produits";
     }
 
     @GetMapping("/{id}/reactiver")
@@ -185,6 +185,6 @@ public class ProduitController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la réactivation : " + e.getMessage());
         }
-        return "redirect:/produits";
+        return "redirect:/api/produits";
     }
 }

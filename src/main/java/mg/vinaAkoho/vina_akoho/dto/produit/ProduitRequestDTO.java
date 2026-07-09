@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 @Builder
 public class ProduitRequestDTO {
 
-    @NotBlank(message = "La référence du produit est obligatoire")
     @Size(max = 100, message = "La référence ne doit pas dépasser 100 caractères")
     private String ref;
 

@@ -73,10 +73,17 @@ public class ProduitService {
     }
 
     public ProduitDTO creer(ProduitRequestDTO requete) {
-        if (produitRepository.existsByRefIgnoreCaseAndActifTrue(requete.getRef())) {
-            throw new ProduitDejaExistantException(
-                    "Un produit avec la référence '" + requete.getRef() + "' existe déjà");
+        String ref = requete.getRef();
+        
+        if (ref == null || ref.trim().isEmpty()) {
+            ref = genererReferenceAutomatique();
+        } else {
+            if (produitRepository.existsByRefIgnoreCaseAndActifTrue(ref)) {
+                throw new ProduitDejaExistantException(
+                        "Un produit avec la référence '" + ref + "' existe déjà");
+            }
         }
+        
         if (produitRepository.existsByNomIgnoreCaseAndActifTrue(requete.getNom())) {
             throw new ProduitDejaExistantException(
                     "Un produit avec le nom '" + requete.getNom() + "' existe déjà");
@@ -85,6 +92,7 @@ public class ProduitService {
         Categorie categorie = recupererCategorieOuLeverException(requete.getIdCategorie());
 
         Produit produit = new Produit();
+        produit.setRef(ref);
         produit.setCategorie(categorie);
         appliquerRequete(produit, requete, categorie);
 
@@ -175,12 +183,33 @@ public class ProduitService {
     }
 
     private void appliquerRequete(Produit produit, ProduitRequestDTO requete, Categorie categorie) {
-        produit.setRef(requete.getRef());
         produit.setCategorie(categorie);
         produit.setNom(requete.getNom());
         produit.setPrixVente(requete.getPrixVente());
         produit.setSeuilAlerte(requete.getSeuilAlerte());
         produit.setDescription(requete.getDescription());
+    }
+
+    private String genererReferenceAutomatique() {
+        String maxRef = produitRepository.findMaxRefLikePRD();
+        
+        if (maxRef == null || maxRef.isEmpty()) {
+            return "PRD-PF-001";
+        }
+        
+        try {
+            String[] parts = maxRef.split("-");
+            if (parts.length >= 3) {
+                String numericPart = parts[parts.length - 1];
+                int number = Integer.parseInt(numericPart);
+                number++;
+                return String.format("PRD-PF-%03d", number);
+            }
+        } catch (NumberFormatException e) {
+            return "PRD-PF-001";
+        }
+        
+        return "PRD-PF-001";
     }
     private ProduitDTO versDTO(Produit produit) {
         BigDecimal stock = lotProduitRepository.sommeQuantiteRestante(produit.getId());
