@@ -73,17 +73,19 @@
               </div>
             </div>
             <div class="card-body">
-              <div class="warn-box">
-                <div class="warn-title">Alerte Stock Matières</div>
-                <p>
-                  Le Maïs et le Premix sont sous le seuil critique pour la
-                  production de la semaine prochaine.
-                </p>
-              </div>
-              <div class="card-actions">
-                <a class="btn btn-orange" href="#">Générer plan d'achat</a>
-                <a class="btn btn-white" href="#">Simuler rentabilité</a>
-              </div>
+              <form method="get" th:action="@{/production}" class="form-grid">
+                <div class="field">
+                  <label for="joursAnalyse">Historique analysé</label>
+                  <select id="joursAnalyse" name="joursAnalyse" class="form-control">
+                    <option value="7" th:selected="${joursAnalyse == 7}">7 jours</option>
+                    <option value="30" th:selected="${joursAnalyse == 30}">30 jours</option>
+                    <option value="90" th:selected="${joursAnalyse == 90}">90 jours</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button class="btn btn-orange" type="submit">Recalculer</button>
+                </div>
+              </form>
             </div>
           </article>
 
@@ -112,6 +114,109 @@
             </div>
           </article>
         </div>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Prévision de production</h2>
+              <p class="card-subtitle">
+                Proposition = quantité moyenne vendue + stock actuel.
+              </p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Produit</th>
+                  <th>Vendu sur la période</th>
+                  <th>Moyenne / jour</th>
+                  <th>Stock actuel</th>
+                  <th>Calcul</th>
+                  <th>À produire</th>
+                  <th>Statut</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="p : ${previsionsProduction}">
+                  <td>
+                    <strong th:text="${p.produitNom}">Produit</strong><br />
+                    <small th:text="${p.categorie}">Catégorie</small>
+                  </td>
+                  <td th:text="${#numbers.formatDecimal(p.quantiteVendue, 1, 2) + ' ' + p.unite}">0</td>
+                  <td th:text="${#numbers.formatDecimal(p.moyenneJournaliere, 1, 2) + ' ' + p.unite}">0</td>
+                  <td th:text="${#numbers.formatDecimal(p.stockActuel, 1, 2) + ' ' + p.unite}">0</td>
+                  <td th:text="${#numbers.formatDecimal(p.objectifStock, 1, 2) + ' ' + p.unite}">0</td>
+                  <td><strong th:text="${#numbers.formatDecimal(p.propositionProduction, 1, 2) + ' ' + p.unite}">0</strong></td>
+                  <td>
+                    <span class="badge"
+                          th:classappend="${p.statut == 'À PRODUIRE'} ? ' badge-warning' : (${p.statut == 'RECETTE MANQUANTE'} ? ' badge-danger' : ' badge-success')"
+                          th:text="${p.statut}">Statut</span>
+                  </td>
+                  <td>
+                    <a th:if="${p.propositionProduction > 0 and p.recetteDisponible}"
+                       class="btn btn-orange btn-small"
+                       th:href="@{/production/entree-produit(produitId=${p.produitId},quantite=${p.propositionProduction})}">
+                      Produire
+                    </a>
+                    <span th:unless="${p.propositionProduction > 0 and p.recetteDisponible}">—</span>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(previsionsProduction)}">
+                  <td colspan="8" class="empty-state">Aucun produit actif.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Prévision des matières premières</h2>
+              <p class="card-subtitle">
+                Besoins calculés depuis les propositions de production et les recettes actives.
+                Le seuil minimum est conservé comme stock de sécurité.
+              </p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Matière première</th>
+                  <th>Fournisseur</th>
+                  <th>Besoin production</th>
+                  <th>Stock actuel</th>
+                  <th>Stock sécurité</th>
+                  <th>À commander</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="mp : ${previsionsMp}">
+                  <td><strong th:text="${mp.nom}">Matière</strong><br /><small th:text="${mp.code}">Code</small></td>
+                  <td th:text="${mp.fournisseur}">Fournisseur</td>
+                  <td th:text="${#numbers.formatDecimal(mp.besoinEstime, 1, 2) + ' ' + mp.unite}">0</td>
+                  <td th:text="${#numbers.formatDecimal(mp.stockActuel, 1, 2) + ' ' + mp.unite}">0</td>
+                  <td th:text="${#numbers.formatDecimal(mp.stockSecurite, 1, 2) + ' ' + mp.unite}">0</td>
+                  <td><strong th:text="${#numbers.formatDecimal(mp.quantiteACommander, 1, 2) + ' ' + mp.unite}">0</strong></td>
+                  <td>
+                    <span class="badge"
+                          th:classappend="${mp.statut == 'À COMMANDER'} ? ' badge-warning' : ' badge-success'"
+                          th:text="${mp.statut}">Statut</span>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(previsionsMp)}">
+                  <td colspan="7" class="empty-state">
+                    Aucun besoin matière : stock produit suffisant ou recette active absente.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <section class="card">
           <div class="card-header">

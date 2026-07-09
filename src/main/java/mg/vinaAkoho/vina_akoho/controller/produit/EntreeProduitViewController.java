@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/api/production")
 public class EntreeProduitViewController {
@@ -16,8 +17,13 @@ public class EntreeProduitViewController {
     }
 
     @GetMapping("/entree-produit")
-    public String page(Model model) {
+    public String page(
+            @RequestParam(required = false) Long produitId,
+            @RequestParam(required = false) java.math.BigDecimal quantite,
+            Model model) {
         model.addAttribute("produits", produitRepository.findAllActifs());
+        model.addAttribute("produitSelectionne", produitId);
+        model.addAttribute("quantiteProposee", quantite);
         return "dashboard/production/entree-produit";
     }
 }
