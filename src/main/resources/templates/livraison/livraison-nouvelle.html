@@ -13,7 +13,7 @@
         <div id="vina-content">
             <section class="page-header">
                 <div>
-                    <p class="eyebrow">${currentUser != null ? currentUser.role.poste : 'Commercial'}</p>
+         
                     <h1>Nouvelle livraison</h1>
                     <p>Créer une livraison associée à une vente.</p>
                 </div>
@@ -47,9 +47,9 @@
                         </div>
 
                         <div class="field">
-                            <label for="idLivreur">Livreur</label>
-                            <select id="idLivreur" th:field="*{idLivreur}" class="form-control">
-                                <option value="">Aucun livreur</option>
+                            <label for="idLivreur">Livreur *</label>
+                            <select id="idLivreur" th:field="*{idLivreur}" class="form-control" required>
+                                <option value="">Sélectionner un livreur</option>
                                 <option th:each="livreur : ${livreursDisponibles}"
                                         th:value="${livreur.id}"
                                         th:text="${livreur.nom + ' ' + livreur.prenom}"></option>
