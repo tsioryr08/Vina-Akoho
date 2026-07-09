@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Rapport Financier Mensuel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div th:replace="~{layout/comptable :: sidebar}"></div>
+
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div th:replace="~{layout/header-comptable :: header('Rapports Financiers / Rapport mensuel')}"></div>
+
+      <div class="content">
+        <section class="page-header theme-blue">
+          <div>
+            <p class="eyebrow">FINANCES</p>
+            <h1>Rapport Financier Mensuel</h1>
+            <p th:text="'Dépenses, recettes et bénéfice pour ' + ${rapportMensuel.moisCourant} + ', avec l\'évolution des derniers mois.'">
+              Dépenses, recettes et bénéfice du mois en cours, avec l'évolution des derniers mois.
+            </p>
+          </div>
+        </section>
+
+        <section class="stats-grid" th:if="${rapportMensuel != null}">
+          <article class="stat-card">
+            <div class="stat-label" th:text="'Recettes — ' + ${rapportMensuel.moisCourant}">Recettes du mois</div>
+            <div class="stat-value">
+              <span class="text-success" th:text="${'+ ' + #numbers.formatDecimal(rapportMensuel.recettesMois, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}">+ 0.00 Ar</span>
+            </div>
+            <div class="stat-trend trend-positive">Total des ventes du mois en cours</div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-label" th:text="'Dépenses — ' + ${rapportMensuel.moisCourant}">Dépenses du mois</div>
+            <div class="stat-value">
+              <span class="text-danger" th:text="${'- ' + #numbers.formatDecimal(rapportMensuel.depensesMois, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}">- 0.00 Ar</span>
+            </div>
+            <div class="stat-trend trend-negative">Dépenses au statut « Payé »</div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-label">Bénéfice du mois</div>
+            <div class="stat-value">
+              <span th:class="${rapportMensuel.beneficeMois >= 0} ? 'text-success' : 'text-danger'"
+                    th:text="${#numbers.formatDecimal(rapportMensuel.beneficeMois, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}">0.00 Ar</span>
+            </div>
+            <div class="stat-trend" th:classappend="${rapportMensuel.beneficeMois >= 0} ? 'trend-positive' : 'trend-negative'">
+              Recettes - Dépenses
+            </div>
+          </article>
+        </section>
+
+        <section class="card" th:if="${rapportMensuel != null}">
+          <div class="card-header">
+            <h2 class="card-title">Evolution mensuelle</h2>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mois</th>
+                  <th>Recettes</th>
+                  <th>Dépenses</th>
+                  <th>Bénéfice</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="mois : ${rapportMensuel.evolutionMensuelle}">
+                  <td th:text="${mois.mois}"></td>
+                  <td class="text-success" th:text="${#numbers.formatDecimal(mois.totalRecettes, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}"></td>
+                  <td class="text-danger" th:text="${#numbers.formatDecimal(mois.totalDepenses, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}"></td>
+                  <td th:class="${mois.benefice >= 0} ? 'text-success' : 'text-danger'"
+                      th:text="${#numbers.formatDecimal(mois.benefice, 1, 'WHITESPACE', 2, 'POINT') + ' Ar'}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="app-footer">VINA AKOHO — Comptabilité & Encaissements</div>
+    </div>
+    <script src="/assets/js/script_content.js"></script>
+  </body>
+</html>
