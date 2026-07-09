@@ -7,18 +7,18 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
             <section class="page-header theme-green">
                 <div>
-                    <p class="eyebrow" th:text="${currentUser != null ? currentUser.role.poste : ''}">${currentUser != null ? currentUser.role.poste : 'Commercial'}</p>
+                    <p class="eyebrow">RO04 - SERVICE COMMERCIAL</p>
                     <h1>Gestion des Ventes</h1>
                     <p class="muted-text">Suivi des ventes clients, facturation et coordination avec le service livraison.</p>
                 </div>
                 <div class="header-actions">
-                    <a class="btn btn-green" th:href="@{/api/ventes/nouvelle}">+ Nouvelle Vente</a>
+                    <a class="btn btn-green" th:href="@{/ventes/nouvelle}">+ Nouvelle Vente</a>
                     <button class="btn btn-white" type="button">Exporter Excel</button>
                 </div>
             </section>
@@ -35,12 +35,12 @@
                 <article class="stat-card">
                     <div class="stat-label">Chiffre d'affaires (Mois)</div>
                     <div class="stat-value" th:text="${#numbers.formatDecimal(caMois, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
-                    <div class="stat-trend trend-positive">Ventes validees</div>
+                    <div class="stat-trend trend-positive">Ventes validées</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Commandes en attente</div>
                     <div class="stat-value" th:text="${commandesEnAttente}"></div>
-                    <div class="stat-trend trend-warning">A valider</div>
+                    <div class="stat-trend trend-warning">À valider</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-label">Taux de conversion</div>
@@ -49,42 +49,107 @@
                 </article>
             </section>
 
-            <form th:action="@{/api/ventes}" method="get" class="simulation-grid" style="grid-template-columns: 300px 1fr;">
+            <div class="simulation-grid" style="grid-template-columns: 300px 1fr;">
                 <aside class="side-panel">
                     <div class="side-panel-heading">
-                        <h2>Filtres avances</h2>
+                        <h2>Recherche</h2>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Client</label>
-                        <input type="text" class="form-control" name="client" placeholder="Nom du client..." th:value="${param.client}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Statut vente</label>
-                        <select class="form-control" name="statut">
-                            <option value="">Tous</option>
-                            <option value="Validee" th:selected="${param.statut == 'Validee'}">Validee</option>
-                            <option value="En attente de paiement" th:selected="${param.statut == 'En attente de paiement'}">En attente de paiement</option>
-                            <option value="Annulee" th:selected="${param.statut == 'Annulee'}">Annulee</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Periode</label>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <input type="date" class="form-control" name="dateDebut" th:value="${param.dateDebut}">
-                            <input type="date" class="form-control" name="dateFin" th:value="${param.dateFin}">
+                    <form th:action="@{/ventes}" method="get">
+                        <div class="form-group">
+                            <label class="form-label">Rechercher</label>
+                            <input type="text" name="recherche" class="form-control" placeholder="Client, produit, facture..." th:value="${param.recherche}">
                         </div>
+                        <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
+                        <div class="form-actions" style="margin-top: 10px;">
+                            <button class="btn btn-green w-100" type="submit">Rechercher</button>
+                        </div>
+                    </form>
+
+                    <div class="side-panel-heading" style="margin-top: 30px;">
+                        <h2>Filtres</h2>
                     </div>
-                    <div class="form-actions" style="margin-top: 20px;">
-                        <button class="btn btn-green w-100" type="submit">Filtrer</button>
-                        <button class="btn btn-white w-100" type="button" onclick="window.location.href='/api/ventes'">Reinitialiser</button>
+                    <form th:action="@{/ventes}" method="get">
+                        <input type="hidden" name="recherche" th:value="${param.recherche}">
+                        <input type="hidden" name="triPar" th:value="${param.triPar}">
+                        <input type="hidden" name="ordreTri" th:value="${param.ordreTri}">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Mode de paiement</label>
+                            <select name="modePaiement" class="form-control">
+                                <option value="">Tous</option>
+                                <option th:each="mode : ${modesPaiementDisponibles}" 
+                                        th:value="${mode.libelle}" 
+                                        th:text="${mode.libelle}"
+                                        th:selected="${param.modePaiement == mode.libelle}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Statut commande</label>
+                            <select name="statut" class="form-control">
+                                <option value="">Tous</option>
+                                <option value="Validée" th:selected="${param.statut == 'Validée'}">Validée</option>
+                                <option value="En attente de paiement" th:selected="${param.statut == 'En attente de paiement'}">En attente de paiement</option>
+                                <option value="Annulée" th:selected="${param.statut == 'Annulée'}">Annulée</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Livraison</label>
+                            <select name="avecLivraison" class="form-control">
+                                <option value="">Toutes</option>
+                                <option value="true" th:selected="${param.avecLivraison == 'true'}">Avec livraison</option>
+                                <option value="false" th:selected="${param.avecLivraison == 'false'}">Sans livraison</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Période</label>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <input type="date" name="dateDebut" class="form-control" th:value="${param.dateDebut}">
+                                <input type="date" name="dateFin" class="form-control" th:value="${param.dateFin}">
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <button class="btn btn-green w-100" type="submit">Filtrer</button>
+                            <button class="btn btn-white w-100" type="button" onclick="window.location.href='/ventes'">Réinitialiser</button>
+                        </div>
+                    </form>
+
+                    <div class="side-panel-heading" style="margin-top: 30px;">
+                        <h2>Tri</h2>
                     </div>
+                    <form th:action="@{/ventes}" method="get">
+                        <input type="hidden" name="recherche" th:value="${param.recherche}">
+                        <input type="hidden" name="modePaiement" th:value="${param.modePaiement}">
+                        <input type="hidden" name="statut" th:value="${param.statut}">
+                        <input type="hidden" name="dateDebut" th:value="${param.dateDebut}">
+                        <input type="hidden" name="dateFin" th:value="${param.dateFin}">
+                        <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Trier par</label>
+                            <select name="triPar" class="form-control">
+                                <option value="dateVente" th:selected="${param.triPar == 'dateVente'}">Date</option>
+                                <option value="montantTotal" th:selected="${param.triPar == 'montantTotal'}">Montant</option>
+                                <option value="clientNom" th:selected="${param.triPar == 'clientNom'}">Client</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ordre</label>
+                            <select name="ordreTri" class="form-control">
+                                <option value="desc" th:selected="${param.ordreTri == 'desc'}">Décroissant</option>
+                                <option value="asc" th:selected="${param.ordreTri == 'asc'}">Croissant</option>
+                            </select>
+                        </div>
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <button class="btn btn-green w-100" type="submit">Trier</button>
+                        </div>
+                    </form>
                 </aside>
 
                 <main>
                     <div class="table-card">
                         <div class="card-header">
                             <h2 class="card-title">Flux des Ventes</h2>
-                            <div class="card-badge" style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;" th:text="${ventes != null ? ventes.size() + ' Ventes affichees' : '0 Ventes affichees'}"></div>
+                            <div class="card-badge" style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;" th:text="${ventes != null ? ventes.size() + ' Ventes affichées' : '0 Ventes affichées'}"></div>
                         </div>
                         <div class="table-wrap">
                             <table class="data-table">
@@ -114,13 +179,13 @@
                                         <td><span class="badge badge-success" th:text="${vente.statutVente}"></span></td>
                                         <td>
                                             <div style="display: flex; gap: 4px;">
-                                                <a class="btn-icon" th:href="@{/api/ventes/{id}(id=${vente.id})}">&#128065;</a>
+                                                <a class="btn-icon" th:href="@{/ventes/{id}(id=${vente.id})}">👁️</a>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr th:if="${ventes == null or #lists.isEmpty(ventes)}">
-                                        <td colspan="7" class="empty-state">
-                                            <p>&#128230; Aucune vente enregistrée.</p>
+                                        <td colspan="8" class="empty-state">
+                                            <p>📦 Aucune vente enregistrée.</p>
                                             <p>Créez une vente pour afficher les lignes ici.</p>
                                         </td>
                                     </tr>
@@ -129,30 +194,12 @@
                         </div>
                     </div>
                 </main>
-            </form>
+            </div>
         </div>
         <div id="vina-footer" th:replace="~{layout/footer}"></div>
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
-    <script>
-        function getFilters() {
-            const params = new URLSearchParams();
-            const inputs = document.querySelectorAll('input[name], select[name]');
-            inputs.forEach(input => {
-                if (input.value) {
-                    params.append(input.name, input.value);
-                }
-            });
-            return params.toString();
-        }
-        function exporterExcel() {
-            window.location.href = '/ventes/liste/export/excel?' + getFilters();
-        }
-        function exporterPdf() {
-            window.location.href = '/ventes/liste/export/pdf?' + getFilters();
-        }
-    </script>
-<script th:src="@{/js/script_content.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
 </body>
 </html>
