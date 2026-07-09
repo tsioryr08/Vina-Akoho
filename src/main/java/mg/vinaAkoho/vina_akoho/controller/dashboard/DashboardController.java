@@ -130,6 +130,8 @@ public class DashboardController {
                 previsionProductionService.calculerMatieresPremieres(previsionsProduction));
         model.addAttribute("joursAnalyse", analyse);
         model.addAttribute("joursCouverture", couverture);
+        model.addAttribute("dateDebutPrevision", aujourdHui.minusDays(analyse - 1L));
+        model.addAttribute("dateFinPrevision", aujourdHui);
 
         return "dashboard/production/index";
     }

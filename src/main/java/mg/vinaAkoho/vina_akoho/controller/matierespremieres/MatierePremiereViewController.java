@@ -43,6 +43,15 @@ public class MatierePremiereViewController {
         return "matieres-premieres/alertes";
     }
 
+    /**
+     * Compatibilité avec l'ancien lien du menu. Les prévisions sont calculées
+     * sur le tableau de bord Production, et non sur une fiche de matière première.
+     */
+    @GetMapping("/previsions")
+    public String previsions() {
+        return "redirect:/api/production";
+    }
+
     @GetMapping("/nouveau")
     public String formulaire(Model model) {
         model.addAttribute("fournisseurs", service.listerFournisseurs());
