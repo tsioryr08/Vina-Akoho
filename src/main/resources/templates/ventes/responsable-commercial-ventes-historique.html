@@ -7,29 +7,29 @@
 <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
 <section class="page-header">
 <div>
-<p class="eyebrow">${currentUser != null ? currentUser.role.poste : "Commercial"}</p>
+<p class="eyebrow">RO04 - Responsable Commercial</p>
 <h1>Historique des ventes</h1>
 <p>Reporting commercial pour analyser la santé des ventes sur une période donnée.</p>
 </div>
-<span class="role-badge">${currentUser != null ? currentUser.role.poste : "Commercial"}</span>
+<span class="role-badge">RO04 - Responsable Commercial</span>
 </section>
 
 <section class="tab-list" role="tablist">
-<a class="tab-link" th:href="@{/api/ventes}">Liste des ventes</a>
-<a class="tab-link active" th:href="@{/api/ventes/historique}">Historique</a>
-<a class="tab-link" th:href="@{/api/ventes/recettes}">Recettes</a>
-<a class="tab-link" th:href="@{/api/ventes/nouvelle}">Nouvelle vente</a>
+<a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
+<a class="tab-link active" th:href="@{/ventes/historique}">Historique</a>
+<a class="tab-link" th:href="@{/ventes/recettes}">Recettes</a>
+<a class="tab-link" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
 </section>
 
 <section class="card">
 <div class="filter-bar report-filters">
-<form th:action="@{/api/ventes/historique}" method="get">
+<form th:action="@{/ventes/historique}" method="get">
 <div class="field">
 <label for="reportPeriod">Période</label>
 <select id="reportPeriod" name="periode" class="form-control">
@@ -53,18 +53,15 @@
 
 <div class="toolbar-actions">
 <button class="btn btn-green" type="submit">Appliquer</button>
-<button class="btn btn-ghost" type="button" onclick="window.location.href='/api/ventes/historique'">Réinitialiser</button>
+<button class="btn btn-ghost" type="button" onclick="window.location.href='/ventes/historique'">Réinitialiser</button>
 <button class="btn btn-ghost" type="button" onclick="exporterExcel()">Exporter</button>
 </div>
 <script>
-function getFilters() {
+function exporterExcel() {
     var periode = document.getElementById('reportPeriod').value;
     var zone = document.getElementById('reportZone').value;
-    var url = '/api/ventes/export/excel?periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
+    var url = '/ventes/export/excel?periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
     window.location.href = url;
-}
-function exporterExcel() {
-    window.location.href = '/api/ventes/export/excel?periode=' + encodeURIComponent(document.getElementById('reportPeriod').value) + '&zone=' + encodeURIComponent(document.getElementById('reportZone').value);
 }
 </script>
 </form>
@@ -93,9 +90,9 @@ function exporterExcel() {
 <div class="table-card-header">
 <div>
 <h2 class="card-title">Produits les plus vendus</h2>
-<p class="card-subtitle">Classement des types d'aliments VINA-AKOHO par volume et chiffre d'affaires. <span th:text="${periode != null ? periode : '6 derniers mois'}"></span></p>
+<p class="card-subtitle">Classement des types d'aliments VINA-AKOHO par volume et chiffre d'affaires. <span th:text="${periode} != null ? periode : '6 derniers mois'"></span></p>
 </div>
-<span class="badge badge-light-green" th:text="${periode != null ? periode : '6 derniers mois'}"></span>
+<span class="badge badge-light-green" th:text="${periode} != null ? periode : '6 derniers mois'"></span>
 </div>
 
 <div class="table-wrap">
@@ -115,9 +112,18 @@ function exporterExcel() {
 <td th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' ' + (${produitsUnite[produit.key]} != null ? produitsUnite[produit.key] : 'kg')"></td>
 <td th:text="${#numbers.formatDecimal(produitsCA[produit.key], 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
 <td>
+<!--
+  CORRECTIF : on n'appelle plus BigDecimal.divide(...) directement dans le
+  template (ex : produitsCA[produit.key].divide(chiffreAffaires)). Sans scale
+  ni RoundingMode explicites, cet appel lève une ArithmeticException
+  ("Non-terminating decimal expansion") dès que la division n'est pas exacte
+  en décimal (ex: 1/3), ce qui causait l'erreur 500.
+  Le pourcentage est maintenant précalculé côté VenteController dans la Map
+  "produitsPourcentage" (avec .divide(chiffreAffaires, 4, RoundingMode.HALF_UP)),
+  on se contente ici de l'afficher.
+-->
 <span class="badge badge-blue" th:if="${chiffreAffaires != null and chiffreAffaires > 0}"
-      th:text="${#numbers.formatDecimal(produitsPourcentage[produit.key], 1, 'COMMA', 1, 'POINT')} + '%'">
-</span>
+      th:text="${#numbers.formatDecimal(produitsPourcentage[produit.key], 1, 'COMMA', 1, 'POINT')} + '%'"></span>
 <span class="badge badge-blue" th:unless="${chiffreAffaires != null and chiffreAffaires > 0}">0%</span>
 </td>
 </tr>
@@ -134,6 +140,6 @@ function exporterExcel() {
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
-<script th:src="@{/js/script_content.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
 </body>
 </html>

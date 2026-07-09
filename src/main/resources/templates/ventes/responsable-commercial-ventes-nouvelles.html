@@ -7,24 +7,24 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="vina-body">
-    <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
+    <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
             <section class="page-header">
                 <div>
-                   
+                    <p class="eyebrow">RO04 - Responsable Commercial</p>
                     <h1>Enregistrer une nouvelle vente</h1>
                     <p>Formulaire dynamique de saisie d’une vente client avec calcul automatique du total.</p>
                 </div>
-                <span class="role-badge">${currentUser != null ? currentUser.role.poste : "Commercial"}</span>
+                <span class="role-badge">RO04 - Responsable Commercial</span>
             </section>
 
             <section class="tab-list" role="tablist">
-                <a class="tab-link" th:href="@{/api/ventes}">Liste des ventes</a>
-                <a class="tab-link" th:href="@{/api/ventes/historique}">Historique</a>
-                <a class="tab-link" th:href="@{/api/ventes/recettes}">Recettes</a>
-                <a class="tab-link active" th:href="@{/api/ventes/nouvelle}">Nouvelle vente</a>
+                <a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
+                <a class="tab-link" th:href="@{/ventes/historique}">Historique</a>
+                <a class="tab-link" th:href="@{/ventes/recettes}">Recettes</a>
+                <a class="tab-link active" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
             </section>
 
             <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
@@ -40,7 +40,7 @@
                         </div>
                     </div>
 
-                    <form th:action="@{/api/ventes/panier/ajouter}" th:object="${panierForm}" method="post">
+                    <form th:action="@{/ventes/panier/ajouter}" th:object="${panierForm}" method="post">
                         <div class="form-grid">
                             <div class="field field-full">
                                 <label for="idProduit">Produit</label>
@@ -89,7 +89,7 @@
                                     <td th:text="${#numbers.formatDecimal(item.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' / ' + (${item.unite} != null and ${item.unite} != '' ? item.unite : 'kg')"></td>
                                     <td th:text="${#numbers.formatDecimal(item.montant, 0, 'COMMA', 2, 'POINT')}"></td>
                                     <td>
-                                        <form th:action="@{/api/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}" method="post">
+                                        <form th:action="@{/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}" method="post">
                                             <button class="btn btn-red btn-small" type="submit">X</button>
                                         </form>
                                     </td>
@@ -111,7 +111,7 @@
                         </div>
                     </div>
 
-                    <form th:action="@{/api/ventes/valider}" th:object="${venteForm}" method="post">
+                    <form th:action="@{/ventes/valider}" th:object="${venteForm}" method="post">
                         <div class="form-grid">
                             <div class="field">
                                 <label for="idClient">Client</label>
@@ -181,7 +181,7 @@
                                 <span class="summary-value" th:text="${#numbers.formatDecimal(panierTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></span>
                             </div>
                             <div class="card-actions">
-                                <button class="btn btn-ghost" type="button" onclick="window.location.href='/api/ventes'">Annuler</button>
+                                <button class="btn btn-ghost" type="button" onclick="window.location.href='/ventes'">Annuler</button>
                                 <button class="btn btn-green" type="submit">Enregistrer la vente</button>
                             </div>
                         </div>
@@ -193,6 +193,6 @@
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
-<script th:src="@{/js/script_content.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
 </body>
 </html>
