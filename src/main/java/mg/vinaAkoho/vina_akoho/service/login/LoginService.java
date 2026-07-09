@@ -1,17 +1,17 @@
 package mg.vinaAkoho.vina_akoho.service.login;
 
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import jakarta.servlet.http.HttpSession;
 import mg.vinaAkoho.vina_akoho.dto.login.LoginRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.login.LoginResponseDTO;
 import mg.vinaAkoho.vina_akoho.entity.login.Employe;
 import mg.vinaAkoho.vina_akoho.exception.login.IdentifiantsInvalidesException;
 import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
 import mg.vinaAkoho.vina_akoho.security.PasswordHasher;
-import jakarta.servlet.http.HttpSession;
-
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class LoginService {
@@ -32,6 +32,9 @@ public class LoginService {
 
         if (!motDePasseCorrect) {
             throw new IdentifiantsInvalidesException("Email ou mot de passe incorrect");
+        }
+        if(employe.getActif() == null || !employe.getActif()) {
+            throw new IdentifiantsInvalidesException("Compte désactivé");
         }
         //ajout derniere connexion de l user
         employe.setDerniereConnexion(LocalDateTime.now());
