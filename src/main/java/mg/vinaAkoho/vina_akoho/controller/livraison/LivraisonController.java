@@ -66,6 +66,11 @@ public class LivraisonController {
         return "livraison/livraison-nouvelle";
     }
 
+    @GetMapping("/zones")
+    public String anciennesZonesLivraison() {
+        return "redirect:/api/livraisons/statistiques";
+    }
+
     @PostMapping("/creer")
     public String creerLivraison(@Valid @ModelAttribute("livraisonForm") LivraisonFormDTO form,
                                 BindingResult bindingResult,
