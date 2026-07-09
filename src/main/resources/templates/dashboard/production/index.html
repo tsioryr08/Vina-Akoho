@@ -72,7 +72,7 @@
               </div>
             </div>
             <div class="card-body">
-              <form method="get" th:action="@{/production}" class="form-grid">
+              <form method="get" th:action="@{/api/production}" class="form-grid">
                 <div class="field">
                   <label for="joursAnalyse">Historique analysé</label>
                   <select id="joursAnalyse" name="joursAnalyse" class="form-control">
@@ -80,6 +80,22 @@
                     <option value="30" th:selected="${joursAnalyse == 30}">30 jours</option>
                     <option value="90" th:selected="${joursAnalyse == 90}">90 jours</option>
                   </select>
+                </div>
+                <div class="field">
+                  <label for="joursCouverture">Couverture cible</label>
+                  <select id="joursCouverture" name="joursCouverture" class="form-control">
+                    <option value="7" th:selected="${joursCouverture == 7}">7 jours</option>
+                    <option value="15" th:selected="${joursCouverture == 15}">15 jours</option>
+                    <option value="30" th:selected="${joursCouverture == 30}">30 jours</option>
+                  </select>
+                </div>
+                <div class="alert-box info field-full">
+                  <strong th:text="${'Analyse active : ' + joursAnalyse + ' jours'}">Analyse active</strong>
+                  <span th:text="${' — du ' + #temporals.format(dateDebutPrevision, 'dd/MM/yyyy')
+                        + ' au ' + #temporals.format(dateFinPrevision, 'dd/MM/yyyy')
+                        + ', objectif de stock pour ' + joursCouverture + ' jours.'}">
+                    Période analysée
+                  </span>
                 </div>
                 <div class="form-actions">
                   <button class="btn btn-orange" type="submit">Recalculer</button>
@@ -119,7 +135,11 @@
             <div>
               <h2 class="card-title">Prévision de production</h2>
               <p class="card-subtitle">
-                Proposition = quantité moyenne vendue + stock actuel.
+                <span th:text="${'Résultat sur ' + joursAnalyse + ' jours : moyenne journalière = ventes ÷ '
+                      + joursAnalyse + ', objectif = moyenne × ' + joursCouverture
+                      + ', à produire = max(objectif − stock, 0).'}">
+                  Formule de prévision.
+                </span>
               </p>
             </div>
           </div>
@@ -156,7 +176,7 @@
                   <td>
                     <a th:if="${p.propositionProduction > 0 and p.recetteDisponible}"
                        class="btn btn-orange btn-small"
-                       th:href="@{/production/entree-produit(produitId=${p.produitId},quantite=${p.propositionProduction})}">
+                       th:href="@{/api/production/entree-produit(produitId=${p.produitId},quantite=${p.propositionProduction})}">
                       Produire
                     </a>
                     <span th:unless="${p.propositionProduction > 0 and p.recetteDisponible}">—</span>
