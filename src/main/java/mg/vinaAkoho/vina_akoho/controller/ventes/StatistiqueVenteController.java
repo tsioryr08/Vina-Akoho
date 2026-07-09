@@ -20,7 +20,7 @@ import mg.vinaAkoho.vina_akoho.repository.produit.CategorieRepository;
 import mg.vinaAkoho.vina_akoho.service.ventes.StatistiqueVenteService;
 
 @Controller
-@RequestMapping("/ventes/statistiques")
+@RequestMapping("/api/ventes/statistiques")
 @RequiredArgsConstructor
 public class StatistiqueVenteController {
 

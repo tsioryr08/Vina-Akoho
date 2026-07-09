@@ -14,9 +14,9 @@
     </style>
 </head>
 <body class="vina-body">
-<div th:replace="~{layout/sidebar-livraison::sidebar-livraison}"></div>
+<div th:replace="~{layout/comptable :: sidebar}"></div>
 <div class="app-main-wrapper">
-    <div id="vina-header" th:replace="~{layout/header}"></div>
+    <div id="vina-header" th:replace="~{layout/header-comptable :: header('Dashboard Financier')}"></div>
 
     <div id="vina-content">
         <section class="page-header">
@@ -38,7 +38,8 @@
     </div>
 </div>
 
-<script th:src="@{/static/assets/js/app-shell.js}"></script>
+<script th:src="@{/js/auth.js}"></script>
+<script th:src="@{/js/app-shell.js}"></script>
 <script>
     async function loadFinanceCharts() {
         try {
