@@ -126,6 +126,8 @@ public class VenteController {
             @RequestParam(required = false) String dateFin,
             @RequestParam(required = false) String triPar,
             @RequestParam(required = false) String ordreTri,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer taille,
             Model model) {
         
         List<VenteDTO> toutesVentes = venteService.listerToutes();
@@ -222,7 +224,22 @@ public class VenteController {
             });
         }
         
-        model.addAttribute("ventes", ventesFiltrees);
+        // Pagination
+        int pageSize = taille != null ? taille : 10;
+        int currentPage = page != null ? page : 1;
+        int totalElements = ventesFiltrees.size();
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+        
+        int startIndex = (currentPage - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalElements);
+        
+        List<VenteDTO> ventesPaginees = ventesFiltrees.subList(startIndex, endIndex);
+        
+        model.addAttribute("ventes", ventesPaginees);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("totalElements", totalElements);
+        model.addAttribute("totalPages", totalPages);
         
         // Calculer les statistiques sur les ventes filtrées
         LocalDate aujourdHui = LocalDate.now();
