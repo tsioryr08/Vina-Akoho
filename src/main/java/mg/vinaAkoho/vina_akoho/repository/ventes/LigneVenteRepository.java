@@ -11,11 +11,27 @@ import org.springframework.data.repository.query.Param;
 import mg.vinaAkoho.vina_akoho.dto.ventes.RecetteVenteProjection;
 import mg.vinaAkoho.vina_akoho.dto.ventes.TopCategorieStatDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.TopProduitStatDTO;
+import mg.vinaAkoho.vina_akoho.dto.prevision.VenteProduitProjection;
 import mg.vinaAkoho.vina_akoho.entity.ventes.LigneVente;
 
 public interface LigneVenteRepository extends JpaRepository<LigneVente, Long> {
 
     List<LigneVente> findByVenteId(Long venteId);
+
+    @Query(value = """
+            SELECT p.id AS produitId, COALESCE(SUM(lv.quantite), 0) AS quantiteVendue
+            FROM ligne_vente lv
+            JOIN vente v ON v.id = lv.id_vente
+            JOIN produit p ON p.id = lv.id_produit
+            JOIN statut_vente sv ON sv.id = v.id_statut_vente
+            WHERE v.date_vente >= :debut
+              AND v.date_vente < :fin
+              AND LOWER(sv.libelle) NOT IN ('annulée', 'annulee', 'en attente de paiement')
+            GROUP BY p.id
+            """, nativeQuery = true)
+    List<VenteProduitProjection> sommerQuantitesVenduesParProduit(
+            @Param("debut") LocalDateTime debut,
+            @Param("fin") LocalDateTime fin);
 
     @Query(value = """
             SELECT

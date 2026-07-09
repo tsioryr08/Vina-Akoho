@@ -15,6 +15,8 @@ import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
 import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
 import mg.vinaAkoho.vina_akoho.service.produit.ProduitService;
 import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
+import mg.vinaAkoho.vina_akoho.service.prevision.PrevisionProductionService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
@@ -27,6 +29,7 @@ public class DashboardController {
     private final LotProduitRepository lotProduitRepository;
     private final LotMpRepository lotMpRepository;
     private final EmployeRepository employeRepository;
+    private final PrevisionProductionService previsionProductionService;
 
 
     @GetMapping("/admin")
@@ -44,7 +47,10 @@ public class DashboardController {
     }
 
     @GetMapping("/production")
-    public String production(Model model) {
+    public String production(
+            @RequestParam(defaultValue = "30") int joursAnalyse,
+            @RequestParam(defaultValue = "7") int joursCouverture,
+            Model model) {
         LocalDate debutMois = LocalDate.now().withDayOfMonth(1);
         LocalDate aujourdHui = LocalDate.now();
         var recettes = recetteVenteService.listerParPeriode(debutMois, aujourdHui);
@@ -98,6 +104,15 @@ public class DashboardController {
 
         model.addAttribute("uniteProduits", uniteProduits);
         model.addAttribute("uniteMps", uniteMps);
+
+        int analyse = Math.max(1, Math.min(365, joursAnalyse));
+        int couverture = Math.max(1, Math.min(365, joursCouverture));
+        var previsionsProduction = previsionProductionService.calculerProductions(analyse, couverture);
+        model.addAttribute("previsionsProduction", previsionsProduction);
+        model.addAttribute("previsionsMp",
+                previsionProductionService.calculerMatieresPremieres(previsionsProduction));
+        model.addAttribute("joursAnalyse", analyse);
+        model.addAttribute("joursCouverture", couverture);
 
         return "dashboard/production/index";
     }
