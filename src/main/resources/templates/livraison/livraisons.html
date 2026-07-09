@@ -51,7 +51,7 @@
                             <td th:text="${liv.dateLivraison}">2026-01-01</td>
                             <td>
                                 <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
-                                    <a class="link-action" th:href="@{'/livraisons/' + ${liv.id}}">Détail</a>
+                                    <a class="link-action" th:href="@{'/api/livraisons/' + ${liv.id}}">Détail</a>
                                     <form th:action="@{/api/livraisons/{id}/statut(id=${liv.id})}" method="post" style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin:0;">
                                         <select name="nouveauStatut" class="form-control" style="min-width: 180px;" required>
                                             <option value="" disabled th:selected="${liv.statutLivraison == null}">Changer le statut</option>

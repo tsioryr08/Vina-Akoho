@@ -44,7 +44,7 @@
                             <td th:text="${changement.nouveauStatut}">En préparation</td>
                             <td th:text="${changement.dateChangement}">2026-01-01</td>
                             <td>
-                                <a class="link-action" th:href="@{'/livraisons/' + ${changement.idLivraison}}">Détail</a>
+                                <a class="link-action" th:href="@{'/api/livraisons/' + ${changement.idLivraison}}">Détail</a>
                             </td>
                         </tr>
                         <tr th:if="${historiques.isEmpty()}">

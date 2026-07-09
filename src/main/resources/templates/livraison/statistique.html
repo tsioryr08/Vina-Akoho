@@ -13,15 +13,15 @@
     </style>
 </head>
 <body class="vina-body">
-<div th:replace="~{layout/comptable :: sidebar}"></div>
+<div th:replace="${sidebarTemplate} :: sidebar"></div>
 
 <div class="app-main-wrapper">
-    <div id="vina-header" th:replace="~{layout/header-comptable :: header('Statistiques livraisons')}"></div>
+    <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
 
     <div id="vina-content">
         <section class="page-header">
             <div>
-                <p class="eyebrow">RO05 - Comptable</p>
+                <p class="eyebrow">Livraisons</p>
                 <h1>Statistiques des Livraisons</h1>
                 <p>Analyse de la répartition des livraisons par zone.</p>
             </div>
