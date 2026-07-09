@@ -26,7 +26,7 @@ public interface LigneVenteRepository extends JpaRepository<LigneVente, Long> {
             JOIN statut_vente sv ON sv.id = v.id_statut_vente
             WHERE v.date_vente >= :debut
               AND v.date_vente < :fin
-              AND LOWER(sv.libelle) NOT IN ('annulée', 'annulee', 'en attente de paiement')
+              AND LOWER(sv.libelle) NOT IN ('annulée', 'annulee', 'en attente', 'en attente de paiement')
             GROUP BY p.id
             """, nativeQuery = true)
     List<VenteProduitProjection> sommerQuantitesVenduesParProduit(
