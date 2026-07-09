@@ -1,299 +1,347 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statistiques Ventes - VINA AKOHO</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <link rel="stylesheet" th:href="@{/css/statistiques-ventes.css}" />
-</head>
-<body>
-<div th:replace="~{layout/responsableCommercial :: sidebar}"></div>
-<div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
-<div class="main">
-  <div th:replace="~{layout/header :: header}"></div>
-  <div class="content page-stats-ventes">
-    <section class="page-header theme-green">
-      <div>
-        <p class="eyebrow">STATISTIQUES</p>
-        <h1>Produits & Ventes</h1>
-        <p>Top produits/catégories vendus et évolution du chiffre d'affaires.</p>
-      </div>
-    </section>
-
-    <!-- FILTRES -->
-    <section class="card">
-      <div class="card-body">
-        <form id="filtresForm" class="form-grid">
-          <div class="field">
-            <label>Date début</label>
-            <input type="date" id="dateDebut" class="form-control" th:value="${dateDebut}" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statistiques Ventes - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/statistiques-ventes.css}" />
+  </head>
+  <body>
+    <div th:replace="~{layout/responsableCommercial :: sidebar}"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+    <div class="main">
+      <div th:replace="${headerTemplate} :: header"></div>
+      <div class="content page-stats-ventes">
+        <section class="page-header theme-green">
+          <div>
+            <p class="eyebrow">STATISTIQUES</p>
+            <h1>Produits & Ventes</h1>
+            <p>
+              Top produits/catégories vendus et évolution du chiffre d'affaires.
+            </p>
           </div>
-          <div class="field">
-            <label>Date fin</label>
-            <input type="date" id="dateFin" class="form-control" th:value="${dateFin}" />
+        </section>
+
+        <!-- FILTRES -->
+        <section class="card">
+          <div class="card-body">
+            <form id="filtresForm" class="form-grid">
+              <div class="field">
+                <label>Date début</label>
+                <input
+                  type="date"
+                  id="dateDebut"
+                  class="form-control"
+                  th:value="${dateDebut}"
+                />
+              </div>
+              <div class="field">
+                <label>Date fin</label>
+                <input
+                  type="date"
+                  id="dateFin"
+                  class="form-control"
+                  th:value="${dateFin}"
+                />
+              </div>
+              <div class="field">
+                <label>Catégorie</label>
+                <select id="idCategorie" class="form-control">
+                  <option value="">Toutes les catégories</option>
+                  <option
+                    th:each="c : ${categories}"
+                    th:value="${c.id}"
+                    th:text="${c.libelle}"
+                    th:selected="${idCategorie != null and idCategorie == c.id}"
+                  ></option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Trier Top produits par</label>
+                <select id="triProduits" class="form-control">
+                  <option
+                    value="quantite"
+                    th:selected="${triProduits == 'quantite'}"
+                  >
+                    Quantité vendue
+                  </option>
+                  <option
+                    value="montant"
+                    th:selected="${triProduits == 'montant'}"
+                  >
+                    Montant des ventes
+                  </option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Granularité évolution</label>
+                <select id="granularite" class="form-control">
+                  <option value="jour" th:selected="${granularite == 'jour'}">
+                    Jour
+                  </option>
+                  <option
+                    value="semaine"
+                    th:selected="${granularite == 'semaine'}"
+                  >
+                    Semaine
+                  </option>
+                  <option value="mois" th:selected="${granularite == 'mois'}">
+                    Mois
+                  </option>
+                </select>
+              </div>
+            </form>
           </div>
-          <div class="field">
-            <label>Catégorie</label>
-            <select id="idCategorie" class="form-control">
-              <option value="">Toutes les catégories</option>
-              <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.libelle}"
-                      th:selected="${idCategorie != null and idCategorie == c.id}"></option>
-            </select>
+        </section>
+
+        <!-- TOP 10 PRODUITS -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Top 10 Produits les plus vendus</h2>
+              <p class="card-subtitle">
+                Basé sur la période et les filtres sélectionnés.
+              </p>
+            </div>
           </div>
-          <div class="field">
-            <label>Trier Top produits par</label>
-            <select id="triProduits" class="form-control">
-              <option value="quantite" th:selected="${triProduits == 'quantite'}">Quantité vendue</option>
-              <option value="montant" th:selected="${triProduits == 'montant'}">Montant des ventes</option>
-            </select>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="chartTopProduits"></canvas>
+            </div>
           </div>
-          <div class="field">
-            <label>Granularité évolution</label>
-            <select id="granularite" class="form-control">
-              <option value="jour" th:selected="${granularite == 'jour'}">Jour</option>
-              <option value="semaine" th:selected="${granularite == 'semaine'}">Semaine</option>
-              <option value="mois" th:selected="${granularite == 'mois'}">Mois</option>
-            </select>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Produit</th>
+                  <th>Catégorie</th>
+                  <th>Quantité vendue</th>
+                  <th>% Quantité</th>
+                  <th>Montant</th>
+                  <th>% Montant</th>
+                  <th>Nb ventes</th>
+                </tr>
+              </thead>
+              <tbody id="tableTopProduits"></tbody>
+            </table>
           </div>
-        </form>
+        </section>
+
+        <!-- TOP 10 CATEGORIES -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Top Catégories les plus vendues</h2>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="chartTopCategories"></canvas>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Catégorie</th>
+                  <th>Quantité vendue</th>
+                  <th>% Quantité</th>
+                  <th>Montant</th>
+                  <th>% Montant</th>
+                  <th>Nb ventes</th>
+                </tr>
+              </thead>
+              <tbody id="tableTopCategories"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- EVOLUTION DES VENTES : reprise dans le tableau de bord admin -->
       </div>
-    </section>
+      <div class="app-footer">VINA AKOHO — Statistiques</div>
+    </div>
 
-    <!-- TOP 10 PRODUITS -->
-    <section class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Top 10 Produits les plus vendus</h2>
-          <p class="card-subtitle">Basé sur la période et les filtres sélectionnés.</p>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="chart-container">
-          <canvas id="chartTopProduits"></canvas>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Produit</th>
-              <th>Catégorie</th>
-              <th>Quantité vendue</th>
-              <th>% Quantité</th>
-              <th>Montant</th>
-              <th>% Montant</th>
-              <th>Nb ventes</th>
-            </tr>
-          </thead>
-          <tbody id="tableTopProduits"></tbody>
-        </table>
-      </div>
-    </section>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script th:src="@{/js/auth.js}"></script>
+    <script th:src="@{/js/app-shell.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
+    <script th:inline="javascript">
+      let chartTopProduits, chartTopCategories;
 
-    <!-- TOP 10 CATEGORIES -->
-    <section class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Top Catégories les plus vendues</h2>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="chart-container">
-          <canvas id="chartTopCategories"></canvas>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Catégorie</th>
-              <th>Quantité vendue</th>
-              <th>% Quantité</th>
-              <th>Montant</th>
-              <th>% Montant</th>
-              <th>Nb ventes</th>
-            </tr>
-          </thead>
-          <tbody id="tableTopCategories"></tbody>
-        </table>
-      </div>
-    </section>
+      const initialStats = /*[[${stats}]]*/ {};
 
-    <!-- EVOLUTION DES VENTES -->
-    <section class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Évolution des ventes</h2>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="chart-container">
-          <canvas id="chartEvolution"></canvas>
-        </div>
-      </div>
-    </section>
-  </div>
-  <div class="app-footer">VINA AKOHO — Statistiques</div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<script th:src="@{/js/auth.js}"></script>
-<script th:src="@{/js/app-shell.js}"></script>
-<script th:src="@{/js/script_content.js}"></script>
-<script th:inline="javascript">
-  let chartTopProduits, chartTopCategories, chartEvolution;
-
-  const initialStats = /*[[${stats}]]*/ {};
-
-  function formatNombre(n) {
-    return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(n);
-  }
-
-  function remplirTableauProduits(liste) {
-    const tbody = document.getElementById("tableTopProduits");
-    tbody.innerHTML = "";
-    liste.forEach(p => {
-      const tr = document.createElement("tr");
-      tr.innerHTML =
-        "<td>" + p.nomProduit + "</td>" +
-        "<td>" + p.categorieLibelle + "</td>" +
-        "<td>" + formatNombre(p.quantiteVendue) + "</td>" +
-        "<td>" + formatNombre(p.pourcentageQuantite) + " %</td>" +
-        "<td>" + formatNombre(p.montantVentes) + " Ar</td>" +
-        "<td>" + formatNombre(p.pourcentageMontant) + " %</td>" +
-        "<td>" + p.nombreVentes + "</td>";
-      tbody.appendChild(tr);
-    });
-  }
-
-  function remplirTableauCategories(liste) {
-    const tbody = document.getElementById("tableTopCategories");
-    tbody.innerHTML = "";
-    liste.forEach(c => {
-      const tr = document.createElement("tr");
-      tr.innerHTML =
-        "<td>" + c.libelleCategorie + "</td>" +
-        "<td>" + formatNombre(c.quantiteVendue) + "</td>" +
-        "<td>" + formatNombre(c.pourcentageQuantite) + " %</td>" +
-        "<td>" + formatNombre(c.montantVentes) + " Ar</td>" +
-        "<td>" + formatNombre(c.pourcentageMontant) + " %</td>" +
-        "<td>" + c.nombreVentes + "</td>";
-      tbody.appendChild(tr);
-    });
-  }
-
-  function majGraphiques(stats, triProduits) {
-    const labelsProduits = stats.topProduits.map(p => p.nomProduit);
-    const dataProduits = stats.topProduits.map(p =>
-      triProduits === 'montant' ? p.montantVentes : p.quantiteVendue);
-
-    if (chartTopProduits) chartTopProduits.destroy();
-    chartTopProduits = new Chart(document.getElementById("chartTopProduits"), {
-      type: 'bar',
-      data: {
-        labels: labelsProduits,
-        datasets: [{
-          label: triProduits === 'montant' ? 'Montant des ventes (Ar)' : 'Quantité vendue',
-          data: dataProduits,
-          backgroundColor: '#16a34a',
-          borderRadius: 6,
-          maxBarThickness: 56
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false } },
-          y: { beginAtZero: true, grid: { color: '#eef1f4' } }
-        }
+      function formatNombre(n) {
+        return new Intl.NumberFormat("fr-FR", {
+          maximumFractionDigits: 2,
+        }).format(n);
       }
-    });
 
-    const labelsCategories = stats.topCategories.map(c => c.libelleCategorie);
-    const dataCategories = stats.topCategories.map(c =>
-      triProduits === 'montant' ? c.montantVentes : c.quantiteVendue);
-
-    if (chartTopCategories) chartTopCategories.destroy();
-    chartTopCategories = new Chart(document.getElementById("chartTopCategories"), {
-      type: 'bar',
-      data: {
-        labels: labelsCategories,
-        datasets: [{
-          label: triProduits === 'montant' ? 'Montant des ventes (Ar)' : 'Quantité vendue',
-          data: dataCategories,
-          backgroundColor: '#0ea5e9',
-          borderRadius: 6,
-          maxBarThickness: 56
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false } },
-          y: { beginAtZero: true, grid: { color: '#eef1f4' } }
-        }
+      function remplirTableauProduits(liste) {
+        const tbody = document.getElementById("tableTopProduits");
+        tbody.innerHTML = "";
+        liste.forEach((p) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            p.nomProduit +
+            "</td>" +
+            "<td>" +
+            p.categorieLibelle +
+            "</td>" +
+            "<td>" +
+            formatNombre(p.quantiteVendue) +
+            "</td>" +
+            "<td>" +
+            formatNombre(p.pourcentageQuantite) +
+            " %</td>" +
+            "<td>" +
+            formatNombre(p.montantVentes) +
+            " Ar</td>" +
+            "<td>" +
+            formatNombre(p.pourcentageMontant) +
+            " %</td>" +
+            "<td>" +
+            p.nombreVentes +
+            "</td>";
+          tbody.appendChild(tr);
+        });
       }
-    });
 
-    const labelsEvolution = stats.evolution.map(e => e.periode);
-    const dataEvolution = stats.evolution.map(e => e.montantVentes);
-
-    if (chartEvolution) chartEvolution.destroy();
-    chartEvolution = new Chart(document.getElementById("chartEvolution"), {
-      type: 'line',
-      data: {
-        labels: labelsEvolution,
-        datasets: [{
-          label: 'Chiffre d\'affaires (Ar)',
-          data: dataEvolution,
-          borderColor: '#f97316',
-          backgroundColor: 'rgba(249,115,22,0.15)',
-          fill: true,
-          tension: 0.3,
-          pointRadius: 3
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { grid: { display: false } },
-          y: { grid: { color: '#eef1f4' } }
-        }
+      function remplirTableauCategories(liste) {
+        const tbody = document.getElementById("tableTopCategories");
+        tbody.innerHTML = "";
+        liste.forEach((c) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            c.libelleCategorie +
+            "</td>" +
+            "<td>" +
+            formatNombre(c.quantiteVendue) +
+            "</td>" +
+            "<td>" +
+            formatNombre(c.pourcentageQuantite) +
+            " %</td>" +
+            "<td>" +
+            formatNombre(c.montantVentes) +
+            " Ar</td>" +
+            "<td>" +
+            formatNombre(c.pourcentageMontant) +
+            " %</td>" +
+            "<td>" +
+            c.nombreVentes +
+            "</td>";
+          tbody.appendChild(tr);
+        });
       }
-    });
-  }
 
-  function actualiser() {
-    const params = new URLSearchParams({
-      dateDebut: document.getElementById("dateDebut").value,
-      dateFin: document.getElementById("dateFin").value,
-      triProduits: document.getElementById("triProduits").value,
-      granularite: document.getElementById("granularite").value
-    });
-    const idCategorie = document.getElementById("idCategorie").value;
-    if (idCategorie) params.append("idCategorie", idCategorie);
+      function majGraphiques(stats, triProduits) {
+        const labelsProduits = stats.topProduits.map((p) => p.nomProduit);
+        const dataProduits = stats.topProduits.map((p) =>
+          triProduits === "montant" ? p.montantVentes : p.quantiteVendue,
+        );
 
-    fetch("/api/ventes/statistiques/data?" + params.toString())
-      .then(res => res.json())
-      .then(stats => {
-        remplirTableauProduits(stats.topProduits);
-        remplirTableauCategories(stats.topCategories);
-        majGraphiques(stats, document.getElementById("triProduits").value);
-      });
-  }
+        if (chartTopProduits) chartTopProduits.destroy();
+        chartTopProduits = new Chart(
+          document.getElementById("chartTopProduits"),
+          {
+            type: "bar",
+            data: {
+              labels: labelsProduits,
+              datasets: [
+                {
+                  label:
+                    triProduits === "montant"
+                      ? "Montant des ventes (Ar)"
+                      : "Quantité vendue",
+                  data: dataProduits,
+                  backgroundColor: "#16a34a",
+                  borderRadius: 6,
+                  maxBarThickness: 56,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false } },
+                y: { beginAtZero: true, grid: { color: "#eef1f4" } },
+              },
+            },
+          },
+        );
 
-  document.getElementById("filtresForm").addEventListener("change", actualiser);
+        const labelsCategories = stats.topCategories.map(
+          (c) => c.libelleCategorie,
+        );
+        const dataCategories = stats.topCategories.map((c) =>
+          triProduits === "montant" ? c.montantVentes : c.quantiteVendue,
+        );
 
-  // Rendu initial avec les données déjà calculées côté serveur (pas de flash vide)
-  remplirTableauProduits(initialStats.topProduits);
-  remplirTableauCategories(initialStats.topCategories);
-  majGraphiques(initialStats, document.getElementById("triProduits").value);
-</script>
-</body>
+        if (chartTopCategories) chartTopCategories.destroy();
+        chartTopCategories = new Chart(
+          document.getElementById("chartTopCategories"),
+          {
+            type: "bar",
+            data: {
+              labels: labelsCategories,
+              datasets: [
+                {
+                  label:
+                    triProduits === "montant"
+                      ? "Montant des ventes (Ar)"
+                      : "Quantité vendue",
+                  data: dataCategories,
+                  backgroundColor: "#0ea5e9",
+                  borderRadius: 6,
+                  maxBarThickness: 56,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false } },
+                y: { beginAtZero: true, grid: { color: "#eef1f4" } },
+              },
+            },
+          },
+        );
+
+      }
+
+      function actualiser() {
+        const params = new URLSearchParams({
+          dateDebut: document.getElementById("dateDebut").value,
+          dateFin: document.getElementById("dateFin").value,
+          triProduits: document.getElementById("triProduits").value,
+          granularite: document.getElementById("granularite").value,
+        });
+        const idCategorie = document.getElementById("idCategorie").value;
+        if (idCategorie) params.append("idCategorie", idCategorie);
+
+        fetch("/api/ventes/statistiques/data?" + params.toString())
+          .then((res) => res.json())
+          .then((stats) => {
+            remplirTableauProduits(stats.topProduits);
+            remplirTableauCategories(stats.topCategories);
+            majGraphiques(stats, document.getElementById("triProduits").value);
+          });
+      }
+
+      document
+        .getElementById("filtresForm")
+        .addEventListener("change", actualiser);
+
+      // Rendu initial avec les données déjà calculées côté serveur (pas de flash vide)
+      remplirTableauProduits(initialStats.topProduits);
+      remplirTableauCategories(initialStats.topCategories);
+      majGraphiques(initialStats, document.getElementById("triProduits").value);
+    </script>
+  </body>
 </html>
