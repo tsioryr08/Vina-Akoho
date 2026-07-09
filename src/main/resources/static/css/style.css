@@ -1619,6 +1619,14 @@ select {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.stats-grid-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.stat-card {
+  min-width: 0;
+}
+
 .stat-card,
 .card {
   border: 1px solid rgba(203, 213, 224, 0.5);
@@ -2955,6 +2963,10 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .stats-grid-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .grid-2,
   .filter-layout,
   .detail-grid,
@@ -2993,6 +3005,18 @@ select {
 
   .synthesis-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1121px) {
+  .stats-grid-6 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1400px) {
+  .stats-grid-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 
@@ -3091,7 +3115,8 @@ select {
   }
 
   .stats-grid,
-  .stats-grid-5 {
+  .stats-grid-5,
+  .stats-grid-6 {
     grid-template-columns: 1fr;
   }
 

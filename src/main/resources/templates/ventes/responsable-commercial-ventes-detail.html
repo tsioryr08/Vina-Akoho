@@ -31,7 +31,9 @@
                 <div class="detail-card">
                     <div class="detail-card-header">
                         <h2>Informations vente</h2>
-                        <span class="badge badge-success" th:text="${vente.statutVente}"></span>
+                        <span class="badge"
+                              th:classappend="${vente.statutVente == 'Annulée' ? 'badge-red' : (vente.statutVente == 'En attente de paiement' ? 'badge-yellow' : 'badge-success')}"
+                              th:text="${vente.statutVente}"></span>
                     </div>
                     <div class="detail-row">
                         <span>ID Vente</span>
@@ -42,7 +44,7 @@
                         <strong th:text="${vente.clientNom + ' ' + vente.clientPrenom}"></strong>
                     </div>
                     <div class="detail-row">
-                        <span>Date de l’opération</span>
+                        <span>Date de l'opération</span>
                         <strong th:text="${#temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}"></strong>
                     </div>
                     <div class="detail-row">
@@ -54,7 +56,6 @@
                 <div class="detail-card">
                     <div class="detail-card-header">
               <h2>Coordonnées & vente</h2>
-                        <span class="badge badge-success">Livrée</span>
                     </div>
                     <div class="detail-row">
                         <span>Facture</span>
@@ -68,6 +69,35 @@
                         <span>Total TTC</span>
                         <strong th:text="${vente.facture != null ? #numbers.formatDecimal(vente.facture.montantTtc, 0, 'COMMA', 2, 'POINT') + ' Ar' : '-'}"></strong>
                     </div>
+                </div>
+            </section>
+
+            <section class="detail-card" th:if="${vente.livraison != null}">
+                <div class="detail-card-header">
+                    <h2>Informations de livraison</h2>
+                    <span class="badge"
+                          th:classappend="${vente.livraison.statutLivraison == 'Livrée' ? 'badge-success' : (vente.livraison.statutLivraison == 'En cours de livraison' ? 'badge-info' : (vente.livraison.statutLivraison == 'En attente d''affectation' ? 'badge-yellow' : 'badge-danger'))}"
+                          th:text="${vente.livraison.statutLivraison}"></span>
+                </div>
+                <div class="detail-row">
+                    <span>Adresse de livraison</span>
+                    <strong th:text="${vente.livraison.lieuExact != null ? vente.livraison.lieuExact : '-'}"></strong>
+                </div>
+                <div class="detail-row">
+                    <span>Contact sur place</span>
+                    <strong th:text="${vente.livraison.contact != null ? vente.livraison.contact : '-'}"></strong>
+                </div>
+                <div class="detail-row">
+                    <span>Date de livraison souhaitée</span>
+                    <strong th:text="${vente.livraison.dateLivraison != null ? #temporals.format(vente.livraison.dateLivraison, 'dd/MM/yyyy') : '-'}"></strong>
+                </div>
+                <div class="detail-row">
+                    <span>Livreur</span>
+                    <strong th:text="${vente.livraison.livreurNom != null ? vente.livraison.livreurNom + ' ' + vente.livraison.livreurPrenom : 'Non affecté'}"></strong>
+                </div>
+                <div class="detail-row" th:if="${vente.livraison.commentaire != null and !vente.livraison.commentaire.isEmpty()}">
+                    <span>Commentaire</span>
+                    <strong th:text="${vente.livraison.commentaire}"></strong>
                 </div>
             </section>
 
@@ -92,8 +122,8 @@
                         <tbody>
                         <tr th:each="ligne : ${vente.lignes}">
                             <td th:text="${ligne.nomProduit}"></td>
-                            <td th:text="${ligne.quantite} + ' ' + (${ligne.unite} != null ? ligne.unite : 'kg')"></td>
-                            <td th:text="${#numbers.formatDecimal(ligne.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' Ar / ' + (${ligne.unite} != null ? ligne.unite : 'kg')"></td>
+                            <td th:text="${ligne.quantite} + ${ligne.unite != null and !ligne.unite.isEmpty() ? ' ' + ligne.unite : ''}"></td>
+                            <td th:text="${#numbers.formatDecimal(ligne.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' Ar' + ${ligne.unite != null and !ligne.unite.isEmpty() ? ' / ' + ligne.unite : ''}"></td>
                             <td th:text="${#numbers.formatDecimal(ligne.montant, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
                         </tr>
                         <tr th:if="${vente.lignes == null or #lists.isEmpty(vente.lignes)}">
@@ -114,6 +144,10 @@
                         <a class="btn btn-green" th:href="@{/api/ventes/{id}/bon-livraison(id=${vente.id})}">Bon de livraison</a>
                         <form th:if="${vente.statutVente == 'En attente de paiement'}" th:action="@{/api/ventes/{id}/valider-paiement(id=${vente.id})}" method="post" style="display:inline;">
                             <button class="btn btn-green" type="submit">Valider le paiement</button>
+                        </form>
+                        <form th:if="${vente.statutVente == 'En attente de paiement'}" th:action="@{/ventes/{id}/annuler(id=${vente.id})}" method="post" style="display:inline;"
+                              onsubmit="return confirm('Annuler cette commande ? Cette action est irréversible.');">
+                            <button class="btn btn-red" type="submit">Annuler la commande</button>
                         </form>
                     </div>
                 </div>

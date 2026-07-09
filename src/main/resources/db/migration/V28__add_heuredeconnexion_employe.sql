@@ -1,0 +1,2 @@
+ALTER TABLE employe
+	ADD COLUMN IF NOT EXISTS derniere_connexion TIMESTAMP;

@@ -27,32 +27,38 @@
           </div>
         </section>
 
-        <section class="stats-grid stats-grid-5">
+        <section class="stats-grid stats-grid-6">
           <article class="stat-card">
-            <div class="stat-label">Capacité utilisée</div>
-            <div class="stat-value">84 %</div>
-            <div class="stat-trend trend-positive">Optimale</div>
+            <div class="stat-label">Quantité actuelle produits finis</div>
+            <div class="stat-value" th:text="${quantiteProduitsFinis != null ? #numbers.formatDecimal(quantiteProduitsFinis, 0, 'COMMA', 0, 'POINT') : 0}">0</div>
+            <div class="stat-trend trend-info" th:text="${uniteProduits != null && !uniteProduits.isBlank() ? uniteProduits : 'Unité'}">Kg en stock</div>
           </article>
           <article class="stat-card">
-            <div class="stat-label">Lots en cours</div>
-            <div class="stat-value">9</div>
-            <div class="stat-trend trend-info">Planifiés</div>
+            <div class="stat-label">Quantité actuelle matières premières</div>
+            <div class="stat-value" th:text="${quantiteMatièresPremières != null ? #numbers.formatDecimal(quantiteMatièresPremières, 0, 'COMMA', 0, 'POINT') : 0}">0</div>
+            <div class="stat-trend trend-info" th:text="${uniteMps != null && !uniteMps.isBlank() ? uniteMps : 'Unité'}">Kg en stock</div>
           </article>
           <article class="stat-card">
-            <div class="stat-label">Rendement moyen</div>
-            <div class="stat-value">96.4 %</div>
-            <div class="stat-trend trend-positive">+1.2% vs Mai</div>
+            <div class="stat-label">Nombre de lots produits</div>
+            <div class="stat-value" th:text="${lotsProduits != null ? lotsProduits : 0}">0</div>
+            <div class="stat-trend trend-info">Lots actifs</div>
           </article>
           <article class="stat-card">
-            <div class="stat-label">Charges fixes / kg</div>
-            <div class="stat-value">98 Ar</div>
-            <div class="stat-trend trend-positive">En baisse</div>
+            <div class="stat-label">Lots expirant bientôt</div>
+            <div class="stat-value" th:text="${lotsExpirantBientot != null ? lotsExpirantBientot : 0}">0</div>
+            <div class="stat-trend trend-warning">Fenêtre : 30 j</div>
           </article>
           <article class="stat-card">
-            <div class="stat-label">Recettes du mois</div>
-            <div class="stat-value" th:text="${#numbers.formatDecimal(recetteMensuelle, 0, 'COMMA', 0, 'POINT')} + ' Ar'">0 Ar</div>
-            <div class="stat-trend trend-positive">Ventes validées</div>
+            <div class="stat-label">Produits sous le seuil d'alerte</div>
+            <div class="stat-value" th:text="${produitsSousSeuil != null ? produitsSousSeuil : 0}">0</div>
+            <div class="stat-trend trend-warning">Seuil atteint</div>
           </article>
+          <article class="stat-card">
+            <div class="stat-label">Matières premières sous seuil minimum</div>
+            <div class="stat-value" th:text="${mpSousSeuilMin != null ? mpSousSeuilMin : 0}">0</div>
+            <div class="stat-trend trend-warning">Approvisionnement requis</div>
+          </article>
+
         </section>
 
         <div class="grid-2">

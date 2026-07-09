@@ -1,0 +1,9 @@
+
+Bonsoir Maude , j'aimerai t'attribuer une tache tres importantes , est ce que tu pourrais me dire si tu arriverai a le finir aujourd'hui 
+
+La tache consiste a faire la refactorisation :
+
+. navbar : eviter que les navbar de chaque utilsateur s'entremele
+ex: quand on clique un lien dans un navbar d'un utilisateur ca ne va pas entrer dans un autre user
+. les regles-backend soit bien utiliser , c'est a dire sur les url 
+ il faut que tout soit uniforme 

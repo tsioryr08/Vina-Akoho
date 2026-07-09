@@ -18,4 +18,9 @@ public interface LotProduitRepository extends JpaRepository<LotProduit, Long> {
 
     @Query("SELECT COALESCE(SUM(l.quantiteRestante), 0) FROM LotProduit l WHERE l.produit.id = :produitId")
     BigDecimal sommeQuantiteRestante(Long produitId);
+
+    // Nombre de lots produits actifs (quantité restante > 0)
+    @Query("SELECT COUNT(l) FROM LotProduit l WHERE l.quantiteRestante > 0")
+    long compterLotsProduitsActifs();
 }
+

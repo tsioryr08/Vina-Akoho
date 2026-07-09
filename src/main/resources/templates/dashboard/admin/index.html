@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,41 +43,36 @@
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Utilisateur (ID)</th>
+                    <th>Utilisateur</th>
                     <th>Rôle Organigramme</th>
                     <th>Dernier Accès</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Andry</td>
-                    <td>Responsable Production (RO02)</td>
-                    <td>Il y a 10 min</td>
+                  <tr th:each="emp : ${employes}">
+                    <td th:text="${emp.nom + ' ' + emp.prenom}"></td>
+                    <td th:text="${emp.role.poste}"></td>
                     <td>
-                      <a class="btn btn-ghost btn-small" href="#"
-                        >Permissions</a
-                      >
+                      <span th:if="${emp.derniereConnexion != null}"
+                            class="derniere-connexion"
+                            th:attr="data-ts=${emp.derniereConnexion}">
+                      </span>
+                      <span th:unless="${emp.derniereConnexion != null}"
+                            style="color:#94a3b8; font-style:italic;">
+                        Jamais connecté
+                      </span>
+                    </td>
+                    <td>
+                      <a class="btn btn-ghost btn-small"
+                         th:href="@{/admin/employes/{id}/modifier(id=${emp.id})}">
+                        Modifier
+                      </a>
                     </td>
                   </tr>
-                  <tr>
-                    <td>Mpiaro</td>
-                    <td>Responsable Commercial (RO04)</td>
-                    <td>En ligne</td>
-                    <td>
-                      <a class="btn btn-ghost btn-small" href="#"
-                        >Permissions</a
-                      >
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Nekena</td>
-                    <td>Comptable (RO05)</td>
-                    <td>Hier</td>
-                    <td>
-                      <a class="btn btn-ghost btn-small" href="#"
-                        >Permissions</a
-                      >
+                  <tr th:if="${#lists.isEmpty(employes)}">
+                    <td colspan="4" style="text-align:center; padding:24px; color:#64748b;">
+                      Aucun utilisateur actif.
                     </td>
                   </tr>
                 </tbody>
@@ -85,7 +80,8 @@
             </div>
 
             <div class="card-actions" style="margin-top: 16px">
-              <a class="btn btn-purple" href="#">+ Créer un nouveau compte</a>
+              <a class="btn btn-purple" th:href="@{/admin/employes/nouveau}">+ Créer un nouveau compte</a>
+              <a class="btn btn-ghost" th:href="@{/admin/employes}">Voir tous les comptes</a>
             </div>
           </div>
 
@@ -105,9 +101,23 @@
             </div>
 
             <div class="card-actions">
-              <a class="btn btn-green" href="#">Valider et Clôturer le Mois</a>
+              <a class="btn btn-green" th:href="@{/comptabilite}">Valider et Clôturer le Mois</a>
             </div>
           </div>
+        </section>
+
+        <!-- KPIs -->
+        <section class="stats-grid" style="margin-bottom: 24px;">
+          <article class="stat-card">
+            <div class="stat-label">Comptes actifs</div>
+            <div class="stat-value" th:text="${totalActifs}">0</div>
+            <div class="stat-trend trend-info">Utilisateurs actifs</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Comptes désactivés</div>
+            <div class="stat-value" th:text="${totalDesactives}">0</div>
+            <div class="stat-trend trend-warning">Accès suspendus</div>
+          </article>
         </section>
 
         <section class="card" style="margin-bottom: 28px">
@@ -132,8 +142,8 @@
                 <span class="badge badge-light-green">Vert</span>
               </div>
               <div class="card-actions">
-                <a class="btn btn-green" href="#">Enregistrer un Client</a>
-                <a class="btn btn-ghost" href="#">Base Clients</a>
+                <a class="btn btn-green" th:href="@{/clients/nouveau}">Enregistrer un Client</a>
+                <a class="btn btn-ghost" th:href="@{/clients}">Base Clients</a>
               </div>
             </div>
             <div class="delivery-card">
@@ -147,8 +157,8 @@
                 <span class="badge badge-orange">Orange</span>
               </div>
               <div class="card-actions">
-                <a class="btn btn-orange" href="#">Nouvel Article</a>
-                <a class="btn btn-ghost" href="#">Catalogue Stocks</a>
+                <a class="btn btn-orange" th:href="@{/produits/nouveau}">Nouvel Article</a>
+                <a class="btn btn-ghost" th:href="@{/matieres-premieres}">Catalogue Stocks</a>
               </div>
             </div>
           </div>
@@ -197,5 +207,21 @@
     </div>
 
     <script src="/assets/js/script_content.js"></script>
+    <script>
+      function tempsRelatif(dateStr) {
+        const maintenant = new Date();
+        const date = new Date(dateStr);
+        const diffSec = Math.floor((maintenant - date) / 1000);
+        if (diffSec < 60)    return "À l'instant";
+        if (diffSec < 3600)  return "Il y a " + Math.floor(diffSec / 60) + " min";
+        if (diffSec < 86400) return "Il y a " + Math.floor(diffSec / 3600) + " h";
+        const jours = Math.floor(diffSec / 86400);
+        if (jours === 1)     return "Hier";
+        return "Il y a " + jours + " jours";
+      }
+      document.querySelectorAll(".derniere-connexion").forEach(el => {
+        el.textContent = tempsRelatif(el.getAttribute("data-ts"));
+      });
+    </script>
   </body>
 </html>

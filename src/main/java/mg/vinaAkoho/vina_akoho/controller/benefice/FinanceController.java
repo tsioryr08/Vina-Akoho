@@ -54,5 +54,10 @@ public String afficherRapportBenefices(
     return "benefice/benefice";
 }
 
+    @GetMapping("/dashboard")
+    public String afficherDashboardFinancier() {
+        return "benefice/statistique_finance";
+    }
+
     
 }

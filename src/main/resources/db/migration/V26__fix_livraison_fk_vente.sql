@@ -6,6 +6,10 @@ DELETE FROM livraison
 WHERE id_vente IS NOT NULL
   AND NOT EXISTS (SELECT 1 FROM vente WHERE vente.id = livraison.id_vente);
 
+-- V20 a renommé livraison.id_commande -> id_vente mais n'a pas recréé
+-- la contrainte de clé étrangère, qui pointait toujours vers commande(id).
+-- Résultat : insertion d'un id_vente valide rejetée car absent de "commande".
+
 ALTER TABLE livraison
     DROP CONSTRAINT IF EXISTS livraison_id_commande_fkey;
 

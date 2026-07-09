@@ -19,4 +19,10 @@ public interface LotMpRepository extends JpaRepository<LotMp, Integer> {
             BigDecimal seuil
     );
 
+    // Nombre de lots MP expirant bientôt (datePeremption dans la fenêtre, et quantité restante > 0)
+    @Query("SELECT COUNT(l) FROM LotMp l WHERE l.quantiteRestante > 0 AND l.datePeremption IS NOT NULL AND l.datePeremption BETWEEN :debut AND :fin")
+    long compterLotsExpirantBientot(@org.springframework.data.repository.query.Param("debut") java.time.LocalDate debut,
+                                    @org.springframework.data.repository.query.Param("fin") java.time.LocalDate fin);
+
 }
+

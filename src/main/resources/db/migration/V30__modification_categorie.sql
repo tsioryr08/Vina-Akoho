@@ -54,7 +54,7 @@ BEGIN
     UPDATE produit SET id_categorie = 3 WHERE id_categorie = 5;
     DELETE FROM categorie WHERE id = 5;
 
-    PERFORM setval(
+       PERFORM setval(
       pg_get_serial_sequence('categorie', 'id'),
       (SELECT MAX(id) FROM categorie)
     );

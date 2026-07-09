@@ -1,0 +1,260 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion des comptes - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div th:replace="~{layout/admin :: sidebar}"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="main">
+      <div th:replace="~{layout/header-admin :: header}"></div>
+
+      <div class="content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow">RO01 - Administrateur</p>
+            <h1>Gestion des comptes utilisateurs</h1>
+            <p>Créer, modifier, désactiver et réinitialiser les comptes employés.</p>
+          </div>
+          <a class="btn btn-purple" th:href="@{/admin/employes/nouveau}">+ Nouveau compte</a>
+        </section>
+
+        <!-- KPIs -->
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Comptes actifs</div>
+            <div class="stat-value" th:text="${totalActifs}">0</div>
+            <div class="stat-trend trend-info">Utilisateurs actifs</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Comptes désactivés</div>
+            <div class="stat-value" th:text="${totalDesactives}">0</div>
+            <div class="stat-trend trend-warning">Accès suspendus</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Rôles disponibles</div>
+            <div class="stat-value" th:text="${totalRoles}">0</div>
+            <div class="stat-trend trend-neutral">Postes définis</div>
+          </article>
+        </section>
+
+        <!-- Alerte -->
+        <div id="alerte" class="alert-box danger" style="display:none"></div>
+
+        <!-- Filtres + Tabs -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Liste des employés</h2>
+              <p class="card-subtitle">Recherche, filtre par rôle et gestion des statuts.</p>
+            </div>
+          </div>
+
+          <!-- Barre de recherche + filtre rôle -->
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+            <input
+              id="champRecherche"
+              type="text"
+              placeholder="Rechercher par nom, prénom ou email..."
+              style="flex:1; min-width:220px; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;"
+              oninput="chargerAvecFiltres()"
+            />
+            <select
+              id="filtreRole"
+              style="padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;"
+              onchange="chargerAvecFiltres()"
+            >
+              <option value="">Tous les rôles</option>
+              <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.poste}"></option>
+            </select>
+          </div>
+
+          <!-- Tabs actifs / désactivés -->
+          <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <button id="tabActifs" class="btn btn-primary btn-small" onclick="changerTab(true)">Actifs</button>
+            <button id="tabDesactives" class="btn btn-ghost btn-small" onclick="changerTab(false)">Désactivés</button>
+          </div>
+
+          <!-- Tableau -->
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nom & Prénom</th>
+                  <th>Email</th>
+                  <th>Contact</th>
+                  <th>Rôle</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="corpsTableau">
+                <tr><td colspan="6" style="text-align:center; padding:24px; color:#64748b;">Chargement...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+     <!-- Modal réinitialisation MDP -->
+    <div id="modalMdp" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:center; justify-content:center;">
+      <div class="card" style="width:400px; padding:24px;">
+        <h2 class="card-title" style="margin-bottom:16px;">Réinitialiser le mot de passe</h2>
+        <input id="nouveauMdp" type="password" placeholder="Nouveau mot de passe"
+          style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px; margin-bottom:6px;"
+          oninput="cacherErreurMdp()" />
+        <!-- Erreur juste sous le champ -->
+        <div id="erreurMdp" style="display:none; color:#ef4444; font-size:13px; margin-bottom:12px; padding:6px 10px; background:#fef2f2; border:1px solid #fecaca; border-radius:6px;">
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
+          <button class="btn btn-ghost btn-small" onclick="fermerModal()">Annuler</button>
+          <button class="btn btn-purple btn-small" onclick="confirmerReinitialisationMdp()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+
+      <div class="app-footer" style="padding:16px 24px; border-top:1px solid var(--border); background:#fff; color:var(--muted); font-size:12px; text-align:center;">
+        VINA AKOHO — Gestion des comptes
+      </div>
+    </div>
+
+    <script src="/assets/js/script_content.js"></script>
+    <script>
+      let afficherActifs = true;
+      let idEmployeSelectionne = null;
+
+      async function chargerEmployes(url) {
+        try {
+          const rep = await fetch(url);
+          const json = await rep.json();
+          if (!json.success) { afficherAlerte(json.message); return; }
+          renderTableau(json.data);
+        } catch (e) {
+          afficherAlerte("Erreur lors du chargement des employés.");
+        }
+      }
+
+      function chargerAvecFiltres() {
+        const terme = document.getElementById("champRecherche").value.trim();
+        const idRole = document.getElementById("filtreRole").value;
+
+        if (terme.length > 0) {
+          const params = new URLSearchParams({ terme, ...(afficherActifs !== null ? { actif: afficherActifs } : {}) });
+          chargerEmployes(`/api/admin/employes/recherche?${params}`);
+        } else if (idRole) {
+          const params = new URLSearchParams({ idRole, ...(afficherActifs !== null ? { actif: afficherActifs } : {}) });
+          chargerEmployes(`/api/admin/employes/par-role?${params}`);
+        } else {
+          chargerEmployes(afficherActifs ? "/api/admin/employes/actifs" : "/api/admin/employes/desactives");
+        }
+      }
+
+      function changerTab(actif) {
+        afficherActifs = actif;
+        document.getElementById("tabActifs").className = actif ? "btn btn-primary btn-small" : "btn btn-ghost btn-small";
+        document.getElementById("tabDesactives").className = !actif ? "btn btn-primary btn-small" : "btn btn-ghost btn-small";
+        chargerAvecFiltres();
+      }
+
+      function renderTableau(employes) {
+        const tbody = document.getElementById("corpsTableau");
+        if (!employes || employes.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:#64748b;">Aucun employé trouvé.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = employes.map(e => `
+          <tr>
+            <td><strong>${e.nom} ${e.prenom}</strong></td>
+            <td>${e.email}</td>
+            <td>${e.contact ?? '—'}</td>
+            <td>${e.role}</td>
+            <td>
+              ${e.actif
+                ? '<span class="badge badge-success">Actif</span>'
+                : '<span class="badge badge-danger">Désactivé</span>'}
+            </td>
+            <td style="display:flex; gap:6px; flex-wrap:wrap;">
+              <a href="/admin/employes/${e.id}/modifier" class="btn btn-ghost btn-small">Modifier</a>
+              ${e.actif
+                ? `<button class="btn btn-small" style="background:#fef3c7; color:#92400e;" onclick="toggleStatut(${e.id}, false)">Désactiver</button>`
+                : `<button class="btn btn-small" style="background:#d1fae5; color:#065f46;" onclick="toggleStatut(${e.id}, true)">Réactiver</button>`}
+              <button class="btn btn-ghost btn-small" onclick="ouvrirModal(${e.id})">Réinit. MDP</button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      async function toggleStatut(id, activer) {
+        const action = activer ? "reactiver" : "desactiver";
+        try {
+          const rep = await fetch(`/api/admin/employes/${id}/${action}`, { method: "PATCH" });
+          const json = await rep.json();
+          if (json.success) chargerAvecFiltres();
+          else afficherAlerte(json.message);
+        } catch (e) {
+          afficherAlerte("Erreur lors de la mise à jour du statut.");
+        }
+      }
+
+      function ouvrirModal(id) {
+      idEmployeSelectionne = id;
+      document.getElementById("nouveauMdp").value = "";
+      document.getElementById("erreurMdp").style.display = "none";
+      document.getElementById("modalMdp").style.display = "flex";
+    }
+
+    function fermerModal() {
+      document.getElementById("modalMdp").style.display = "none";
+      document.getElementById("erreurMdp").style.display = "none";
+    }
+
+    function cacherErreurMdp() {
+      document.getElementById("erreurMdp").style.display = "none";
+    }
+
+    async function confirmerReinitialisationMdp() {
+      const mdp = document.getElementById("nouveauMdp").value.trim();
+      if (!mdp) {
+        afficherErreurMdp("Le mot de passe ne peut pas être vide.");
+        return;
+      }
+      try {
+        const rep = await fetch(`/api/admin/employes/${idEmployeSelectionne}/reinitialiser-mdp`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nouveauMdp: mdp })
+        });
+        const json = await rep.json();
+        if (json.success) {
+          fermerModal();
+        } else {
+          // Erreur affichée sous le champ, pas en haut
+          afficherErreurMdp(json.message);
+        }
+      } catch (e) {
+        afficherErreurMdp("Erreur lors de la réinitialisation.");
+      }
+    }
+
+    function afficherErreurMdp(msg) {
+      const el = document.getElementById("erreurMdp");
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+      function afficherAlerte(msg) {
+        const el = document.getElementById("alerte");
+        el.textContent = msg;
+        el.style.display = "block";
+        setTimeout(() => el.style.display = "none", 4000);
+      }
+
+      // Chargement initial
+      chargerEmployes("/api/admin/employes/actifs");
+    </script>
+  </body>
+</html>

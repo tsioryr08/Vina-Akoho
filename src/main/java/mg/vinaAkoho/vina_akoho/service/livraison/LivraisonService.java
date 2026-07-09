@@ -3,6 +3,7 @@ package mg.vinaAkoho.vina_akoho.service.livraison;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import mg.vinaAkoho.vina_akoho.entity.livraison.livreur;
 import mg.vinaAkoho.vina_akoho.entity.livraison.livraison;
 import mg.vinaAkoho.vina_akoho.entity.livraison.statutLivraison;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Vente;
+import mg.vinaAkoho.vina_akoho.entity.ventes.StatutVente;
 import mg.vinaAkoho.vina_akoho.exception.livraison.LivreurNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.livraison.LivraisonNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.livraison.VenteNotFoundException;
@@ -25,6 +27,7 @@ import mg.vinaAkoho.vina_akoho.repository.livraison.HistoriqueChangementReposito
 import mg.vinaAkoho.vina_akoho.repository.livraison.LivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.livraison.LivreurRepository;
 import mg.vinaAkoho.vina_akoho.repository.livraison.StatutLivraisonRepository;
+import mg.vinaAkoho.vina_akoho.repository.ventes.StatutVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
 
 @Service
@@ -37,6 +40,7 @@ public class LivraisonService {
     private final LivreurRepository livreurRepository;
     private final StatutLivraisonRepository statutLivraisonRepository;
     private final HistoriqueChangementRepository historiqueChangementRepository;
+    private final StatutVenteRepository statutVenteRepository;
 
     public List<LivraisonDTO> listerToutes() {
         return livraisonRepository.findAll()
@@ -107,6 +111,23 @@ public class LivraisonService {
         historique.setNouveauStatut(statut);
         historiqueChangementRepository.save(historique);
 
+        // Point 5 du markdown (option A) : une fois la livraison effectuée,
+        // la vente associée est considérée comme terminée -> on synchronise
+        // son statut avec celui de la livraison.
+        if ("livrée".equalsIgnoreCase(statut.getLibelle()) || "livree".equalsIgnoreCase(statut.getLibelle())) {
+            Vente vente = livraison.getVente();
+            if (vente != null) {
+                StatutVente statutVenteLivree = statutVenteRepository.findByLibelleIgnoreCase("Livrée")
+                        .orElseGet(() -> {
+                            StatutVente nouveau = new StatutVente();
+                            nouveau.setLibelle("Livrée");
+                            return statutVenteRepository.save(nouveau);
+                        });
+                vente.setStatutVente(statutVenteLivree);
+                venteRepository.save(vente);
+            }
+        }
+
         return versDTO(livraison);
     }
 
@@ -122,7 +143,7 @@ public class LivraisonService {
                 .collect(Collectors.toList());
     }
 
-    private LivraisonDTO versDTO(livraison livraison) {
+    public LivraisonDTO versDTO(livraison livraison) {
         Vente vente = livraison.getVente();
         String referenceVente = vente != null ? "V" + vente.getId() : null;
         String clientNom = vente != null && vente.getClient() != null
@@ -161,4 +182,16 @@ public class LivraisonService {
                                 .dateChangement(historique.getDateChangement() != null ? historique.getDateChangement() : historique.getCreatedAt())
                                 .build();
         }
+
+    public Map<String, Long> getStatistiquesZones() {
+        return livraisonRepository.countLivraisonsByZone().stream()
+                .collect(Collectors.toMap(
+                        obj -> (String) obj[0],
+                        obj -> (Long) obj[1]
+                ));
+    }
+
+    public long countTotalLivraisons() {
+        return livraisonRepository.count();
+    }
 }

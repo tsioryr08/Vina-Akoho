@@ -57,11 +57,14 @@
 <button class="btn btn-ghost" type="button" onclick="exporterExcel()">Exporter</button>
 </div>
 <script>
-function exporterExcel() {
+function getFilters() {
     var periode = document.getElementById('reportPeriod').value;
     var zone = document.getElementById('reportZone').value;
     var url = '/api/ventes/export/excel?periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
     window.location.href = url;
+}
+function exporterExcel() {
+    window.location.href = '/api/ventes/export/excel?periode=' + encodeURIComponent(document.getElementById('reportPeriod').value) + '&zone=' + encodeURIComponent(document.getElementById('reportZone').value);
 }
 </script>
 </form>
@@ -100,7 +103,7 @@ function exporterExcel() {
 <thead>
 <tr>
 <th>Produit</th>
-<th>Quantité (kg)</th>
+<th>Quantité</th>
 <th>Chiffre d'affaires (Ar)</th>
 <th>Part du CA</th>
 </tr>
@@ -109,12 +112,13 @@ function exporterExcel() {
 <th:block th:each="produit, stat : ${produitsVendus}">
 <tr>
 <td><strong th:text="${produit.key}"></strong></td>
-<td th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' kg'"></td>
+<td th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' ' + (${produitsUnite[produit.key]} != null ? produitsUnite[produit.key] : 'kg')"></td>
 <td th:text="${#numbers.formatDecimal(produitsCA[produit.key], 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
 <td>
-<span class="badge badge-blue" th:if="${produitsPercent[produit.key] != null}"
-      th:text="${produitsPercent[produit.key]}"></span>
-<span class="badge badge-blue" th:unless="${produitsPercent[produit.key] != null}">0%</span>
+<span class="badge badge-blue" th:if="${chiffreAffaires != null and chiffreAffaires > 0}"
+      th:text="${#numbers.formatDecimal(produitsPourcentage[produit.key], 1, 'COMMA', 1, 'POINT')} + '%'">
+</span>
+<span class="badge badge-blue" th:unless="${chiffreAffaires != null and chiffreAffaires > 0}">0%</span>
 </td>
 </tr>
 </th:block>
