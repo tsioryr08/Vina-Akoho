@@ -48,7 +48,7 @@ public class LoginController {
             } else if (role != null && role.equalsIgnoreCase("Comptable")) {
                 return "redirect:/api/comptabilite";
             } else {
-                return "redirect:/api/matieres-premieres";
+                return "redirect:/matieres-premieres";
             }
         } catch (IdentifiantsInvalidesException e) {
             redirectAttributes.addFlashAttribute("erreur", e.getMessage());

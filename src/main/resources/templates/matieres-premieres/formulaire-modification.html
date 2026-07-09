@@ -46,15 +46,15 @@
           style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px"
         >
           <a
-            th:href="@{/api/matieres-premieres/{id}(id=${fiche.id})}"
+            th:href="@{/matieres-premieres/{id}(id=${fiche.id})}"
             class="btn btn-ghost btn-small"
             >← Retour à la fiche</a
           >
-          <a th:href="@{/api/matieres-premieres}" class="btn btn-ghost btn-small"
+          <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small"
             >Suivi Stock</a
           >
           <a
-            th:href="@{/api/matieres-premieres/entree-stock}"
+            th:href="@{/matieres-premieres/entree-stock}"
             class="btn btn-ghost btn-small"
             >Ajouter Matière</a
           >
@@ -76,7 +76,7 @@
           <h2>Informations de la Matière Première</h2>
           <form
             method="post"
-            th:action="@{/api/matieres-premieres/{id}/modifier(id=${fiche.id})}"
+            th:action="@{/matieres-premieres/{id}/modifier(id=${fiche.id})}"
           >
             <div class="form-grid">
               <div class="form-group">
@@ -152,7 +152,7 @@
 
             <div class="form-actions" style="margin-top: 32px">
               <a
-                th:href="@{/api/matieres-premieres/{id}(id=${fiche.id})}"
+                th:href="@{/matieres-premieres/{id}(id=${fiche.id})}"
                 class="btn btn-ghost"
                 >Annuler</a
               >
@@ -173,7 +173,7 @@
           </div>
           <form
             method="post"
-            th:action="@{/api/matieres-premieres/{id}/supprimer(id=${fiche.id})}"
+            th:action="@{/matieres-premieres/{id}/supprimer(id=${fiche.id})}"
             onsubmit="
               return confirm(
                 'Supprimer définitivement ' +
