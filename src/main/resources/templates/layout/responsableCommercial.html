@@ -1,34 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
-<body>
-<aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
-  <div class="sidebar-brand">
-    <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
-    <div>
-      <div class="brand-title">VINA AKOHO</div>
-      <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO04</div>
-      <div th:if="${currentUser != null}" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Utilisateur</div>
-    </div>
-  </div>
+  <body>
+    <aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
+      <div class="sidebar-brand">
+        <img
+          th:src="@{/images/VINA_AKOHO_LOGO.png}"
+          alt="VINA AKOHO"
+          class="brand-mark"
+        />
+        <div>
+          <div class="brand-title">VINA AKOHO</div>
+          <div
+            class="brand-subtitle"
+            th:text="${currentUser != null ? currentUser.role.poste : ''}"
+          >
+            RO04
+          </div>
+          <div
+            th:if="${currentUser != null}"
+            th:text="${currentUser.prenom + ' ' + currentUser.nom}"
+          >
+            Utilisateur
+          </div>
+        </div>
+      </div>
 
-  <nav class="sidebar-nav">
-    <div class="sidebar-section">Principal</div>
-    <a class="sidebar-link" th:href="@{/api/ventes}">Gestion des Ventes <span class="sidebar-code">C1</span></a>
-    <div class="sidebar-section">Ventes</div>
-    <a class="sidebar-link" th:href="@{/api/ventes/nouvelle}">Ajout Vente <span class="sidebar-code">C2</span></a>
-    <a class="sidebar-link" th:href="@{/api/ventes/historique}">Historique Ventes <span class="sidebar-code">C4</span></a>
-    <a class="sidebar-link" th:href="@{/api/ventes/recettes}">Recettes <span class="sidebar-code">R2</span></a>
-    <div class="sidebar-section">Clients</div>
-    <a class="sidebar-link" th:href="@{/api/clients/nouveau}">Enregistrer Client <span class="sidebar-code">A1</span></a>
-    <a class="sidebar-link" th:href="@{/api/clients}">Base Clients <span class="sidebar-code">A2</span></a>
-    <div class="sidebar-section">Livraisons</div>
-    <a class="sidebar-link" th:href="@{/api/livraisons/statistiques}">Statistiques livraisons <span class="sidebar-code">L2</span></a>
-    <a class="sidebar-link" th:href="@{/api/livraisons}">Liste livraisons <span class="sidebar-code">L2b</span></a>
-    <a class="sidebar-link" th:href="@{/api/livraisons/nouvelle}">Nouvelle livraison <span class="sidebar-code">L1</span></a>
-    <div class="sidebar-section">Statistiques</div>
-    <a class="sidebar-link" th:href="@{/api/ventes/statistiques}">Produits & Ventes <span class="sidebar-code">S1</span></a>
-  </nav>
-</aside>
-</body>
-
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Principal</div>
+        <a class="sidebar-link" th:href="@{/api/ventes}"
+          >Gestion des Ventes <span class="sidebar-code">C1</span></a
+        >
+        <div class="sidebar-section">Ventes</div>
+        <a class="sidebar-link" th:href="@{/api/ventes/nouvelle}"
+          >Ajout Vente <span class="sidebar-code">C2</span></a
+        >
+        <a class="sidebar-link" th:href="@{/api/ventes/historique}"
+          >Historique Ventes <span class="sidebar-code">C4</span></a
+        >
+        <a class="sidebar-link" th:href="@{/api/ventes/recettes}"
+          >Recettes <span class="sidebar-code">R2</span></a
+        >
+        <div class="sidebar-section">Clients</div>
+        <a class="sidebar-link" th:href="@{/api/clients/nouveau}"
+          >Enregistrer Client <span class="sidebar-code">A1</span></a
+        >
+        <a class="sidebar-link" th:href="@{/api/clients}"
+          >Base Clients <span class="sidebar-code">A2</span></a
+        >
+        <div class="sidebar-section">Livraisons</div>
+        <a class="sidebar-link" th:href="@{/api/livraisons/statistiques}"
+          >Statistiques livraisons <span class="sidebar-code">L2</span></a
+        >
+        <a class="sidebar-link" th:href="@{/api/livraisons}"
+          >Liste livraisons <span class="sidebar-code">L2b</span></a
+        >
+        <a class="sidebar-link" th:href="@{/api/livraisons/nouvelle}"
+          >Nouvelle livraison <span class="sidebar-code">L1</span></a
+        >
+      </nav>
+    </aside>
+  </body>
 </html>

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VINA AKOHO - Panneau d'Administration</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/statistiques-ventes.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   </head>
   <body>
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
@@ -14,15 +16,31 @@
     <div class="main">
       <div th:replace="${headerTemplate} :: header"></div>
 
-      <div class="content">
+      <div class="content page-stats-ventes">
         <section class="page-header">
           <div>
-
             <h1>Panneau d'Administration Système & Paramètres</h1>
             <p>
               Gestion des utilisateurs, rôles assignés, journal d'activité et
               validations de clôture.
             </p>
+          </div>
+        </section>
+
+        <!-- EVOLUTION DES VENTES -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Évolution des ventes</h2>
+              <p class="card-subtitle">
+                Chiffre d'affaires journalier sur les 30 derniers jours.
+              </p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="chartEvolution"></canvas>
+            </div>
           </div>
         </section>
 
@@ -53,24 +71,33 @@
                     <td th:text="${emp.nom + ' ' + emp.prenom}"></td>
                     <td th:text="${emp.role.poste}"></td>
                     <td>
-                      <span th:if="${emp.derniereConnexion != null}"
-                            class="derniere-connexion"
-                            th:attr="data-ts=${emp.derniereConnexion}">
+                      <span
+                        th:if="${emp.derniereConnexion != null}"
+                        class="derniere-connexion"
+                        th:attr="data-ts=${emp.derniereConnexion}"
+                      >
                       </span>
-                      <span th:unless="${emp.derniereConnexion != null}"
-                            style="color:#94a3b8; font-style:italic;">
+                      <span
+                        th:unless="${emp.derniereConnexion != null}"
+                        style="color: #94a3b8; font-style: italic"
+                      >
                         Jamais connecté
                       </span>
                     </td>
                     <td>
-                      <a class="btn btn-ghost btn-small"
-                         th:href="@{/admin/employes/{id}/modifier(id=${emp.id})}">
+                      <a
+                        class="btn btn-ghost btn-small"
+                        th:href="@{/admin/employes/{id}/modifier(id=${emp.id})}"
+                      >
                         Modifier
                       </a>
                     </td>
                   </tr>
                   <tr th:if="${#lists.isEmpty(employes)}">
-                    <td colspan="4" style="text-align:center; padding:24px; color:#64748b;">
+                    <td
+                      colspan="4"
+                      style="text-align: center; padding: 24px; color: #64748b"
+                    >
                       Aucun utilisateur actif.
                     </td>
                   </tr>
@@ -79,34 +106,18 @@
             </div>
 
             <div class="card-actions" style="margin-top: 16px">
-              <a class="btn btn-purple" th:href="@{/admin/employes/nouveau}">+ Créer un nouveau compte</a>
-              <a class="btn btn-ghost" th:href="@{/admin/employes}">Voir tous les comptes</a>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title">Approbations de Clôture en attente</h2>
-                <p class="card-subtitle">
-                  Validation administrative avant clôture mensuelle.
-                </p>
-              </div>
-            </div>
-
-            <div class="alert-box danger">
-              Le rapport financier mensuel de Mai 2026 a été généré par le
-              Comptable et attend votre validation.
-            </div>
-
-            <div class="card-actions">
-              <a class="btn btn-green" th:href="@{/comptabilite}">Valider et Clôturer le Mois</a>
+              <a class="btn btn-purple" th:href="@{/admin/employes/nouveau}"
+                >+ Créer un nouveau compte</a
+              >
+              <a class="btn btn-ghost" th:href="@{/admin/employes}"
+                >Voir tous les comptes</a
+              >
             </div>
           </div>
         </section>
 
         <!-- KPIs -->
-        <section class="stats-grid" style="margin-bottom: 24px;">
+        <section class="stats-grid" style="margin-bottom: 24px">
           <article class="stat-card">
             <div class="stat-label">Comptes actifs</div>
             <div class="stat-value" th:text="${totalActifs}">0</div>
@@ -117,76 +128,6 @@
             <div class="stat-value" th:text="${totalDesactives}">0</div>
             <div class="stat-trend trend-warning">Accès suspendus</div>
           </article>
-        </section>
-
-        <section class="card" style="margin-bottom: 28px">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Pages d'administration métier</h2>
-              <p class="card-subtitle">
-                Accès rapide aux formulaires et listes demandés pour le
-                commercial et le stock/production.
-              </p>
-            </div>
-          </div>
-          <div class="grid-2">
-            <div class="delivery-card">
-              <div class="delivery-card-header">
-                <div>
-                  <h2>Commercial — Clients</h2>
-                  <p class="card-subtitle">
-                    Enregistrement et base de données clients.
-                  </p>
-                </div>
-                <span class="badge badge-light-green">Vert</span>
-              </div>
-              <div class="card-actions">
-                <a class="btn btn-green" th:href="@{/clients/nouveau}">Enregistrer un Client</a>
-                <a class="btn btn-ghost" th:href="@{/clients}">Base Clients</a>
-              </div>
-            </div>
-            <div class="delivery-card">
-              <div class="delivery-card-header">
-                <div>
-                  <h2>Stock & Production — Catalogue</h2>
-                  <p class="card-subtitle">
-                    Création d'article et suivi du stock.
-                  </p>
-                </div>
-                <span class="badge badge-orange">Orange</span>
-              </div>
-              <div class="card-actions">
-                <a class="btn btn-orange" th:href="@{/produits/nouveau}">Nouvel Article</a>
-                <a class="btn btn-ghost" th:href="@{/matieres-premieres}">Catalogue Stocks</a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Journal d'activité Général</h2>
-              <p class="card-subtitle">
-                Audit Trail - RG01 — Liste chronologique des actions sensibles.
-              </p>
-            </div>
-          </div>
-
-          <div class="log-list">
-            <div class="log-item">
-              <div class="log-time">[09/06 20:12]</div>
-              <div class="log-action">
-                ${currentUser != null ? currentUser.role.poste + ' (validation)' : 'Production (validation)'} du LOT-CROIS-50-A.
-              </div>
-            </div>
-            <div class="log-item">
-              <div class="log-time">[09/06 18:45]</div>
-              <div class="log-action">
-                ${currentUser != null ? currentUser.role.poste + ' (modification)' : 'Comptable (modification)'} de Agro-Distribution.
-              </div>
-            </div>
-          </div>
         </section>
       </div>
 
@@ -206,21 +147,56 @@
     </div>
 
     <script src="/assets/js/script_content.js"></script>
-    <script>
+    <script th:inline="javascript">
       function tempsRelatif(dateStr) {
         const maintenant = new Date();
         const date = new Date(dateStr);
         const diffSec = Math.floor((maintenant - date) / 1000);
-        if (diffSec < 60)    return "À l'instant";
-        if (diffSec < 3600)  return "Il y a " + Math.floor(diffSec / 60) + " min";
-        if (diffSec < 86400) return "Il y a " + Math.floor(diffSec / 3600) + " h";
+        if (diffSec < 60) return "À l'instant";
+        if (diffSec < 3600)
+          return "Il y a " + Math.floor(diffSec / 60) + " min";
+        if (diffSec < 86400)
+          return "Il y a " + Math.floor(diffSec / 3600) + " h";
         const jours = Math.floor(diffSec / 86400);
-        if (jours === 1)     return "Hier";
+        if (jours === 1) return "Hier";
         return "Il y a " + jours + " jours";
       }
-      document.querySelectorAll(".derniere-connexion").forEach(el => {
+      document.querySelectorAll(".derniere-connexion").forEach((el) => {
         el.textContent = tempsRelatif(el.getAttribute("data-ts"));
       });
+
+      // Évolution des ventes (graphique du tableau de bord admin)
+      const evolutionVentes = /*[[${evolutionVentes}]]*/ [];
+      if (evolutionVentes && evolutionVentes.length) {
+        const labels = evolutionVentes.map((e) => e.periode);
+        const data = evolutionVentes.map((e) => e.montantVentes);
+
+        new Chart(document.getElementById("chartEvolution"), {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Chiffre d'affaires (Ar)",
+                data: data,
+                borderColor: "#f97316",
+                backgroundColor: "rgba(249,115,22,0.15)",
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false } },
+              y: { grid: { color: "#eef1f4" } },
+            },
+          },
+        });
+      }
     </script>
   </body>
 </html>

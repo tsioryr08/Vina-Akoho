@@ -10,29 +10,38 @@
         />
         <div>
           <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO01</div>
+          <div
+            class="brand-subtitle"
+            th:text="${currentUser != null ? currentUser.role.poste : ''}"
+          >
+            RO01
+          </div>
         </div>
       </div>
 
       <nav class="sidebar-nav">
         <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link" th:href="@{/api/admin}">Dashboard <span class="sidebar-code">A1</span></a>
+        <a class="sidebar-link" th:href="@{/api/admin}"
+          >Dashboard <span class="sidebar-code">A1</span></a
+        >
         <div class="sidebar-section">Utilisateurs</div>
-        <a class="sidebar-link" th:href="@{/api/clients}">Gestion des comptes <span class="sidebar-code">A2</span></a>
-        <div class="sidebar-section">Finances</div>
-        <a class="sidebar-link" th:href="@{/api/comptabilite}">Rapports &amp; Tresorerie <span class="sidebar-code">A3</span></a>
+        <a class="sidebar-link" th:href="@{/admin/employes}"
+          >Gestion des comptes <span class="sidebar-code">A2</span></a
+        >
+        <a class="sidebar-link" th:href="@{/admin/employes/nouveau}"
+          >Ajout nouveau compte <span class="sidebar-code">A2</span></a
+        >
         <div class="sidebar-section">Statistiques</div>
-        <a class="sidebar-link" th:href="@{/api/admin}">Vue globale &amp; Analytics <span class="sidebar-code">A4</span></a>
-        <a class="sidebar-link" th:href="@{/api/production}">Production <span class="sidebar-code">A4a</span></a>
-        <a class="sidebar-link" th:href="@{/api/ventes}">Ventes <span class="sidebar-code">A4b</span></a>
-        <a class="sidebar-link" th:href="@{/api/commercial}">Geographie <span class="sidebar-code">A4c</span></a>
-        <div class="sidebar-section">Configuration</div>
-        <a class="sidebar-link" th:href="@{/api/admin}">Parametres systeme <span class="sidebar-code">A5</span></a>
-        <div class="sidebar-section">Previsions</div>
-        <a class="sidebar-link" th:href="@{/api/production}">Previsions <span class="sidebar-code">A6</span></a>
+        <a class="sidebar-link" th:href="@{/api/ventes/statistiques}"
+          >Produits & Ventes <span class="sidebar-code">S1</span></a
+        >
         <div class="sidebar-section">Categories</div>
-        <a class="sidebar-link" th:href="@{/api/categories}">Liste des categories<span class="sidebar-code">A7</span></a>
-        <a class="sidebar-link" th:href="@{/api/categories/nouveau}">Ajout categorie <span class="sidebar-code">A7b</span></a>
+        <a class="sidebar-link" th:href="@{/api/categories}"
+          >Liste des categories<span class="sidebar-code">A7</span></a
+        >
+        <a class="sidebar-link" th:href="@{/api/categories/nouveau}"
+          >Ajout categorie <span class="sidebar-code">A7b</span></a
+        >
       </nav>
     </aside>
   </body>
