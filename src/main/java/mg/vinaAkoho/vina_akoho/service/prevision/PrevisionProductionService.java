@@ -106,11 +106,12 @@ public class PrevisionProductionService {
         BigDecimal moyenne = quantiteVendue.divide(
                 BigDecimal.valueOf(joursAnalyse), 2, RoundingMode.HALF_UP);
         BigDecimal stock = valeur(lotProduitRepository.sommeQuantiteRestante(produit.getId()));
-        BigDecimal proposition = moyenne.add(stock);
+        BigDecimal objectif = moyenne.multiply(BigDecimal.valueOf(joursCouverture));
+        BigDecimal proposition = objectif.subtract(stock).max(ZERO);
         boolean recetteDisponible = !recetteProduitRepository
                 .findByIdCategorieAndIsActiveTrue(produit.getCategorie().getId().intValue()).isEmpty();
 
-        String statut = proposition.signum() == 0
+        String statut = proposition.signum() <= 0
                 ? "STOCK SUFFISANT"
                 : recetteDisponible ? "À PRODUIRE" : "RECETTE MANQUANTE";
 
@@ -122,7 +123,7 @@ public class PrevisionProductionService {
                 arrondir(quantiteVendue),
                 arrondir(moyenne),
                 arrondir(stock),
-                arrondir(proposition),
+                arrondir(objectif),
                 arrondir(proposition),
                 statut,
                 recetteDisponible);

@@ -49,7 +49,7 @@ class PrevisionProductionServiceTest {
     }
 
     @Test
-    void calculeLaProductionDepuisLaMoyenneEtLeStockDisponibleSelonLaFormuleDemandee() {
+    void calculeLaProductionDepuisLaMoyenneLaCouvertureEtLeStockDisponible() {
         Categorie categorie = new Categorie();
         categorie.setId(1L);
         categorie.setLibelle("Poussin");
@@ -73,9 +73,37 @@ class PrevisionProductionServiceTest {
 
         assertEquals(new BigDecimal("2.00"), resultat.moyenneJournaliere());
         assertEquals(new BigDecimal("4.00"), resultat.stockActuel());
-        assertEquals(new BigDecimal("6.00"), resultat.objectifStock());
-        assertEquals(new BigDecimal("6.00"), resultat.propositionProduction());
+        assertEquals(new BigDecimal("14.00"), resultat.objectifStock());
+        assertEquals(new BigDecimal("10.00"), resultat.propositionProduction());
         assertEquals("À PRODUIRE", resultat.statut());
+    }
+
+    @Test
+    void neProposeRienQuandLeStockCouvreDejaLeBesoin() {
+        Categorie categorie = new Categorie();
+        categorie.setId(1L);
+        categorie.setLibelle("Poussin");
+
+        Produit produit = new Produit();
+        produit.setId(10L);
+        produit.setNom("Aliment poussin");
+        produit.setCategorie(categorie);
+
+        VenteProduitProjection vente = mock(VenteProduitProjection.class);
+        when(vente.getProduitId()).thenReturn(10L);
+        when(vente.getQuantiteVendue()).thenReturn(new BigDecimal("60"));
+        when(ligneVenteRepository.sommerQuantitesVenduesParProduit(any(), any()))
+                .thenReturn(List.of(vente));
+        when(produitRepository.findAllActifs()).thenReturn(List.of(produit));
+        when(lotProduitRepository.sommeQuantiteRestante(10L)).thenReturn(new BigDecimal("20"));
+        when(recetteProduitRepository.findByIdCategorieAndIsActiveTrue(1))
+                .thenReturn(List.of(new RecetteProduit()));
+
+        PrevisionProductionDTO resultat = service.calculerProductions(30, 7).get(0);
+
+        assertEquals(new BigDecimal("14.00"), resultat.objectifStock());
+        assertEquals(new BigDecimal("0.00"), resultat.propositionProduction());
+        assertEquals("STOCK SUFFISANT", resultat.statut());
     }
 
     @Test
