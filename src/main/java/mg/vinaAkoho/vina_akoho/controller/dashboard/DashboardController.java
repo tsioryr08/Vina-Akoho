@@ -8,7 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.ventes.EvolutionVenteStatDTO;
 import mg.vinaAkoho.vina_akoho.entity.login.Employe;
 import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.LotMpRepository;
@@ -16,6 +19,7 @@ import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
 import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
 import mg.vinaAkoho.vina_akoho.service.produit.ProduitService;
 import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
+import mg.vinaAkoho.vina_akoho.service.ventes.StatistiqueVenteService;
 import mg.vinaAkoho.vina_akoho.service.prevision.PrevisionProductionService;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,6 +36,7 @@ public class DashboardController {
     private final LotMpRepository lotMpRepository;
     private final EmployeRepository employeRepository;
     private final PrevisionProductionService previsionProductionService;
+    private final StatistiqueVenteService statistiqueVenteService;
 
 
     @GetMapping("/admin")
@@ -40,6 +45,16 @@ public class DashboardController {
         model.addAttribute("employes", actifs);
         model.addAttribute("totalActifs", actifs.size());
         model.addAttribute("totalDesactives", employeRepository.findByActif(false).size());
+
+        // Évolution des ventes sur les 30 derniers jours (granularité jour),
+        // identique au défaut de la page statistiques pour un rendu cohérent.
+        LocalDate debut = LocalDate.now().minusDays(30);
+        LocalDate fin = LocalDate.now();
+        List<EvolutionVenteStatDTO> evolutionVentes = statistiqueVenteService
+                .obtenirStatistiques(debut, fin, null, "montant", "jour")
+                .getEvolution();
+        model.addAttribute("evolutionVentes", evolutionVentes);
+
         return "dashboard/admin/index";
     }
 
