@@ -36,4 +36,7 @@ public interface ProduitRepository extends JpaRepository<Produit, Long>, JpaSpec
 
     @Query("SELECT COUNT(p) > 0 FROM Produit p WHERE p.categorie.id = :categorieId AND p.actif = true")
     boolean existsByCategorieIdAndActifTrue(@Param("categorieId") Long categorieId);
+
+    @Query("SELECT MAX(p.ref) FROM Produit p WHERE p.ref LIKE 'PRD-%' AND p.actif = true")
+    String findMaxRefLikePRD();
 }

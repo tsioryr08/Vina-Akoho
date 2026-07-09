@@ -174,7 +174,7 @@ public class ProduitController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la désactivation : " + e.getMessage());
         }
-        return "redirect:/produits";
+        return "redirect:/api/produits";
     }
 
     @GetMapping("/{id}/reactiver")
@@ -185,6 +185,6 @@ public class ProduitController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la réactivation : " + e.getMessage());
         }
-        return "redirect:/produits";
+        return "redirect:/api/produits";
     }
 }

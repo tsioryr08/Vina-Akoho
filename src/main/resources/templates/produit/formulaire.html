@@ -47,8 +47,8 @@
             th:object="${produit}"
           >
             <div class="form-grid">
-              <div class="field ref-field">
-                <label for="ref">Référence *</label>
+              <div class="field ref-field" th:if="${produitId != null}">
+                <label for="ref">Référence</label>
                 <input
                   type="text"
                   id="ref"
