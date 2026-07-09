@@ -1,198 +1,328 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VINA AKOHO - Nouvelle Vente</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body class="vina-body">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="vina-body">
     <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="~{layout/header}"></div>
-        <div id="vina-content">
-            <section class="page-header">
+      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow">RO04 - Responsable Commercial</p>
+            <h1>Enregistrer une nouvelle vente</h1>
+            <p>
+              Formulaire dynamique de saisie d’une vente client avec calcul
+              automatique du total.
+            </p>
+          </div>
+          <span class="role-badge">RO04 - Responsable Commercial</span>
+        </section>
+
+        <section class="tab-list" role="tablist">
+          <a class="tab-link" th:href="@{/api/ventes}">Liste des ventes</a>
+          <a class="tab-link" th:href="@{/api/ventes/historique}">Historique</a>
+          <a class="tab-link" th:href="@{/api/ventes/recettes}">Recettes</a>
+          <a class="tab-link active" th:href="@{/api/ventes/nouvelle}"
+            >Nouvelle vente</a
+          >
+        </section>
+
+        <div
+          th:if="${success}"
+          class="info-banner success"
+          th:text="${success}"
+        ></div>
+        <div
+          th:if="${error}"
+          class="info-banner error"
+          th:text="${error}"
+        ></div>
+
+        <section class="form-card">
+          <div class="form-section">
+            <div class="form-section-heading">
+              <span>1</span>
+              <div>
+                <h2>Informations générales</h2>
+                <p>Identification du client et date de la transaction.</p>
+              </div>
+            </div>
+
+            <form
+              th:action="@{/ventes/panier/ajouter}"
+              th:object="${panierForm}"
+              method="post"
+            >
+              <div class="form-grid">
+                <div class="field field-full">
+                  <label for="idProduit">Produit</label>
+                  <select
+                    id="idProduit"
+                    class="form-control"
+                    th:field="*{idProduit}"
+                  >
+                    <option value="" disabled selected>
+                      Choisir un produit
+                    </option>
+                    <option
+                      th:each="produit : ${produitsDisponibles}"
+                      th:value="${produit.id}"
+                      th:text="${produit.nom + ' - ' + produit.ref}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="quantite">Quantité</label>
+                  <input
+                    id="quantite"
+                    class="form-control"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    th:field="*{quantite}"
+                  />
+                </div>
+                <div class="field field-actions" style="align-self: flex-end">
+                  <button class="btn btn-green" type="submit">
+                    Ajouter au panier
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-heading">
+              <span>2</span>
+              <div>
+                <h2>Gestion des articles</h2>
+                <p>
+                  Ajout de plusieurs lignes de produits avec calcul en temps
+                  réel.
+                </p>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire (Ar)</th>
+                    <th>Total (Ar)</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="item : ${panier}">
+                    <td th:text="${item.nomProduit}"></td>
+                    <td
+                      th:text="${item.quantite} + ' ' + (${item.unite} != null and ${item.unite} != '' ? item.unite : 'kg')"
+                    ></td>
+                    <td
+                      th:text="${#numbers.formatDecimal(item.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' / ' + (${item.unite} != null and ${item.unite} != '' ? item.unite : 'kg')"
+                    ></td>
+                    <td
+                      th:text="${#numbers.formatDecimal(item.montant, 0, 'COMMA', 2, 'POINT')}"
+                    ></td>
+                    <td>
+                      <form
+                        th:action="@{/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}"
+                        method="post"
+                      >
+                        <button class="btn btn-red btn-small" type="submit">
+                          X
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <tr th:if="${panier == null or #lists.isEmpty(panier)}">
+                    <td colspan="5" class="empty-state">
+                      Aucun produit dans le panier.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-heading">
+              <span>3</span>
+              <div>
+                <h2>Logistique et règlement</h2>
+                <p>Mode de paiement et validation finale de la vente.</p>
+              </div>
+            </div>
+
+            <form
+              th:action="@{/ventes/valider}"
+              th:object="${venteForm}"
+              method="post"
+            >
+              <div class="form-grid">
+                <div class="field">
+                  <label for="idClient">Client</label>
+                  <select
+                    id="idClient"
+                    class="form-control"
+                    th:field="*{idClient}"
+                  >
+                    <option value="" disabled selected>
+                      Choisir un client
+                    </option>
+                    <option
+                      th:each="client : ${clientsDisponibles}"
+                      th:value="${client.id}"
+                      th:text="${client.nom + ' ' + client.prenom}"
+                    ></option>
+                  </select>
+                  <div
+                    class="error"
+                    th:if="${#fields.hasErrors('idClient')}"
+                    th:errors="*{idClient}"
+                  ></div>
+                </div>
+                <div class="field">
+                  <label for="idModePaiement">Mode de paiement</label>
+                  <select
+                    id="idModePaiement"
+                    class="form-control"
+                    th:field="*{idModePaiement}"
+                  >
+                    <option value="" disabled selected>
+                      Choisir un mode de paiement
+                    </option>
+                    <option
+                      th:each="mode : ${modesPaiementDisponibles}"
+                      th:value="${mode.id}"
+                      th:text="${mode.libelle}"
+                    ></option>
+                  </select>
+                  <div
+                    class="error"
+                    th:if="${#fields.hasErrors('idModePaiement')}"
+                    th:errors="*{idModePaiement}"
+                  ></div>
+                </div>
+                <div class="field">
+                  <label for="saleDate">Date de vente</label>
+                  <input
+                    id="saleDate"
+                    class="form-control"
+                    type="date"
+                    th:value="${T(java.time.LocalDate).now()}"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <div class="form-grid" style="margin-top: 16px">
+                <div class="field field-full">
+                  <label style="display: flex; align-items: center; gap: 8px">
+                    <input
+                      type="checkbox"
+                      id="livraisonRequise"
+                      th:field="*{livraisonRequise}"
+                      onclick="toggleLivraisonFields()"
+                    />
+                    Livraison requise ?
+                  </label>
+                </div>
+              </div>
+
+              <div id="livraisonFields" class="form-grid" style="display: none">
+                <div class="field field-full">
+                  <label for="adresseLivraison">Adresse de livraison</label>
+                  <input
+                    id="adresseLivraison"
+                    class="form-control"
+                    type="text"
+                    placeholder="Adresse de livraison"
+                    th:field="*{adresseLivraison}"
+                  />
+                </div>
+                <div class="field">
+                  <label for="contactLivraison">Contact sur place</label>
+                  <input
+                    id="contactLivraison"
+                    class="form-control"
+                    type="text"
+                    placeholder="Numéro de téléphone"
+                    th:field="*{contactLivraison}"
+                  />
+                </div>
+                <div class="field">
+                  <label for="dateLivraisonSouhaitee"
+                    >Date de livraison souhaitée</label
+                  >
+                  <input
+                    id="dateLivraisonSouhaitee"
+                    class="form-control"
+                    type="date"
+                    th:field="*{dateLivraisonSouhaitee}"
+                  />
+                </div>
+                <div class="field field-full">
+                  <label for="commentaireLivraison"
+                    >Commentaire / instructions</label
+                  >
+                  <textarea
+                    id="commentaireLivraison"
+                    class="form-control"
+                    rows="2"
+                    placeholder="Instructions particulières pour le livreur (optionnel)"
+                    th:field="*{commentaireLivraison}"
+                  ></textarea>
+                </div>
+              </div>
+              <script>
+                function toggleLivraisonFields() {
+                  var checkbox = document.getElementById("livraisonRequise");
+                  var fields = document.getElementById("livraisonFields");
+                  fields.style.display = checkbox.checked ? "grid" : "none";
+                }
+                document.addEventListener(
+                  "DOMContentLoaded",
+                  toggleLivraisonFields,
+                );
+              </script>
+
+              <div class="summary-card">
                 <div>
-                    <p class="eyebrow">RO04 - Responsable Commercial</p>
-                    <h1>Enregistrer une nouvelle vente</h1>
-                    <p>Formulaire dynamique de saisie d’une vente client avec calcul automatique du total.</p>
+                  <span class="summary-label">Sous-total</span>
+                  <span
+                    class="summary-value"
+                    th:text="${#numbers.formatDecimal(panierTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
+                  ></span>
                 </div>
-                <span class="role-badge">RO04 - Responsable Commercial</span>
-            </section>
-
-            <section class="tab-list" role="tablist">
-                <a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
-                <a class="tab-link" th:href="@{/ventes/historique}">Historique</a>
-                <a class="tab-link" th:href="@{/ventes/recettes}">Recettes</a>
-                <a class="tab-link active" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
-            </section>
-
-            <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
-            <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
-
-            <section class="form-card">
-                <div class="form-section">
-                    <div class="form-section-heading">
-                        <span>1</span>
-                        <div>
-                            <h2>Informations générales</h2>
-                            <p>Identification du client et date de la transaction.</p>
-                        </div>
-                    </div>
-
-                    <form th:action="@{/ventes/panier/ajouter}" th:object="${panierForm}" method="post">
-                        <div class="form-grid">
-                            <div class="field field-full">
-                                <label for="idProduit">Produit</label>
-                                <select id="idProduit" class="form-control" th:field="*{idProduit}">
-                                    <option value="" disabled selected>Choisir un produit</option>
-                                    <option th:each="produit : ${produitsDisponibles}"
-                                            th:value="${produit.id}"
-                                            th:text="${produit.nom + ' - ' + produit.ref}"></option>
-                                </select>
-                            </div>
-                            <div class="field">
-                                <label for="quantite">Quantité</label>
-                                <input id="quantite" class="form-control" type="number" step="0.01" min="0.01" th:field="*{quantite}">
-                            </div>
-                            <div class="field field-actions" style="align-self: flex-end;">
-                                <button class="btn btn-green" type="submit">Ajouter au panier</button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="card-actions">
+                  <button
+                    class="btn btn-ghost"
+                    type="button"
+                    onclick="window.location.href = '/ventes'"
+                  >
+                    Annuler
+                  </button>
+                  <button class="btn btn-green" type="submit">
+                    Enregistrer la vente
+                  </button>
                 </div>
-
-                <div class="form-section">
-                    <div class="form-section-heading">
-                        <span>2</span>
-                        <div>
-                            <h2>Gestion des articles</h2>
-                            <p>Ajout de plusieurs lignes de produits avec calcul en temps réel.</p>
-                        </div>
-                    </div>
-
-                    <div class="table-wrap">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Produit</th>
-                                    <th>Quantité</th>
-                                    <th>Prix unitaire (Ar)</th>
-                                    <th>Total (Ar)</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="item : ${panier}">
-                                    <td th:text="${item.nomProduit}"></td>
-                                    <td th:text="${item.quantite} + ' ' + (${item.unite} != null and ${item.unite} != '' ? item.unite : 'kg')"></td>
-                                    <td th:text="${#numbers.formatDecimal(item.prixUnitaire, 0, 'COMMA', 2, 'POINT')} + ' / ' + (${item.unite} != null and ${item.unite} != '' ? item.unite : 'kg')"></td>
-                                    <td th:text="${#numbers.formatDecimal(item.montant, 0, 'COMMA', 2, 'POINT')}"></td>
-                                    <td>
-                                        <form th:action="@{/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}" method="post">
-                                            <button class="btn btn-red btn-small" type="submit">X</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <tr th:if="${panier == null or #lists.isEmpty(panier)}">
-                                    <td colspan="5" class="empty-state">Aucun produit dans le panier.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="form-section-heading">
-                        <span>3</span>
-                        <div>
-                            <h2>Logistique et règlement</h2>
-                            <p>Mode de paiement et validation finale de la vente.</p>
-                        </div>
-                    </div>
-
-                    <form th:action="@{/ventes/valider}" th:object="${venteForm}" method="post">
-                        <div class="form-grid">
-                            <div class="field">
-                                <label for="idClient">Client</label>
-                                <select id="idClient" class="form-control" th:field="*{idClient}">
-                                    <option value="" disabled selected>Choisir un client</option>
-                                    <option th:each="client : ${clientsDisponibles}"
-                                            th:value="${client.id}"
-                                            th:text="${client.nom + ' ' + client.prenom}"></option>
-                                </select>
-                                <div class="error" th:if="${#fields.hasErrors('idClient')}" th:errors="*{idClient}"></div>
-                            </div>
-                            <div class="field">
-                                <label for="idModePaiement">Mode de paiement</label>
-                                <select id="idModePaiement" class="form-control" th:field="*{idModePaiement}">
-                                    <option value="" disabled selected>Choisir un mode de paiement</option>
-                                    <option th:each="mode : ${modesPaiementDisponibles}"
-                                            th:value="${mode.id}"
-                                            th:text="${mode.libelle}"></option>
-                                </select>
-                                <div class="error" th:if="${#fields.hasErrors('idModePaiement')}" th:errors="*{idModePaiement}"></div>
-                            </div>
-                            <div class="field">
-                                <label for="saleDate">Date de vente</label>
-                                <input id="saleDate" class="form-control" type="date" th:value="${T(java.time.LocalDate).now()}" disabled>
-                            </div>
-                        </div>
-
-                        <div class="form-grid" style="margin-top: 16px;">
-                            <div class="field field-full">
-                                <label style="display:flex; align-items:center; gap:8px;">
-                                    <input type="checkbox" id="livraisonRequise" th:field="*{livraisonRequise}" onclick="toggleLivraisonFields()">
-                                    Livraison requise ?
-                                </label>
-                            </div>
-                        </div>
-
-                        <div id="livraisonFields" class="form-grid" style="display:none;">
-                            <div class="field field-full">
-                                <label for="adresseLivraison">Adresse de livraison</label>
-                                <input id="adresseLivraison" class="form-control" type="text" placeholder="Adresse de livraison" th:field="*{adresseLivraison}">
-                            </div>
-                            <div class="field">
-                                <label for="contactLivraison">Contact sur place</label>
-                                <input id="contactLivraison" class="form-control" type="text" placeholder="Numéro de téléphone" th:field="*{contactLivraison}">
-                            </div>
-                            <div class="field">
-                                <label for="dateLivraisonSouhaitee">Date de livraison souhaitée</label>
-                                <input id="dateLivraisonSouhaitee" class="form-control" type="date" th:field="*{dateLivraisonSouhaitee}">
-                            </div>
-                            <div class="field field-full">
-                                <label for="commentaireLivraison">Commentaire / instructions</label>
-                                <textarea id="commentaireLivraison" class="form-control" rows="2" placeholder="Instructions particulières pour le livreur (optionnel)" th:field="*{commentaireLivraison}"></textarea>
-                            </div>
-                        </div>
-                        <script>
-                        function toggleLivraisonFields() {
-                            var checkbox = document.getElementById('livraisonRequise');
-                            var fields = document.getElementById('livraisonFields');
-                            fields.style.display = checkbox.checked ? 'grid' : 'none';
-                        }
-                        document.addEventListener('DOMContentLoaded', toggleLivraisonFields);
-                        </script>
-
-                        <div class="summary-card">
-                            <div>
-                                <span class="summary-label">Sous-total</span>
-                                <span class="summary-value" th:text="${#numbers.formatDecimal(panierTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></span>
-                            </div>
-                            <div class="card-actions">
-                                <button class="btn btn-ghost" type="button" onclick="window.location.href='/ventes'">Annuler</button>
-                                <button class="btn btn-green" type="submit">Enregistrer la vente</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </section>
-            <div id="vina-footer" th:replace="~{layout/footer}"></div>
-        </div>
+              </div>
+            </form>
+          </div>
+        </section>
+        <div id="vina-footer" th:replace="~{layout/footer}"></div>
+      </div>
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
     <script th:src="@{/js/script_content.js}"></script>
-</body>
+  </body>
 </html>
