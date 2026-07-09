@@ -60,6 +60,7 @@
                             <input type="text" name="recherche" class="form-control" placeholder="Client, produit, facture..." th:value="${param.recherche}">
                         </div>
                         <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
+                        <input type="hidden" name="taille" th:value="${pageSize}">
                         <div class="form-actions" style="margin-top: 10px;">
                             <button class="btn btn-green w-100" type="submit">Rechercher</button>
                         </div>
@@ -72,6 +73,7 @@
                         <input type="hidden" name="recherche" th:value="${param.recherche}">
                         <input type="hidden" name="triPar" th:value="${param.triPar}">
                         <input type="hidden" name="ordreTri" th:value="${param.ordreTri}">
+                        <input type="hidden" name="taille" th:value="${pageSize}">
                         
                         <div class="form-group">
                             <label class="form-label">Mode de paiement</label>
@@ -123,6 +125,7 @@
                         <input type="hidden" name="dateDebut" th:value="${param.dateDebut}">
                         <input type="hidden" name="dateFin" th:value="${param.dateFin}">
                         <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
+                        <input type="hidden" name="page" th:value="${currentPage}">
                         
                         <div class="form-group">
                             <label class="form-label">Trier par</label>
@@ -141,6 +144,29 @@
                         </div>
                         <div class="form-actions" style="margin-top: 20px;">
                             <button class="btn btn-green w-100" type="submit">Trier</button>
+                        </div>
+                    </form>
+
+                    <div class="side-panel-heading" style="margin-top: 30px;">
+                        <h2>Pagination</h2>
+                    </div>
+                    <form th:action="@{/ventes}" method="get">
+                        <input type="hidden" name="recherche" th:value="${param.recherche}">
+                        <input type="hidden" name="modePaiement" th:value="${param.modePaiement}">
+                        <input type="hidden" name="statut" th:value="${param.statut}">
+                        <input type="hidden" name="dateDebut" th:value="${param.dateDebut}">
+                        <input type="hidden" name="dateFin" th:value="${param.dateFin}">
+                        <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
+                        <input type="hidden" name="triPar" th:value="${param.triPar}">
+                        <input type="hidden" name="ordreTri" th:value="${param.ordreTri}">
+                        <input type="hidden" name="page" value="1">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Éléments par page</label>
+                            <input type="number" name="taille" class="form-control" th:value="${pageSize}" min="1" max="100" placeholder="10">
+                        </div>
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <button class="btn btn-green w-100" type="submit">Appliquer</button>
                         </div>
                     </form>
                 </aside>
@@ -191,6 +217,34 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        
+                        <div class="pagination" th:if="${totalPages > 1}">
+                            <div class="pagination-info">
+                                <span th:text="'Page ' + ${currentPage} + ' / ' + ${totalPages}"></span>
+                                <span th:text="'(' + ${totalElements} + ' éléments)'"></span>
+                            </div>
+                            <div class="pagination-controls">
+                                <a th:href="@{/ventes(page=${currentPage - 1}, recherche=${param.recherche}, modePaiement=${param.modePaiement}, statut=${param.statut}, dateDebut=${param.dateDebut}, dateFin=${param.dateFin}, avecLivraison=${param.avecLivraison}, triPar=${param.triPar}, ordreTri=${param.ordreTri}, taille=${pageSize})}" 
+                                   class="btn btn-sm btn-ghost"
+                                   th:disabled="${currentPage == 1}"
+                                   th:classappend="${currentPage == 1} ? 'disabled' : ''">Précédent</a>
+
+                                <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                    <a th:if="${i == currentPage}" 
+                                       class="btn btn-sm btn-green active" 
+                                       th:text="${i}"></a>
+                                    <a th:if="${i != currentPage}"
+                                       th:href="@{/ventes(page=${i}, recherche=${param.recherche}, modePaiement=${param.modePaiement}, statut=${param.statut}, dateDebut=${param.dateDebut}, dateFin=${param.dateFin}, avecLivraison=${param.avecLivraison}, triPar=${param.triPar}, ordreTri=${param.ordreTri}, taille=${pageSize})}"
+                                       class="btn btn-sm btn-ghost"
+                                       th:text="${i}"></a>
+                                </th:block>
+
+                                <a th:href="@{/ventes(page=${currentPage + 1}, recherche=${param.recherche}, modePaiement=${param.modePaiement}, statut=${param.statut}, dateDebut=${param.dateDebut}, dateFin=${param.dateFin}, avecLivraison=${param.avecLivraison}, triPar=${param.triPar}, ordreTri=${param.ordreTri}, taille=${pageSize})}"
+                                   class="btn btn-sm btn-ghost"
+                                   th:disabled="${currentPage == totalPages}"
+                                   th:classappend="${currentPage == totalPages} ? 'disabled' : ''">Suivant</a>
+                            </div>
                         </div>
                     </div>
                 </main>
