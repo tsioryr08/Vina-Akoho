@@ -1,118 +1,190 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VINA AKOHO - Historique des Ventes</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body class="vina-body">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VINA AKOHO - Historique des Ventes</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="vina-body">
     <div id="vina-sidebar" th:replace="~{layout/responsableCommercial}"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="~{layout/header}"></div>
-        <div id="vina-content">
-<section class="page-header">
-<div>
-<p class="eyebrow">RO04 - Responsable Commercial</p>
-<h1>Historique des ventes</h1>
-<p>Reporting commercial pour analyser la santé des ventes sur une période donnée.</p>
-</div>
-<span class="role-badge">RO04 - Responsable Commercial</span>
-</section>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-content">
+        <section class="page-header">
+          <div>
+            <p class="eyebrow">RO04 - Responsable Commercial</p>
+            <h1>Historique des ventes</h1>
+            <p>
+              Reporting commercial pour analyser la santé des ventes sur une
+              période donnée.
+            </p>
+          </div>
+          <span class="role-badge">RO04 - Responsable Commercial</span>
+        </section>
 
-<section class="tab-list" role="tablist">
-<a class="tab-link" th:href="@{/ventes}">Liste des ventes</a>
-<a class="tab-link active" th:href="@{/ventes/historique}">Historique</a>
-<a class="tab-link" th:href="@{/ventes/recettes}">Recettes</a>
-<a class="tab-link" th:href="@{/ventes/nouvelle}">Nouvelle vente</a>
-</section>
+        <section class="tab-list" role="tablist">
+          <a class="tab-link" th:href="@{/api/ventes}">Liste des ventes</a>
+          <a class="tab-link active" th:href="@{/api/ventes/historique}"
+            >Historique</a
+          >
+          <a class="tab-link" th:href="@{/api/ventes/recettes}">Recettes</a>
+          <a class="tab-link" th:href="@{/api/ventes/nouvelle}"
+            >Nouvelle vente</a
+          >
+        </section>
 
-<section class="card">
-<div class="filter-bar report-filters">
-<form th:action="@{/ventes/historique}" method="get">
-<div class="field">
-<label for="reportPeriod">Période</label>
-<select id="reportPeriod" name="periode" class="form-control">
-<option value="6 derniers mois" th:selected="${periode == '6 derniers mois'}">6 derniers mois</option>
-<option value="Ce mois" th:selected="${periode == 'Ce mois'}">Ce mois</option>
-<option value="Ce trimestre" th:selected="${periode == 'Ce trimestre'}">Ce trimestre</option>
-<option value="Personnalisée" th:selected="${periode == 'Personnalisée'}">Personnalisée</option>
-</select>
-</div>
+        <section class="card">
+          <div class="filter-bar report-filters">
+            <form th:action="@{/api/ventes/historique}" method="get">
+              <div class="field">
+                <label for="reportPeriod">Période</label>
+                <select id="reportPeriod" name="periode" class="form-control">
+                  <option
+                    value="6 derniers mois"
+                    th:selected="${periode == '6 derniers mois'}"
+                  >
+                    6 derniers mois
+                  </option>
+                  <option value="Ce mois" th:selected="${periode == 'Ce mois'}">
+                    Ce mois
+                  </option>
+                  <option
+                    value="Ce trimestre"
+                    th:selected="${periode == 'Ce trimestre'}"
+                  >
+                    Ce trimestre
+                  </option>
+                  <option
+                    value="Personnalisée"
+                    th:selected="${periode == 'Personnalisée'}"
+                  >
+                    Personnalisée
+                  </option>
+                </select>
+              </div>
 
-<div class="field">
-<label for="reportZone">Zone cible</label>
-<select id="reportZone" name="zone" class="form-control">
-<option value="Toutes les zones" th:selected="${zone == null or zone == 'Toutes les zones'}">Toutes les zones</option>
-<option value="ITAOSY" th:selected="${zone == 'ITAOSY'}">Itaosy</option>
-<option value="MAHITSY" th:selected="${zone == 'MAHITSY'}">Mahitsy</option>
-<option value="AMBOHIDRATRIMO" th:selected="${zone == 'AMBOHIDRATRIMO'}">Ambohidratrimo</option>
-<option value="ANKAZOBE" th:selected="${zone == 'ANKAZOBE'}">Ankazobe</option>
-</select>
-</div>
+              <div class="field">
+                <label for="reportZone">Zone cible</label>
+                <select id="reportZone" name="zone" class="form-control">
+                  <option
+                    value="Toutes les zones"
+                    th:selected="${zone == null or zone == 'Toutes les zones'}"
+                  >
+                    Toutes les zones
+                  </option>
+                  <option value="ITAOSY" th:selected="${zone == 'ITAOSY'}">
+                    Itaosy
+                  </option>
+                  <option value="MAHITSY" th:selected="${zone == 'MAHITSY'}">
+                    Mahitsy
+                  </option>
+                  <option
+                    value="AMBOHIDRATRIMO"
+                    th:selected="${zone == 'AMBOHIDRATRIMO'}"
+                  >
+                    Ambohidratrimo
+                  </option>
+                  <option value="ANKAZOBE" th:selected="${zone == 'ANKAZOBE'}">
+                    Ankazobe
+                  </option>
+                </select>
+              </div>
 
-<div class="toolbar-actions">
-<button class="btn btn-green" type="submit">Appliquer</button>
-<button class="btn btn-ghost" type="button" onclick="window.location.href='/ventes/historique'">Réinitialiser</button>
-<button class="btn btn-ghost" type="button" onclick="exporterExcel()">Exporter</button>
-</div>
-<script>
-function exporterExcel() {
-    var periode = document.getElementById('reportPeriod').value;
-    var zone = document.getElementById('reportZone').value;
-    var url = '/ventes/export/excel?periode=' + encodeURIComponent(periode) + '&zone=' + encodeURIComponent(zone);
-    window.location.href = url;
-}
-</script>
-</form>
-</div>
-</section>
+              <div class="toolbar-actions">
+                <button class="btn btn-green" type="submit">Appliquer</button>
+                <button
+                  class="btn btn-ghost"
+                  type="button"
+                  onclick="window.location.href = '/ventes/historique'"
+                >
+                  Réinitialiser
+                </button>
+                <button
+                  class="btn btn-ghost"
+                  type="button"
+                  onclick="exporterExcel()"
+                >
+                  Exporter
+                </button>
+              </div>
+              <script>
+                function exporterExcel() {
+                  var periode = document.getElementById("reportPeriod").value;
+                  var zone = document.getElementById("reportZone").value;
+                  var url =
+                    "/ventes/export/excel?periode=" +
+                    encodeURIComponent(periode) +
+                    "&zone=" +
+                    encodeURIComponent(zone);
+                  window.location.href = url;
+                }
+              </script>
+            </form>
+          </div>
+        </section>
 
-<section class="stats-grid">
-<article class="stat-card">
-<div class="stat-label">Total ventes (kg)</div>
-<div class="stat-value" th:text="${totalVentesKg} + ' kg'"></div>
-<div class="stat-trend trend-positive">Volume global vendu</div>
-</article>
-<article class="stat-card">
-<div class="stat-label">Chiffre d'affaires total</div>
-<div class="stat-value" th:text="${#numbers.formatDecimal(chiffreAffaires, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
-<div class="stat-trend trend-positive">Valeur générée</div>
-</article>
-<article class="stat-card">
-<div class="stat-label">Nombre de transactions</div>
-<div class="stat-value" th:text="${nombreTransactions}"></div>
-<div class="stat-trend trend-info">Commandes payées</div>
-</article>
-</section>
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Total ventes (kg)</div>
+            <div class="stat-value" th:text="${totalVentesKg} + ' kg'"></div>
+            <div class="stat-trend trend-positive">Volume global vendu</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Chiffre d'affaires total</div>
+            <div
+              class="stat-value"
+              th:text="${#numbers.formatDecimal(chiffreAffaires, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
+            ></div>
+            <div class="stat-trend trend-positive">Valeur générée</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Nombre de transactions</div>
+            <div class="stat-value" th:text="${nombreTransactions}"></div>
+            <div class="stat-trend trend-info">Commandes payées</div>
+          </article>
+        </section>
 
-<section class="table-card">
-<div class="table-card-header">
-<div>
-<h2 class="card-title">Produits les plus vendus</h2>
-<p class="card-subtitle">Classement des types d'aliments VINA-AKOHO par volume et chiffre d'affaires. <span th:text="${periode} != null ? periode : '6 derniers mois'"></span></p>
-</div>
-<span class="badge badge-light-green" th:text="${periode} != null ? periode : '6 derniers mois'"></span>
-</div>
+        <section class="table-card">
+          <div class="table-card-header">
+            <div>
+              <h2 class="card-title">Produits les plus vendus</h2>
+              <p class="card-subtitle">
+                Classement des types d'aliments VINA-AKOHO par volume et chiffre
+                d'affaires.
+                <span
+                  th:text="${periode} != null ? periode : '6 derniers mois'"
+                ></span>
+              </p>
+            </div>
+            <span
+              class="badge badge-light-green"
+              th:text="${periode} != null ? periode : '6 derniers mois'"
+            ></span>
+          </div>
 
-<div class="table-wrap">
-<table class="data-table">
-<thead>
-<tr>
-<th>Produit</th>
-<th>Quantité</th>
-<th>Chiffre d'affaires (Ar)</th>
-<th>Part du CA</th>
-</tr>
-</thead>
-<tbody>
-<th:block th:each="produit, stat : ${produitsVendus}">
-<tr>
-<td><strong th:text="${produit.key}"></strong></td>
-<td th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' ' + (${produitsUnite[produit.key]} != null ? produitsUnite[produit.key] : 'kg')"></td>
-<td th:text="${#numbers.formatDecimal(produitsCA[produit.key], 0, 'COMMA', 2, 'POINT')} + ' Ar'"></td>
-<td>
-<!--
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Produit</th>
+                  <th>Quantité</th>
+                  <th>Chiffre d'affaires (Ar)</th>
+                  <th>Part du CA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <th:block th:each="produit, stat : ${produitsVendus}">
+                  <tr>
+                    <td><strong th:text="${produit.key}"></strong></td>
+                    <td
+                      th:text="${#numbers.formatDecimal(produit.value, 0, 'COMMA', 2, 'POINT')} + ' ' + (${produitsUnite[produit.key]} != null ? produitsUnite[produit.key] : 'kg')"
+                    ></td>
+                    <td
+                      th:text="${#numbers.formatDecimal(produitsCA[produit.key], 0, 'COMMA', 2, 'POINT')} + ' Ar'"
+                    ></td>
+                    <td>
+                      <!--
   CORRECTIF : on n'appelle plus BigDecimal.divide(...) directement dans le
   template (ex : produitsCA[produit.key].divide(chiffreAffaires)). Sans scale
   ni RoundingMode explicites, cet appel lève une ArithmeticException
@@ -122,24 +194,35 @@ function exporterExcel() {
   "produitsPourcentage" (avec .divide(chiffreAffaires, 4, RoundingMode.HALF_UP)),
   on se contente ici de l'afficher.
 -->
-<span class="badge badge-blue" th:if="${chiffreAffaires != null and chiffreAffaires > 0}"
-      th:text="${#numbers.formatDecimal(produitsPourcentage[produit.key], 1, 'COMMA', 1, 'POINT')} + '%'"></span>
-<span class="badge badge-blue" th:unless="${chiffreAffaires != null and chiffreAffaires > 0}">0%</span>
-</td>
-</tr>
-</th:block>
-<tr th:if="${produitsVendus == null or produitsVendus.isEmpty()}">
-<td colspan="4" class="empty-state">Aucune vente enregistrée.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-        </div>
-        <div id="vina-footer" th:replace="~{layout/footer}"></div>
+                      <span
+                        class="badge badge-blue"
+                        th:if="${chiffreAffaires != null and chiffreAffaires > 0}"
+                        th:text="${#numbers.formatDecimal(produitsPourcentage[produit.key], 1, 'COMMA', 1, 'POINT')} + '%'"
+                      ></span>
+                      <span
+                        class="badge badge-blue"
+                        th:unless="${chiffreAffaires != null and chiffreAffaires > 0}"
+                        >0%</span
+                      >
+                    </td>
+                  </tr>
+                </th:block>
+                <tr
+                  th:if="${produitsVendus == null or produitsVendus.isEmpty()}"
+                >
+                  <td colspan="4" class="empty-state">
+                    Aucune vente enregistrée.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+      <div id="vina-footer" th:replace="~{layout/footer}"></div>
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
     <script th:src="@{/js/script_content.js}"></script>
-</body>
+  </body>
 </html>
