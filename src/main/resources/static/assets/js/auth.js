@@ -59,7 +59,7 @@ window.VinaAkohoAuth = {
             'ADMINISTRATEUR': '/admin',
             'RESPONSABLE_ACHATS': '/achats',
             'RESPONSABLE_PRODUCTION': '/production',
-            'GESTIONNAIRE_DE_STOCK': '/stock',
+            'GESTIONNAIRE_DE_STOCK': '/api/stock',
             'RESPONSABLE_COMMERCIAL': '/commercial',
             'COMPTABLE': '/comptabilite',
             'LIVREUR': '/livraison'
