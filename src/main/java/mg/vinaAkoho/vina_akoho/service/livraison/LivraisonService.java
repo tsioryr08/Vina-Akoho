@@ -65,11 +65,13 @@ public class LivraisonService {
 
         livraison livraison = new livraison();
         livraison.setVente(vente);
-        if (form.getIdLivreur() != null) {
-            livreur livreur = livreurRepository.findById(form.getIdLivreur())
-                    .orElseThrow(() -> LivreurNotFoundException.parId(Long.valueOf(form.getIdLivreur())));
-            livraison.setLivreur(livreur);
+        if (form.getIdLivreur() == null) {
+            throw new IllegalArgumentException("Le livreur est obligatoire pour créer une livraison.");
         }
+
+        livreur livreur = livreurRepository.findById(form.getIdLivreur())
+            .orElseThrow(() -> LivreurNotFoundException.parId(Long.valueOf(form.getIdLivreur())));
+        livraison.setLivreur(livreur);
         livraison.setLieuExact(form.getLieuExact());
         livraison.setContact(form.getContact());
         if (form.getDateLivraison() != null && !form.getDateLivraison().isBlank()) {
@@ -99,6 +101,11 @@ public class LivraisonService {
         statutLivraison statut = statutLivraisonRepository.findByLibelleIgnoreCase(nouveauStatutLibelle)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Statut de livraison introuvable : " + nouveauStatutLibelle));
+
+        if (("livrée".equalsIgnoreCase(statut.getLibelle()) || "livree".equalsIgnoreCase(statut.getLibelle()))
+            && livraison.getLivreur() == null) {
+            throw new IllegalStateException("Une livraison doit avoir un livreur assigné avant d'être validée.");
+        }
 
         livraison.setStatutLivraison(statut);
         livraison = livraisonRepository.save(livraison);

@@ -17,6 +17,7 @@ public class LivraisonFormDTO {
     @NotNull(message = "La vente est obligatoire")
     private Long idVente;
 
+    @NotNull(message = "Le livreur est obligatoire")
     private Integer idLivreur;
 
     private String lieuExact;
