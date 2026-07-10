@@ -1021,13 +1021,13 @@ public class VenteController {
                                Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "Le client et le mode de paiement sont obligatoires.");
-            return "/api/ventes/responsable-commercial-ventes-nouvelles";
+            return "ventes/responsable-commercial-ventes-nouvelles";
         }
 
         List<PanierItemDTO> panier = panier(session);
         if (panier.isEmpty()) {
             model.addAttribute("error", "Le panier est vide.");
-            return "/api/ventes/responsable-commercial-ventes-nouvelles";
+            return "ventes/responsable-commercial-ventes-nouvelles";
         }
 
         try {
@@ -1041,7 +1041,7 @@ public class VenteController {
             return "redirect:/api/ventes";
         } catch (Exception e) {
             model.addAttribute("error", "Impossible de créer la vente : " + e.getMessage());
-            return "/api/ventes/responsable-commercial-ventes-nouvelles";
+            return "ventes/responsable-commercial-ventes-nouvelles";
         }
     }
 
@@ -1049,7 +1049,7 @@ public class VenteController {
     public String detailVente(@PathVariable Long id, Model model) {
         VenteDTO vente = venteService.trouverParId(id);
         model.addAttribute("vente", vente);
-        return "/api/ventes/responsable-commercial-ventes-detail";
+        return "ventes/responsable-commercial-ventes-detail";
     }
 
     @PostMapping("/{id}/valider-paiement")
@@ -1080,13 +1080,13 @@ public class VenteController {
     public String facture(@PathVariable Long id, Model model) {
         VenteDTO vente = venteService.trouverParId(id);
         model.addAttribute("vente", vente);
-        return "/api/ventes/facture";
+        return "ventes/facture";
     }
 
     @GetMapping("/{id}/bon-livraison")
     public String bonLivraison(@PathVariable Long id, Model model) {
         VenteDTO vente = venteService.trouverParId(id);
         model.addAttribute("vente", vente);
-        return "/api/ventes/bon-livraison";
+        return "ventes/bon-livraison";
     }
 }

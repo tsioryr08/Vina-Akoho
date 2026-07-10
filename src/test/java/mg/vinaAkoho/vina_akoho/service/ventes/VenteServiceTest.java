@@ -12,11 +12,14 @@ import mg.vinaAkoho.vina_akoho.entity.ventes.StatutVente;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Vente;
 import mg.vinaAkoho.vina_akoho.repository.clients.ClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.LivraisonRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.StatutLivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.FactureRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.LigneVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.StatutVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
+import mg.vinaAkoho.vina_akoho.service.livraison.LivraisonService;
 import mg.vinaAkoho.vina_akoho.service.stockproduit.SortieProduitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,6 +65,15 @@ class VenteServiceTest {
 
     @Mock
     private SortieProduitService sortieProduitService;
+
+    @Mock
+    private LivraisonService livraisonService;
+
+    @Mock
+    private LivraisonRepository livraisonRepository;
+
+    @Mock
+    private StatutLivraisonRepository statutLivraisonRepository;
 
     @InjectMocks
     private VenteService venteService;
@@ -198,6 +210,7 @@ class VenteServiceTest {
     @Test
     void testValiderPaiement_ChangeStatut() {
         when(venteRepository.findById(1L)).thenReturn(Optional.of(vente));
+        when(livraisonRepository.findByVenteId(1L)).thenReturn(Optional.empty());
         when(statutVenteRepository.findByLibelleIgnoreCase("Validée"))
                 .thenReturn(Optional.of(statutVente));
         when(venteRepository.save(any(Vente.class))).thenReturn(vente);
