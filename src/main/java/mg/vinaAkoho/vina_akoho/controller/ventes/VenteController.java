@@ -46,7 +46,7 @@ import mg.vinaAkoho.vina_akoho.dto.ventes.ProduitVenduExportDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteListeExportDTO;
 
 @Controller
-@RequestMapping("/api/ventes")
+@RequestMapping({"/api/ventes", "/ventes"})
 @RequiredArgsConstructor
 public class VenteController {
 
@@ -227,10 +227,11 @@ public class VenteController {
         }
         
         // Pagination
-        int pageSize = taille != null ? taille : 10;
-        int currentPage = page != null ? page : 1;
+        int pageSize = taille != null && taille > 0 ? taille : 10;
         int totalElements = ventesFiltrees.size();
-        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalElements / pageSize));
+        int currentPage = page != null ? page : 1;
+        currentPage = Math.max(1, Math.min(currentPage, totalPages));
         
         int startIndex = (currentPage - 1) * pageSize;
         int endIndex = Math.min(startIndex + pageSize, totalElements);
