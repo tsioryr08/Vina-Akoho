@@ -1,29 +1,31 @@
 package mg.vinaAkoho.vina_akoho.controller.clients;
 
-import jakarta.validation.Valid;
 import java.util.Map;
+
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.validation.Valid;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientConnexionDTO;
-import mg.vinaAkoho.vina_akoho.dto.clients.ClientHistoriqueAchatsDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientGestionDTO;
+import mg.vinaAkoho.vina_akoho.dto.clients.ClientHistoriqueAchatsDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientResumeDTO;
 import mg.vinaAkoho.vina_akoho.repository.clients.ServiceClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.clients.TypeClientRepository;
 import mg.vinaAkoho.vina_akoho.service.clients.ClientService;
 import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/api/clients")

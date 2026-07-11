@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Import Clients - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div th:replace="~{layout/responsableCommercial :: sidebar}"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+    <div class="main">
+      <div th:replace="~{layout/header :: header}"></div>
+      <div class="content">
+        <section class="page-header theme-green">
+          <div>
+            <p class="eyebrow">CLIENTS</p>
+            <h1>Import en masse</h1>
+            <p>Importer plusieurs clients depuis un fichier Excel.</p>
+          </div>
+        </section>
+
+        <div th:replace="~{layout/fragment-import-excel :: formulaireImport('formImportClient', 'inputFichierClient', 'resultatImportClient', @{/api/clients/import/modele})}"></div>
+      </div>
+      <div class="app-footer">VINA AKOHO — Import Clients</div>
+    </div>
+
+    <script th:src="@{/js/import-excel.js}"></script>
+    <script th:inline="javascript">
+      initImportExcel({
+        urlApercu: /*[[@{/api/clients/import/apercu}]]*/ "",
+        urlImport: /*[[@{/api/clients/import}]]*/ "",
+        inputFileId: "inputFichierClient",
+        formId: "formImportClient",
+        resultatContainerId: "resultatImportClient",
+      });
+    </script>
+  </body>
+</html>
