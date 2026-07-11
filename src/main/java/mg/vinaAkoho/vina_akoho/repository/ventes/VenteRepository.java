@@ -23,6 +23,16 @@ public interface VenteRepository extends JpaRepository<Vente, Long> {
 
     List<Vente> findAllByOrderByDateVenteDesc();
 
+    @Query("""
+            SELECT DISTINCT v
+            FROM Vente v
+            LEFT JOIN FETCH v.client
+            LEFT JOIN FETCH v.lignes lv
+            LEFT JOIN FETCH lv.produit
+            ORDER BY v.dateVente DESC
+            """)
+    List<Vente> findAllWithClientAndLignesProduitOrderByDateVenteDesc();
+
     List<Vente> findByClientIdOrderByDateVenteDesc(Integer clientId);
 
     @Query("""

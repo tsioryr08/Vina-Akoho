@@ -1,6 +1,9 @@
 package mg.vinaAkoho.vina_akoho.controller.livraison;
 
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,9 +39,30 @@ public class LivraisonController {
     private final StatutLivraisonRepository statutLivraisonRepository;
 
     @ModelAttribute("ventesDisponibles")
-    public List<Vente> getVentesDisponibles() {
-        return venteRepository.findAll();
+        public Map<Long, String> getVentesDisponibles() {
+        return venteRepository.findAllWithClientAndLignesProduitOrderByDateVenteDesc().stream()
+            .collect(Collectors.toMap(
+                Vente::getId,
+                this::formaterLibelleVente,
+                (premier, second) -> premier,
+                LinkedHashMap::new
+            ));
     }
+
+        private String formaterLibelleVente(Vente vente) {
+        String client = vente.getClient() != null
+            ? vente.getClient().getNom() + " " + vente.getClient().getPrenom()
+            : "Client inconnu";
+
+        String produits = vente.getLignes() == null || vente.getLignes().isEmpty()
+            ? "Produit inconnu"
+            : vente.getLignes().stream()
+                .map(ligne -> ligne.getProduit() != null ? ligne.getProduit().getNom() : "Produit inconnu")
+                .distinct()
+                .collect(Collectors.joining(", "));
+
+        return client + " - " + produits;
+        }
 
     @ModelAttribute("livreursDisponibles")
     public List<livreur> getLivreursDisponibles() {

@@ -30,9 +30,9 @@
                             <label for="idVente">Vente *</label>
                             <select id="idVente" th:field="*{idVente}" class="form-control" required>
                                 <option value="">Sélectionner une vente</option>
-                                <option th:each="vente : ${ventesDisponibles}"
-                                        th:value="${vente.id}"
-                                        th:text="'V' + ${vente.id}"></option>
+                                <option th:each="venteEntry : ${ventesDisponibles.entrySet()}"
+                                        th:value="${venteEntry.key}"
+                                        th:text="${venteEntry.value}"></option>
                             </select>
                         </div>
 
