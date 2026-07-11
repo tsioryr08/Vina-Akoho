@@ -31,13 +31,14 @@
                 <article class="stat-card">
                     <div class="stat-label">Ventes du jour</div>
                     <div class="stat-value" th:text="${#numbers.formatDecimal(ventesJour, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
-                    <div class="stat-trend trend-positive">+0 vs hier</div>
+                    <div class="stat-trend"
+                         th:classappend="${diffHier >= 0} ? 'trend-positive' : 'trend-negative'"
+                         th:text="${(diffHier >= 0 ? '+' : '') + #numbers.formatDecimal(diffHier, 0, 'COMMA', 2, 'POINT') + ' vs hier'}">
+                        0 vs hier
+                    </div>
                 </article>
-                <article class="stat-card">
-                    <div class="stat-label">Chiffre d'affaires (Mois)</div>
-                    <div class="stat-value" th:text="${#numbers.formatDecimal(caMois, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
-                    <div class="stat-trend trend-positive">Ventes validées</div>
-                </article>
+
+
                 <article class="stat-card">
                     <div class="stat-label">Commandes en attente</div>
                     <div class="stat-value" th:text="${commandesEnAttente}"></div>
