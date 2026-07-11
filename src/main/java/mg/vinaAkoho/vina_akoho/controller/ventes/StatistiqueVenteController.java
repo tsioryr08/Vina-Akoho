@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.ventes.EvolutionVenteStatDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.StatistiqueVenteReponseDTO;
 import mg.vinaAkoho.vina_akoho.entity.produit.Categorie;
 import mg.vinaAkoho.vina_akoho.repository.produit.CategorieRepository;
@@ -68,5 +69,14 @@ public class StatistiqueVenteController {
             @RequestParam(defaultValue = "quantite") String triProduits,
             @RequestParam(defaultValue = "jour") String granularite) {
         return statistiqueVenteService.obtenirStatistiques(dateDebut, dateFin, idCategorie, triProduits, granularite);
+    }
+    @GetMapping(value = "/evolution", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<EvolutionVenteStatDTO> evolution(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+            @RequestParam(required = false) Long idCategorie,
+            @RequestParam(defaultValue = "jour") String granularite) {
+        return statistiqueVenteService.obtenirEvolution(dateDebut, dateFin, idCategorie, granularite);
     }
 }
