@@ -105,7 +105,14 @@
                   type="button"
                   onclick="exporterExcel()"
                 >
-                  Exporter
+                  Exporter Excel
+                </button>
+                <button
+                  class="btn btn-ghost"
+                  type="button"
+                  onclick="exporterPdf()"
+                >
+                  Export PDF
                 </button>
               </div>
               <script>
@@ -113,7 +120,17 @@
                   var periode = document.getElementById("reportPeriod").value;
                   var zone = document.getElementById("reportZone").value;
                   var url =
-                    "/ventes/export/excel?periode=" +
+                    "/api/ventes/historique/export/excel?periode=" +
+                    encodeURIComponent(periode) +
+                    "&zone=" +
+                    encodeURIComponent(zone);
+                  window.location.href = url;
+                }
+                function exporterPdf() {
+                  var periode = document.getElementById("reportPeriod").value;
+                  var zone = document.getElementById("reportZone").value;
+                  var url =
+                    "/api/ventes/historique/export/pdf?periode=" +
                     encodeURIComponent(periode) +
                     "&zone=" +
                     encodeURIComponent(zone);

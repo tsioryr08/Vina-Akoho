@@ -1083,10 +1083,32 @@ public class VenteController {
         return "ventes/facture";
     }
 
+    @GetMapping("/{id}/facture/pdf")
+    public void facturePdf(@PathVariable Long id, jakarta.servlet.http.HttpServletResponse response) throws IOException {
+        VenteDTO vente = venteService.trouverParId(id);
+        byte[] pdfData = exportVenteService.exporterFactureVentePdf(vente);
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=facture_vente_" + id + ".pdf");
+        response.getOutputStream().write(pdfData);
+        response.getOutputStream().flush();
+    }
+
     @GetMapping("/{id}/bon-livraison")
     public String bonLivraison(@PathVariable Long id, Model model) {
         VenteDTO vente = venteService.trouverParId(id);
         model.addAttribute("vente", vente);
         return "ventes/bon-livraison";
+    }
+
+    @GetMapping("/{id}/bon-livraison/pdf")
+    public void bonLivraisonPdf(@PathVariable Long id, jakarta.servlet.http.HttpServletResponse response) throws IOException {
+        VenteDTO vente = venteService.trouverParId(id);
+        byte[] pdfData = exportVenteService.exporterBonLivraisonPdf(vente);
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=bon_livraison_" + id + ".pdf");
+        response.getOutputStream().write(pdfData);
+        response.getOutputStream().flush();
     }
 }

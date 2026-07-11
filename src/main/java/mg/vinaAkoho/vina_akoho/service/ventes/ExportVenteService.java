@@ -351,4 +351,60 @@ public class ExportVenteService {
 
         return outputStream.toByteArray();
     }
+
+    public byte[] exporterBonLivraisonPdf(VenteDTO vente) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document, outputStream);
+
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+        Paragraph title = new Paragraph("VINA AKOHO - Bon de livraison", titleFont);
+        title.setAlignment(Paragraph.ALIGN_CENTER);
+        title.setSpacingAfter(18);
+        document.add(title);
+
+        Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
+        Font textFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+
+        document.add(new Paragraph("Informations vente", sectionFont));
+        document.add(new Paragraph("ID Vente: " + (vente.getId() != null ? vente.getId() : ""), textFont));
+        document.add(new Paragraph("Date: " + (vente.getDateVente() != null ? vente.getDateVente().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : ""), textFont));
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Livrer à", sectionFont));
+        document.add(new Paragraph((vente.getClientNom() != null ? vente.getClientNom() : "") + (vente.getClientPrenom() != null ? " " + vente.getClientPrenom() : ""), textFont));
+        document.add(new Paragraph(vente.getClientAdresse() != null ? vente.getClientAdresse() : "", textFont));
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Articles", sectionFont));
+        PdfPTable table = new PdfPTable(3);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[]{4f, 2f, 2f});
+
+        table.addCell(new Phrase("Produit", sectionFont));
+        table.addCell(new Phrase("Quantité", sectionFont));
+        table.addCell(new Phrase("Unité", sectionFont));
+
+        if (vente.getLignes() != null) {
+            for (var ligne : vente.getLignes()) {
+                table.addCell(new Phrase(ligne.getNomProduit() != null ? ligne.getNomProduit() : "", textFont));
+                table.addCell(new Phrase(ligne.getQuantite() != null ? ligne.getQuantite().toString() : "0", textFont));
+                table.addCell(new Phrase(ligne.getUnite() != null ? ligne.getUnite() : "kg", textFont));
+            }
+        }
+
+        document.add(table);
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("Signature réception", sectionFont));
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph("____________________________________", textFont));
+
+        document.close();
+
+        return outputStream.toByteArray();
+    }
 }

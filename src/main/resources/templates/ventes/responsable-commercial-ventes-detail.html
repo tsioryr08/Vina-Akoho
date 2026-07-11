@@ -140,8 +140,8 @@
                     </div>
                     <div class="card-actions">
                         <a class="btn btn-ghost" th:href="@{/ventes}">Retour à la liste</a>
-                        <a class="btn btn-blue-dark" th:href="@{/ventes/{id}/facture(id=${vente.id})}">PDF Facture</a>
-                        <a class="btn btn-green" th:href="@{/ventes/{id}/bon-livraison(id=${vente.id})}">Bon de livraison</a>
+                        <a class="btn btn-blue-dark" th:href="@{/api/ventes/{id}/facture/pdf(id=${vente.id})}">PDF Facture</a>
+                        <a class="btn btn-green" th:href="@{/api/ventes/{id}/bon-livraison/pdf(id=${vente.id})}">Bon de livraison</a>
                         <form th:if="${vente.statutVente == 'En attente de paiement'}" th:action="@{/ventes/{id}/valider-paiement(id=${vente.id})}" method="post" style="display:inline;">
                             <button class="btn btn-green" type="submit">Valider le paiement</button>
                         </form>
