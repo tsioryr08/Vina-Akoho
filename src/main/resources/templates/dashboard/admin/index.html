@@ -28,13 +28,34 @@
         </section>
 
         <!-- EVOLUTION DES VENTES -->
+         <!-- FILTRES ÉVOLUTION DES VENTES -->
+        <section class="card">
+          <div class="card-body">
+            <form id="filtresEvolutionForm" class="form-grid">
+              <div class="field">
+                <label>Date début</label>
+                <input type="date" id="evoDateDebut" class="form-control" th:value="${dateDebutEvolution}" />
+              </div>
+              <div class="field">
+                <label>Date fin</label>
+                <input type="date" id="evoDateFin" class="form-control" th:value="${dateFinEvolution}" />
+              </div>
+              <div class="field">
+                <label>Granularité</label>
+                <select id="evoGranularite" class="form-control">
+                  <option value="jour" th:selected="${granulariteEvolution == 'jour'}">Jour</option>
+                  <option value="semaine" th:selected="${granulariteEvolution == 'semaine'}">Semaine</option>
+                  <option value="mois" th:selected="${granulariteEvolution == 'mois'}">Mois</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </section>
         <section class="card">
           <div class="card-header">
             <div>
               <h2 class="card-title">Évolution des ventes</h2>
-              <p class="card-subtitle">
-                Chiffre d'affaires journalier sur les 30 derniers jours.
-              </p>
+              <p class="card-subtitle" th:text="'Chiffre d\'affaires par ' + ${granulariteEvolution} + '.'"></p>
             </div>
           </div>
           <div class="card-body">
@@ -164,7 +185,14 @@
       document.querySelectorAll(".derniere-connexion").forEach((el) => {
         el.textContent = tempsRelatif(el.getAttribute("data-ts"));
       });
-
+      document.getElementById("filtresEvolutionForm").addEventListener("change", function () {
+        const params = new URLSearchParams({
+          dateDebutEvolution: document.getElementById("evoDateDebut").value,
+          dateFinEvolution: document.getElementById("evoDateFin").value,
+          granulariteEvolution: document.getElementById("evoGranularite").value,
+        });
+        window.location.href = "/api/admin?" + params.toString();   // ✅ bon chemin
+      });
       // Évolution des ventes (graphique du tableau de bord admin)
       const evolutionVentes = /*[[${evolutionVentes}]]*/ [];
       if (evolutionVentes && evolutionVentes.length) {

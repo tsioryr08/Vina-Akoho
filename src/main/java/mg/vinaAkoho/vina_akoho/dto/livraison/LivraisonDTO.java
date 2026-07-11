@@ -26,6 +26,7 @@ public class LivraisonDTO {
     private String contact;
     private LocalDate dateLivraison;
     private String commentaire;
+    private String zoneLivraison;
     private String statutLivraison;
     private LocalDateTime createdAt;
 }

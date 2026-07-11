@@ -54,7 +54,7 @@
             </div>
 
             <form
-              th:action="@{/ventes/panier/ajouter}"
+              th:action="@{/api/ventes/panier/ajouter}"
               th:object="${panierForm}"
               method="post"
             >
@@ -162,7 +162,7 @@
             </div>
 
             <form
-              th:action="@{/ventes/valider}"
+              th:action="@{/api/ventes/valider}"
               th:object="${venteForm}"
               method="post"
             >
@@ -239,6 +239,21 @@
 
               <div id="livraisonFields" class="form-grid" style="display: none">
                 <div class="field field-full">
+                  <label for="idZoneLivraison">Zone de livraison</label>
+                  <select
+                    id="idZoneLivraison"
+                    class="form-control"
+                    th:field="*{idZoneLivraison}"
+                  >
+                    <option value="" disabled>Choisir une zone</option>
+                    <option
+                      th:each="zone : ${zonesLivraisonDisponibles}"
+                      th:value="${zone.id}"
+                      th:text="${zone.libelle}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="field field-full">
                   <label for="adresseLivraison">Adresse de livraison</label>
                   <input
                     id="adresseLivraison"
@@ -286,7 +301,24 @@
                 function toggleLivraisonFields() {
                   var checkbox = document.getElementById("livraisonRequise");
                   var fields = document.getElementById("livraisonFields");
+                  var zone = document.getElementById("idZoneLivraison");
+                  var adresse = document.getElementById("adresseLivraison");
+                  var contact = document.getElementById("contactLivraison");
+                  var dateLivraison = document.getElementById("dateLivraisonSouhaitee");
+                  var commentaire = document.getElementById("commentaireLivraison");
                   fields.style.display = checkbox.checked ? "grid" : "none";
+                  zone.required = checkbox.checked;
+                  adresse.required = checkbox.checked;
+                  contact.required = checkbox.checked;
+                  dateLivraison.required = checkbox.checked;
+                  commentaire.required = false;
+                  if (!checkbox.checked) {
+                    zone.value = "";
+                    adresse.value = "";
+                    contact.value = "";
+                    dateLivraison.value = "";
+                    commentaire.value = "";
+                  }
                 }
                 document.addEventListener(
                   "DOMContentLoaded",

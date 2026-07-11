@@ -31,13 +31,14 @@
                 <article class="stat-card">
                     <div class="stat-label">Ventes du jour</div>
                     <div class="stat-value" th:text="${#numbers.formatDecimal(ventesJour, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
-                    <div class="stat-trend trend-positive">+0 vs hier</div>
+                    <div class="stat-trend"
+                         th:classappend="${diffHier >= 0} ? 'trend-positive' : 'trend-negative'"
+                         th:text="${(diffHier >= 0 ? '+' : '') + #numbers.formatDecimal(diffHier, 0, 'COMMA', 2, 'POINT') + ' vs hier'}">
+                        0 vs hier
+                    </div>
                 </article>
-                <article class="stat-card">
-                    <div class="stat-label">Chiffre d'affaires (Mois)</div>
-                    <div class="stat-value" th:text="${#numbers.formatDecimal(caMois, 0, 'COMMA', 2, 'POINT')} + ' Ar'"></div>
-                    <div class="stat-trend trend-positive">Ventes validées</div>
-                </article>
+
+
                 <article class="stat-card">
                     <div class="stat-label">Commandes en attente</div>
                     <div class="stat-value" th:text="${commandesEnAttente}"></div>
@@ -57,8 +58,8 @@
                     </div>
                     <form th:action="@{/ventes}" method="get">
                         <div class="form-group">
-                            <label class="form-label">Rechercher</label>
-                            <input type="text" name="recherche" class="form-control" placeholder="Client, produit, facture..." th:value="${param.recherche}">
+                            <label class="form-label" for="recherche">Rechercher</label>
+                            <input id="recherche" type="text" name="recherche" class="form-control" placeholder="Client, produit, facture..." th:value="${param.recherche}">
                         </div>
                         <input type="hidden" name="avecLivraison" th:value="${param.avecLivraison}">
                         <input type="hidden" name="taille" th:value="${pageSize}">
@@ -77,8 +78,8 @@
                         <input type="hidden" name="taille" th:value="${pageSize}">
                         
                         <div class="form-group">
-                            <label class="form-label">Mode de paiement</label>
-                            <select name="modePaiement" class="form-control">
+                            <label class="form-label" for="modePaiement">Mode de paiement</label>
+                            <select id="modePaiement" name="modePaiement" class="form-control">
                                 <option value="">Tous</option>
                                 <option th:each="mode : ${modesPaiementDisponibles}" 
                                         th:value="${mode.libelle}" 
@@ -87,8 +88,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Statut commande</label>
-                            <select name="statut" class="form-control">
+                            <label class="form-label" for="statut">Statut commande</label>
+                            <select id="statut" name="statut" class="form-control">
                                 <option value="">Tous</option>
                                 <option value="Validée" th:selected="${param.statut == 'Validée'}">Validée</option>
                                 <option value="En attente de paiement" th:selected="${param.statut == 'En attente de paiement'}">En attente de paiement</option>
@@ -96,23 +97,24 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Livraison</label>
-                            <select name="avecLivraison" class="form-control">
+                            <label class="form-label" for="avecLivraison">Livraison</label>
+                            <select id="avecLivraison" name="avecLivraison" class="form-control">
                                 <option value="">Toutes</option>
                                 <option value="true" th:selected="${param.avecLivraison == 'true'}">Avec livraison</option>
                                 <option value="false" th:selected="${param.avecLivraison == 'false'}">Sans livraison</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Période</label>
                             <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <input type="date" name="dateDebut" class="form-control" th:value="${param.dateDebut}">
-                                <input type="date" name="dateFin" class="form-control" th:value="${param.dateFin}">
+                                <label class="form-label" for="dateDebut">Date début</label>
+                                <input id="dateDebut" type="date" name="dateDebut" class="form-control" th:value="${param.dateDebut}">
+                                <label class="form-label" for="dateFin">Date fin</label>
+                                <input id="dateFin" type="date" name="dateFin" class="form-control" th:value="${param.dateFin}">
                             </div>
                         </div>
                         <div class="form-actions" style="margin-top: 20px;">
                             <button class="btn btn-green w-100" type="submit">Filtrer</button>
-                            <button class="btn btn-white w-100" type="button" onclick="window.location.href='/ventes'">Réinitialiser</button>
+                            <button class="btn btn-white w-100" type="button" onclick="resetVentesFilters()">Réinitialiser</button>
                         </div>
                     </form>
 
@@ -129,16 +131,16 @@
                         <input type="hidden" name="page" th:value="${currentPage}">
                         
                         <div class="form-group">
-                            <label class="form-label">Trier par</label>
-                            <select name="triPar" class="form-control">
+                            <label class="form-label" for="triPar">Trier par</label>
+                            <select id="triPar" name="triPar" class="form-control">
                                 <option value="dateVente" th:selected="${param.triPar == 'dateVente'}">Date</option>
                                 <option value="montantTotal" th:selected="${param.triPar == 'montantTotal'}">Montant</option>
                                 <option value="clientNom" th:selected="${param.triPar == 'clientNom'}">Client</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Ordre</label>
-                            <select name="ordreTri" class="form-control">
+                            <label class="form-label" for="ordreTri">Ordre</label>
+                            <select id="ordreTri" name="ordreTri" class="form-control">
                                 <option value="desc" th:selected="${param.ordreTri == 'desc'}">Décroissant</option>
                                 <option value="asc" th:selected="${param.ordreTri == 'asc'}">Croissant</option>
                             </select>
@@ -163,8 +165,8 @@
                         <input type="hidden" name="page" value="1">
                         
                         <div class="form-group">
-                            <label class="form-label">Éléments par page</label>
-                            <input type="number" name="taille" class="form-control" th:value="${pageSize}" min="1" max="100" placeholder="10">
+                            <label class="form-label" for="taille">Éléments par page</label>
+                            <input id="taille" type="number" name="taille" class="form-control" th:value="${pageSize}" min="1" max="100" placeholder="10">
                         </div>
                         <div class="form-actions" style="margin-top: 20px;">
                             <button class="btn btn-green w-100" type="submit">Appliquer</button>
@@ -257,22 +259,109 @@
     <script th:src="@{/js/app-shell.js}"></script>
     <script th:src="@{/js/script_content.js}"></script>
     <script th:inline="javascript">
-        function getFilters() {
-            var params = new URLSearchParams();
-            var inputs = document.querySelectorAll('.search-filters input, .search-filters select');
-            inputs.forEach(function(input) {
-                if (input.name && input.value) {
-                    params.append(input.name, input.value);
+        (function () {
+            const contentSelector = '#vina-content';
+            const contentRoot = document.querySelector(contentSelector);
+
+            if (!contentRoot) {
+                return;
+            }
+
+            function buildUrlFromForm(form) {
+                const url = new URL(form.action, window.location.origin);
+                const formData = new FormData(form);
+
+                formData.forEach(function (value, key) {
+                    if (value !== null && String(value).trim() !== '') {
+                        url.searchParams.append(key, value);
+                    }
+                });
+
+                return url.toString();
+            }
+
+            function swapContent(html, url) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const nextContent = doc.querySelector(contentSelector);
+
+                if (!nextContent) {
+                    window.location.href = url;
+                    return;
                 }
+
+                contentRoot.innerHTML = nextContent.innerHTML;
+                document.title = doc.title || document.title;
+                window.history.pushState({ url: url }, '', url);
+            }
+
+            async function loadPage(url) {
+                const response = await fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const html = await response.text();
+                swapContent(html, url);
+            }
+
+            document.addEventListener('submit', function (event) {
+                const form = event.target.closest('form');
+
+                if (!form || !contentRoot.contains(form)) {
+                    return;
+                }
+
+                if ((form.method || 'get').toLowerCase() !== 'get') {
+                    return;
+                }
+
+                event.preventDefault();
+                loadPage(buildUrlFromForm(form));
             });
-            return params.toString();
-        }
-        function exporterExcel() {
-            window.location.href = '/api/ventes/liste/export/excel?' + getFilters();
-        }
-        function exporterPdf() {
-            window.location.href = '/api/ventes/liste/export/pdf?' + getFilters();
-        }
+
+            document.addEventListener('click', function (event) {
+                const link = event.target.closest('.pagination-controls a');
+
+                if (!link || !contentRoot.contains(link)) {
+                    return;
+                }
+
+                if (link.classList.contains('disabled') || link.classList.contains('active')) {
+                    event.preventDefault();
+                    return;
+                }
+
+                event.preventDefault();
+                loadPage(link.href);
+            });
+
+            window.resetVentesFilters = function () {
+                loadPage('/ventes');
+            };
+
+            window.getFilters = function () {
+                const params = new URLSearchParams();
+                const inputs = document.querySelectorAll('.search-filters input, .search-filters select');
+
+                inputs.forEach(function (input) {
+                    if (input.name && input.value) {
+                        params.append(input.name, input.value);
+                    }
+                });
+
+                return params.toString();
+            };
+
+            window.exporterExcel = function () {
+                window.location.href = '/api/ventes/liste/export/excel?' + window.getFilters();
+            };
+
+            window.exporterPdf = function () {
+                window.location.href = '/api/ventes/liste/export/pdf?' + window.getFilters();
+            };
+        })();
     </script>
 </body>
 </html>

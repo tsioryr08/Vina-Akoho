@@ -74,23 +74,6 @@
                   </option>
                 </select>
               </div>
-              <div class="field">
-                <label>Granularité évolution</label>
-                <select id="granularite" class="form-control">
-                  <option value="jour" th:selected="${granularite == 'jour'}">
-                    Jour
-                  </option>
-                  <option
-                    value="semaine"
-                    th:selected="${granularite == 'semaine'}"
-                  >
-                    Semaine
-                  </option>
-                  <option value="mois" th:selected="${granularite == 'mois'}">
-                    Mois
-                  </option>
-                </select>
-              </div>
             </form>
           </div>
         </section>
@@ -320,7 +303,6 @@
           dateDebut: document.getElementById("dateDebut").value,
           dateFin: document.getElementById("dateFin").value,
           triProduits: document.getElementById("triProduits").value,
-          granularite: document.getElementById("granularite").value,
         });
         const idCategorie = document.getElementById("idCategorie").value;
         if (idCategorie) params.append("idCategorie", idCategorie);

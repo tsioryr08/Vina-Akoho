@@ -3,11 +3,8 @@ package mg.vinaAkoho.vina_akoho.controller.ventes;
 import java.math.BigDecimal;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.HashMap;
 import java.math.RoundingMode;
 
 import org.springframework.data.domain.Page;
@@ -35,7 +32,9 @@ import mg.vinaAkoho.vina_akoho.dto.ventes.VenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteFormDTO;
 import mg.vinaAkoho.vina_akoho.entity.produit.Produit;
 import mg.vinaAkoho.vina_akoho.entity.ventes.ModePaiement;
+import mg.vinaAkoho.vina_akoho.entity.livraison.ZoneLivraison;
 import mg.vinaAkoho.vina_akoho.repository.clients.ClientRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.ZoneLivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.security.SessionFilter;
@@ -71,6 +70,7 @@ public class VenteController {
     private final ClientRepository clientRepository;
     private final ProduitRepository produitRepository;
     private final ModePaiementRepository modePaiementRepository;
+    private final ZoneLivraisonRepository zoneLivraisonRepository;
     private final ExportVenteService exportVenteService;
 
     @ModelAttribute("clientsDisponibles")
@@ -89,6 +89,11 @@ public class VenteController {
     @ModelAttribute("modesPaiementDisponibles")
     public List<ModePaiement> getModesPaiementDisponibles() {
         return modePaiementRepository.findAll();
+    }
+
+    @ModelAttribute("zonesLivraisonDisponibles")
+    public List<ZoneLivraison> getZonesLivraisonDisponibles() {
+        return zoneLivraisonRepository.findAllByOrderByLibelleAsc();
     }
 
     @ModelAttribute("panierForm")
@@ -131,154 +136,82 @@ public class VenteController {
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer taille,
             Model model) {
-        
+
         List<VenteDTO> toutesVentes = venteService.listerToutes();
-        
-        // Étape 1: Recherche textuelle (indépendante des filtres)
-        List<VenteDTO> ventesRecherchees = toutesVentes.stream()
+
+        // Étape 1 & 2: Filtrage et recherche
+        List<VenteDTO> ventesFiltrees = toutesVentes.stream()
                 .filter(v -> {
-                    if (recherche == null || recherche.isEmpty()) {
-                        return true;
+                    // Recherche textuelle
+                    if (recherche != null && !recherche.isEmpty()) {
+                        String r = recherche.toLowerCase();
+                        boolean match = (v.getClientNom() != null && v.getClientNom().toLowerCase().contains(r)) ||
+                                (v.getLignes() != null && v.getLignes().stream().anyMatch(l -> l.getNomProduit() != null && l.getNomProduit().toLowerCase().contains(r))) ||
+                                (v.getFacture() != null && v.getFacture().getNumero() != null && v.getFacture().getNumero().toLowerCase().contains(r));
+                        if (!match) return false;
                     }
-                    String rechercheLower = recherche.toLowerCase();
-                    boolean matchClient = v.getClientNom() != null && v.getClientNom().toLowerCase().contains(rechercheLower);
-                    boolean matchProduit = v.getLignes() != null && v.getLignes().stream()
-                            .anyMatch(l -> l.getNomProduit() != null && l.getNomProduit().toLowerCase().contains(rechercheLower));
-                    boolean matchFacture = v.getFacture() != null && v.getFacture().getNumero() != null 
-                            && v.getFacture().getNumero().toLowerCase().contains(rechercheLower);
-                    return matchClient || matchProduit || matchFacture;
-                })
-                .collect(Collectors.toList());
-        
-        // Étape 2: Filtres (indépendants de la recherche et du tri)
-        List<VenteDTO> ventesFiltrees = ventesRecherchees.stream()
-                .filter(v -> {
-                    boolean match = true;
-                    if (modePaiement != null && !modePaiement.isEmpty()) {
-                        match = match && modePaiement.equals(v.getModePaiement());
-                    }
-                    if (statut != null && !statut.isEmpty()) {
-                        match = match && statut.equals(v.getStatutVente());
-                    }
+                    // Filtres
+                    if (modePaiement != null && !modePaiement.isEmpty() && !modePaiement.equals(v.getModePaiement())) return false;
+                    if (statut != null && !statut.isEmpty() && !statut.equals(v.getStatutVente())) return false;
                     if (avecLivraison != null && !avecLivraison.isEmpty()) {
                         boolean hasLivraison = v.getLivraison() != null;
-                        if ("true".equals(avecLivraison)) {
-                            match = match && hasLivraison;
-                        } else if ("false".equals(avecLivraison)) {
-                            match = match && !hasLivraison;
-                        }
+                        if (("true".equals(avecLivraison) && !hasLivraison) || ("false".equals(avecLivraison) && hasLivraison)) return false;
                     }
-                    if (dateDebut != null && !dateDebut.isEmpty() && v.getDateVente() != null) {
-                        LocalDate debut = LocalDate.parse(dateDebut);
-                        match = match && !v.getDateVente().toLocalDate().isBefore(debut);
-                    }
-                    if (dateFin != null && !dateFin.isEmpty() && v.getDateVente() != null) {
-                        LocalDate fin = LocalDate.parse(dateFin);
-                        match = match && !v.getDateVente().toLocalDate().isAfter(fin);
-                    }
-                    return match;
+                    if (dateDebut != null && !dateDebut.isEmpty() && v.getDateVente() != null && v.getDateVente().toLocalDate().isBefore(LocalDate.parse(dateDebut))) return false;
+                    if (dateFin != null && !dateFin.isEmpty() && v.getDateVente() != null && v.getDateVente().toLocalDate().isAfter(LocalDate.parse(dateFin))) return false;
+                    return true;
                 })
                 .collect(Collectors.toList());
-        
-        // Étape 3: Tri (indépendant de la recherche et des filtres)
-        if (triPar != null && !triPar.isEmpty()) {
-            boolean desc = "desc".equalsIgnoreCase(ordreTri);
-            switch (triPar) {
-                case "dateVente":
-                    ventesFiltrees.sort((v1, v2) -> {
-                        if (v1.getDateVente() == null && v2.getDateVente() == null) return 0;
-                        if (v1.getDateVente() == null) return desc ? 1 : -1;
-                        if (v2.getDateVente() == null) return desc ? -1 : 1;
-                        return desc ? v2.getDateVente().compareTo(v1.getDateVente()) : v1.getDateVente().compareTo(v2.getDateVente());
-                    });
-                    break;
-                case "montantTotal":
-                    ventesFiltrees.sort((v1, v2) -> {
-                        if (v1.getMontantTotal() == null && v2.getMontantTotal() == null) return 0;
-                        if (v1.getMontantTotal() == null) return desc ? 1 : -1;
-                        if (v2.getMontantTotal() == null) return desc ? -1 : 1;
-                        return desc ? v2.getMontantTotal().compareTo(v1.getMontantTotal()) : v1.getMontantTotal().compareTo(v2.getMontantTotal());
-                    });
-                    break;
-                case "clientNom":
-                    ventesFiltrees.sort((v1, v2) -> {
-                        String nom1 = v1.getClientNom() != null ? v1.getClientNom() : "";
-                        String nom2 = v2.getClientNom() != null ? v2.getClientNom() : "";
-                        return desc ? nom2.compareToIgnoreCase(nom1) : nom1.compareToIgnoreCase(nom2);
-                    });
-                    break;
-                default:
-                    // Tri par défaut par date décroissante
-                    ventesFiltrees.sort((v1, v2) -> {
-                        if (v1.getDateVente() == null && v2.getDateVente() == null) return 0;
-                        if (v1.getDateVente() == null) return 1;
-                        if (v2.getDateVente() == null) return -1;
-                        return v2.getDateVente().compareTo(v1.getDateVente());
-                    });
-            }
-        } else {
-            // Tri par défaut par date décroissante
-            ventesFiltrees.sort((v1, v2) -> {
-                if (v1.getDateVente() == null && v2.getDateVente() == null) return 0;
-                if (v1.getDateVente() == null) return 1;
-                if (v2.getDateVente() == null) return -1;
-                return v2.getDateVente().compareTo(v1.getDateVente());
-            });
-        }
-        
+
+        // Étape 3: Tri
+        Comparator<VenteDTO> comparator = (v1, v2) -> {
+            if ("dateVente".equals(triPar)) return v2.getDateVente().compareTo(v1.getDateVente());
+            if ("montantTotal".equals(triPar)) return v2.getMontantTotal().compareTo(v1.getMontantTotal());
+            return v2.getDateVente().compareTo(v1.getDateVente()); // Défaut
+        };
+        if ("asc".equalsIgnoreCase(ordreTri)) comparator = comparator.reversed();
+        ventesFiltrees.sort(comparator);
+
         // Pagination
         int pageSize = taille != null && taille > 0 ? taille : 10;
+        int currentPage = (page != null) ? page : 1;
         int totalElements = ventesFiltrees.size();
         int totalPages = Math.max(1, (int) Math.ceil((double) totalElements / pageSize));
-        int currentPage = page != null ? page : 1;
-        currentPage = Math.max(1, Math.min(currentPage, totalPages));
-        
-        int startIndex = (currentPage - 1) * pageSize;
-        int endIndex = Math.min(startIndex + pageSize, totalElements);
-        
-        List<VenteDTO> ventesPaginees = ventesFiltrees.subList(startIndex, endIndex);
-        
-        model.addAttribute("ventes", ventesPaginees);
+
+        model.addAttribute("ventes", ventesFiltrees.stream()
+                .skip((long) (currentPage - 1) * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList()));
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("totalElements", totalElements);
         model.addAttribute("totalPages", totalPages);
-        
-        // Calculer les statistiques sur les ventes filtrées
+
+        // Statistiques
         LocalDate aujourdHui = LocalDate.now();
-        LocalDate debutMois = aujourdHui.withDayOfMonth(1);
-        
-        // Point 4 du markdown : le CA affiché ne doit compter que les ventes
-        // réalisées (tout sauf "En attente de paiement" et "Annulée").
-        BigDecimal ventesJour = ventesFiltrees.stream()
-                .filter(v -> v.getDateVente() != null &&
-                           v.getDateVente().toLocalDate().equals(aujourdHui))
+        LocalDate hier = aujourdHui.minusDays(1);
+
+        BigDecimal ventesJour = toutesVentes.stream()
+                .filter(v -> v.getDateVente() != null && v.getDateVente().toLocalDate().equals(aujourdHui))
                 .filter(VenteController::estVenteRealisee)
                 .map(VenteDTO::getMontantTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal caMois = ventesFiltrees.stream()
-                .filter(v -> v.getDateVente() != null &&
-                           !v.getDateVente().toLocalDate().isBefore(debutMois))
+        BigDecimal ventesHier = toutesVentes.stream()
+                .filter(v -> v.getDateVente() != null && v.getDateVente().toLocalDate().equals(hier))
                 .filter(VenteController::estVenteRealisee)
                 .map(VenteDTO::getMontantTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
-        long commandesEnAttente = ventesFiltrees.stream()
-                .filter(v -> "En attente de paiement".equals(v.getStatutVente()))
-                .count();
-        
-        long totalVentes = ventesFiltrees.size();
-        double tauxConversion = totalVentes > 0 ?
-                (ventesFiltrees.stream().filter(VenteController::estVenteRealisee).count() * 100.0 / totalVentes) : 0;
-        
+
         model.addAttribute("ventesJour", ventesJour);
-        model.addAttribute("caMois", caMois);
-        model.addAttribute("commandesEnAttente", commandesEnAttente);
-        model.addAttribute("tauxConversion", String.format("%.0f%%", tauxConversion));
-        
+        model.addAttribute("diffHier", ventesJour.subtract(ventesHier));
+        model.addAttribute("commandesEnAttente", ventesFiltrees.stream().filter(v -> "En attente de paiement".equals(v.getStatutVente())).count());
+        model.addAttribute("tauxConversion", String.format("%.0f%%", ventesFiltrees.size() > 0 ? (ventesFiltrees.stream().filter(VenteController::estVenteRealisee).count() * 100.0 / ventesFiltrees.size()) : 0));
+
         return "ventes/responsable-commercial-ventes";
     }
+
+
 
     @GetMapping("/liste/export/excel")
     public void exporterListeExcel(
@@ -1027,6 +960,11 @@ public class VenteController {
         List<PanierItemDTO> panier = panier(session);
         if (panier.isEmpty()) {
             model.addAttribute("error", "Le panier est vide.");
+            return "ventes/responsable-commercial-ventes-nouvelles";
+        }
+
+        if (venteForm.isLivraisonRequise() && (venteForm.getIdZoneLivraison() == null || venteForm.getIdZoneLivraison().isBlank())) {
+            model.addAttribute("error", "La zone de livraison est obligatoire quand une livraison est requise.");
             return "ventes/responsable-commercial-ventes-nouvelles";
         }
 

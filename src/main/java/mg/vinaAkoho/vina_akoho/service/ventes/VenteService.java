@@ -303,6 +303,10 @@ public Page<VenteDTO> rechercherVentesAvecPagination(RechercheVenteDTO recherche
         // validerPaiement(...) ; c'est à ce moment-là qu'elle basculera sur
         // "En livraison" (cf. validerPaiement()).
         if (requete.isLivraisonRequise()) {
+            if (requete.getIdZoneLivraison() == null || requete.getIdZoneLivraison().isBlank()) {
+                throw new IllegalArgumentException("La zone de livraison est obligatoire quand la livraison est requise.");
+            }
+
             Integer idStatutInitial = statutLivraisonRepository.findByLibelleIgnoreCase("En attente d'affectation")
                     .map(statut -> statut.getId())
                     .orElseThrow(() -> new IllegalStateException(
@@ -311,6 +315,7 @@ public Page<VenteDTO> rechercherVentesAvecPagination(RechercheVenteDTO recherche
 
             LivraisonFormDTO livraisonForm = LivraisonFormDTO.builder()
                     .idVente(vente.getId())
+                    .idZoneLivraison(requete.getIdZoneLivraison())
                     .lieuExact(requete.getAdresseLivraison())
                     .contact(requete.getContactLivraison())
                     .dateLivraison(requete.getDateLivraisonSouhaitee())
@@ -362,6 +367,7 @@ public Page<VenteDTO> rechercherVentesAvecPagination(RechercheVenteDTO recherche
                             .contact(livraison.getContact())
                             .dateLivraison(livraison.getDateLivraison())
                             .commentaire(livraison.getCommentaire())
+                            .zoneLivraison(livraison.getZoneLivraison() != null ? livraison.getZoneLivraison().getLibelle() : null)
                             .statutLivraison(livraison.getStatutLivraison() != null ? livraison.getStatutLivraison().getLibelle() : null)
                             .livreurNom(livraison.getLivreur() != null ? livraison.getLivreur().getNom() : null)
                             .livreurPrenom(livraison.getLivreur() != null ? livraison.getLivreur().getPrenom() : null)
