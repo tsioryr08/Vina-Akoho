@@ -8,77 +8,12 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
   <body>
-    <aside class="sidebar" id="vina-sidebar">
-      <div class="sidebar-brand">
-        <!-- <img
-          th:src="@{/static/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        /> -->
-        <img
-          th:src="@{/images/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        />
-
-        <div>
-          <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">${currentUser != null ? currentUser.role.poste : 'Stock'}</div>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link active" th:href="@{/api/stock}"
-          >Dashboard <span class="sidebar-code">F9</span></a
-        >
-
-        <div class="sidebar-section">Mouvements et Lots</div>
-        <a class="sidebar-link" th:href="@{/api/stock}"
-          >Mouvements Stocks <span class="sidebar-code">S1</span></a
-        >
-        <a class="sidebar-link" th:href="@{/api/stock}"
-          >Gestion Lots & Péremptions <span class="sidebar-code">S2</span></a
-        >
-
-        <div class="sidebar-section">Surveillance</div>
-        <a class="sidebar-link" th:href="@{/matieres-premieres/alertes}"
-          >Alertes de Seuil <span class="sidebar-code">S3</span></a
-        >
-        <a class="sidebar-link" th:href="@{/api/stock}"
-          >Inventaire Périodique <span class="sidebar-code">S4</span></a
-        >
-
-        <div class="sidebar-section">Reporting</div>
-        <a class="sidebar-link" th:href="@{/api/stock}"
-          >Rapport de Stock <span class="sidebar-code">S5</span></a
-        >
-        <a class="sidebar-link" th:href="@{/api/stock}">Suggestions Promotions</a>
-      </nav>
-    </aside>
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
-    <div class="main">
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="menu-button" id="vina-menu-button" type="button">
-            ☰
-          </button>
-          <span class="breadcrumb">Dashboard Stock</span>
-        </div>
-        <div class="topbar-actions">
-          <span class="role-pill">${currentUser != null ? currentUser.role.poste : 'Stock'}</span>
-          <button
-            class="btn btn-ghost btn-small"
-            id="vina-logout-button"
-           
-            type="button"
-          >
-            Déconnexion
-          </button>
-        </div>
-      </div>
+    <div class="app-main-wrapper">
+      <div th:replace="${headerTemplate} :: header"></div>
 
       <div class="content">
         <section class="page-header theme-blue">

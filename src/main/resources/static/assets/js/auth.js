@@ -55,17 +55,14 @@ window.VinaAkohoAuth = {
             .replace(/[-]/g, '_');
 
         const routes = {
-            'ADMIN': '/admin',
-            'ADMINISTRATEUR': '/admin',
-            'RESPONSABLE_ACHATS': '/achats',
-            'RESPONSABLE_PRODUCTION': '/production',
+            'ADMIN': '/api/admin',
+            'ADMINISTRATEUR': '/api/admin',
+ 
             'GESTIONNAIRE_DE_STOCK': '/api/stock',
             'RESPONSABLE_COMMERCIAL': '/commercial',
-            'COMPTABLE': '/comptabilite',
-            'LIVREUR': '/livraison'
         };
 
-        return routes[normalizedRole] || '/matieres-premieres';
+        return routes[normalizedRole] || '/api/matieres-premieres';
     },
 
     redirectIfAuthenticated: function () {

@@ -30,21 +30,21 @@
         <div
           style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px"
         >
-          <a th:href="@{/matieres-premieres}" class="btn btn-primary btn-small"
+          <a th:href="@{/api/matieres-premieres}" class="btn btn-primary btn-small"
             >Suivi Stock</a
           >
           <a
-            th:href="@{/matieres-premieres/alertes}"
+            th:href="@{/api/matieres-premieres/alertes}"
             class="btn btn-ghost btn-small"
             >Alertes</a
           >
           <a
-            th:href="@{/matieres-premieres/entree-stock}"
+            th:href="@{/api/matieres-premieres/entree-stock}"
             class="btn btn-ghost btn-small"
             >Ajouter Matière</a
           >
           <a
-            th:href="@{/matieres-premieres/nouveau}"
+            th:href="@{/api/matieres-premieres/nouveau}"
             class="btn btn-ghost btn-small"
             >Créer Fiche Produit</a
           >
@@ -127,7 +127,7 @@
                   </td>
                   <td>
                     <a
-                      th:href="@{/matieres-premieres/{id}(id=${mp.id})}"
+                      th:href="@{/api/matieres-premieres/{id}(id=${mp.id})}"
                       class="btn btn-small btn-ghost"
                       >Fiche →</a
                     >
@@ -139,7 +139,7 @@
                     style="text-align: center; padding: 24px; color: #64748b"
                   >
                     Aucune matière première enregistrée.
-                    <a th:href="@{/matieres-premieres/nouveau}"
+                    <a th:href="@{/api/matieres-premieres/nouveau}"
                       >En créer une →</a
                     >
                   </td>

@@ -108,7 +108,7 @@
                     <td>
                       <a
                         class="btn btn-ghost btn-small"
-                        th:href="@{/admin/employes/{id}/modifier(id=${emp.id})}"
+                        th:href="@{/api/admin/employes/{id}/modifier(id=${emp.id})}"
                       >
                         Modifier
                       </a>
@@ -127,10 +127,10 @@
             </div>
 
             <div class="card-actions" style="margin-top: 16px">
-              <a class="btn btn-purple" th:href="@{/admin/employes/nouveau}"
+              <a class="btn btn-purple" th:href="@{/api/admin/employes/nouveau}"
                 >+ Créer un nouveau compte</a
               >
-              <a class="btn btn-ghost" th:href="@{/admin/employes}"
+              <a class="btn btn-ghost" th:href="@{/api/admin/employes}"
                 >Voir tous les comptes</a
               >
             </div>

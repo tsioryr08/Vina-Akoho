@@ -46,8 +46,8 @@ window.VinaAkohoAuth = {
             .replace(/\s+/g, '_')
             .replace(/[-]/g, '_');
         const routes = {
-            'ADMIN': '/admin',
-            'ADMINISTRATEUR': '/admin',
+            'ADMIN': '/api/admin',
+            'ADMINISTRATEUR': '/api/admin',
             'RESPONSABLE_ACHATS': '/achats',
             'RESPONSABLE_PRODUCTION': '/production',
             'GESTIONNAIRE_DE_STOCK': '/api/stock',
@@ -56,7 +56,7 @@ window.VinaAkohoAuth = {
             'LIVREUR': '/livraison'
         };
 
-        return routes[normalizedRole] || '/matieres-premieres';
+        return routes[normalizedRole] || '/api/matieres-premieres';
     },
 
     redirectIfAuthenticated: function () {
