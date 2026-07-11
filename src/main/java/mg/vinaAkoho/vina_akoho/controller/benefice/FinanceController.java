@@ -16,23 +16,21 @@ import java.time.LocalDate;
 @Controller
 @RequestMapping("/api/benefices")
 public class FinanceController {
-
     private final BeneficeService beneficeService;
-
     public FinanceController(BeneficeService beneficeService) {
         this.beneficeService = beneficeService;
     }
     @GetMapping
-public String afficherRapportBenefices(
+    public String afficherRapportBenefices(
         @RequestParam(value = "dateDebut", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
         @RequestParam(value = "dateFin", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
         @RequestParam(value = "categorieId", required = false) Integer categorieId,
         Model model) {
 
-    if (dateDebut == null) dateDebut = LocalDate.now().withDayOfMonth(1);
-    if (dateFin == null) dateFin = LocalDate.now();
+        if (dateDebut == null) dateDebut = LocalDate.now().withDayOfMonth(1);
+        if (dateFin == null) dateFin = LocalDate.now();
 
-    if (dateDebut.isAfter(dateFin)) {
+        if (dateDebut.isAfter(dateFin)) {
         model.addAttribute("erreur", "La date de début ne peut pas être ultérieure à la date de fin.");
         
         RapportBeneficeDTO rapportErreur = new RapportBeneficeDTO(

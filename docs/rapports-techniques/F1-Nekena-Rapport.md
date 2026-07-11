@@ -15,7 +15,11 @@
 ```
 src/main/java/mg/vinaAkoho/vina_akoho/entity/produit/
 ├── Produit.java          # Entite Produit
-├── Categorie.java        # Entite Categorie
+├── Categorie.java        # Entite Catego
+
+.
+
+rie
 ```
 
 ### 1.2 DTOs (dto/produit/)
