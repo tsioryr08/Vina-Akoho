@@ -34,4 +34,6 @@ public class DepenseRequestDTO {
 
     @NotNull(message = "Le statut de dépense est obligatoire")
     private Integer idStatutDepense;
+
+    private Integer id;
 }
