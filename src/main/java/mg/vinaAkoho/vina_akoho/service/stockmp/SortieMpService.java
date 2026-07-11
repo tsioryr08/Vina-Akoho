@@ -76,8 +76,9 @@ public class SortieMpService {
 
         // 2. Pour chaque ligne de la recette, déduire la matière première
         for (RecetteProduitDTO ligne : recette) {
-            BigDecimal besoin = ligne.getQuantiteMp();
-
+            //BigDecimal besoin = ligne.getQuantiteMp();
+            BigDecimal besoin = ligne.getQuantiteMp().multiply(requete.getQuantiteAProduire());
+            
             List<LotMp> lots = lotMpRepository
                     .findByMatierePremiereIdAndQuantiteRestanteGreaterThanOrderByDateAchatAsc(
                             ligne.getIdMp(), BigDecimal.ZERO);
