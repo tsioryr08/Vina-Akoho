@@ -18,6 +18,7 @@ import mg.vinaAkoho.vina_akoho.entity.livraison.historique_statut_livraison;
 import mg.vinaAkoho.vina_akoho.entity.livraison.livreur;
 import mg.vinaAkoho.vina_akoho.entity.livraison.livraison;
 import mg.vinaAkoho.vina_akoho.entity.livraison.statutLivraison;
+import mg.vinaAkoho.vina_akoho.entity.livraison.ZoneLivraison;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Vente;
 import mg.vinaAkoho.vina_akoho.entity.ventes.StatutVente;
 import mg.vinaAkoho.vina_akoho.exception.livraison.LivreurNotFoundException;
@@ -27,6 +28,7 @@ import mg.vinaAkoho.vina_akoho.repository.livraison.HistoriqueChangementReposito
 import mg.vinaAkoho.vina_akoho.repository.livraison.LivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.livraison.LivreurRepository;
 import mg.vinaAkoho.vina_akoho.repository.livraison.StatutLivraisonRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.ZoneLivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.StatutVenteRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
 
@@ -39,6 +41,7 @@ public class LivraisonService {
     private final VenteRepository venteRepository;
     private final LivreurRepository livreurRepository;
     private final StatutLivraisonRepository statutLivraisonRepository;
+    private final ZoneLivraisonRepository zoneLivraisonRepository;
     private final HistoriqueChangementRepository historiqueChangementRepository;
     private final StatutVenteRepository statutVenteRepository;
 
@@ -59,19 +62,24 @@ public class LivraisonService {
         Vente vente = venteRepository.findById(form.getIdVente())
                 .orElseThrow(() -> VenteNotFoundException.parId(form.getIdVente()));
 
-        statutLivraison statut = statutLivraisonRepository.findById(form.getIdStatutLivraison())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Statut de livraison introuvable : " + form.getIdStatutLivraison()));
+        ZoneLivraison zone = zoneLivraisonRepository.findById(form.getIdZoneLivraison())
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Zone de livraison introuvable : " + form.getIdZoneLivraison()));
+
+        statutLivraison statut = form.getIdStatutLivraison() != null
+                ? statutLivraisonRepository.findById(form.getIdStatutLivraison())
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Statut de livraison introuvable : " + form.getIdStatutLivraison()))
+                : statutParDefautCreation();
 
         livraison livraison = new livraison();
         livraison.setVente(vente);
-        if (form.getIdLivreur() == null) {
-            throw new IllegalArgumentException("Le livreur est obligatoire pour créer une livraison.");
+        if (form.getIdLivreur() != null) {
+            livreur livreur = livreurRepository.findById(form.getIdLivreur())
+                .orElseThrow(() -> LivreurNotFoundException.parId(Long.valueOf(form.getIdLivreur())));
+            livraison.setLivreur(livreur);
         }
-
-        livreur livreur = livreurRepository.findById(form.getIdLivreur())
-            .orElseThrow(() -> LivreurNotFoundException.parId(Long.valueOf(form.getIdLivreur())));
-        livraison.setLivreur(livreur);
+        livraison.setZoneLivraison(zone);
         livraison.setLieuExact(form.getLieuExact());
         livraison.setContact(form.getContact());
         if (form.getDateLivraison() != null && !form.getDateLivraison().isBlank()) {
@@ -98,11 +106,15 @@ public class LivraisonService {
 
         statutLivraison ancienStatut = livraison.getStatutLivraison();
 
+        if (ancienStatut != null && estStatutLivre(ancienStatut.getLibelle())) {
+            throw new IllegalStateException("Le statut d'une livraison déjà livrée ne peut plus être modifié.");
+        }
+
         statutLivraison statut = statutLivraisonRepository.findByLibelleIgnoreCase(nouveauStatutLibelle)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Statut de livraison introuvable : " + nouveauStatutLibelle));
 
-        if (("livrée".equalsIgnoreCase(statut.getLibelle()) || "livree".equalsIgnoreCase(statut.getLibelle()))
+        if (estStatutLivre(statut.getLibelle())
             && livraison.getLivreur() == null) {
             throw new IllegalStateException("Une livraison doit avoir un livreur assigné avant d'être validée.");
         }
@@ -121,7 +133,7 @@ public class LivraisonService {
         // Point 5 du markdown (option A) : une fois la livraison effectuée,
         // la vente associée est considérée comme terminée -> on synchronise
         // son statut avec celui de la livraison.
-        if ("livrée".equalsIgnoreCase(statut.getLibelle()) || "livree".equalsIgnoreCase(statut.getLibelle())) {
+        if (estStatutLivre(statut.getLibelle())) {
             Vente vente = livraison.getVente();
             if (vente != null) {
                 StatutVente statutVenteLivree = statutVenteRepository.findByLibelleIgnoreCase("Livrée")
@@ -136,6 +148,20 @@ public class LivraisonService {
         }
 
         return versDTO(livraison);
+    }
+
+    public boolean estStatutLivre(String libelleStatut) {
+        return "livrée".equalsIgnoreCase(libelleStatut) || "livree".equalsIgnoreCase(libelleStatut);
+    }
+
+    private statutLivraison statutParDefautCreation() {
+        return statutLivraisonRepository.findByLibelleIgnoreCase("En cours de livraison")
+                .or(() -> statutLivraisonRepository.findByLibelleIgnoreCase("En cours"))
+                .or(() -> statutLivraisonRepository.findAll().stream()
+                        .filter(s -> s.getLibelle() != null && s.getLibelle().toLowerCase().contains("en cours"))
+                        .findFirst())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Aucun statut de livraison par défaut 'En cours' n'a été trouvé."));
     }
 
     public List<HistoriqueChangementDTO> listerHistorique() {
@@ -175,6 +201,7 @@ public class LivraisonService {
                 .contact(livraison.getContact())
                 .dateLivraison(livraison.getDateLivraison())
                 .commentaire(livraison.getCommentaire())
+                .zoneLivraison(livraison.getZoneLivraison() != null ? livraison.getZoneLivraison().getLibelle() : null)
                 .statutLivraison(statut != null ? statut.getLibelle() : null)
                 .createdAt(livraison.getCreatedAt())
                 .build();

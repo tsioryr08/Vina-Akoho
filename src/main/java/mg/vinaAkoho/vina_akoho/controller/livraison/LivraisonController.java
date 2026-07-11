@@ -21,9 +21,11 @@ import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonFormDTO;
 import mg.vinaAkoho.vina_akoho.entity.livraison.livreur;
 import mg.vinaAkoho.vina_akoho.entity.livraison.statutLivraison;
+import mg.vinaAkoho.vina_akoho.entity.livraison.ZoneLivraison;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Vente;
 import mg.vinaAkoho.vina_akoho.repository.livraison.LivreurRepository;
 import mg.vinaAkoho.vina_akoho.repository.livraison.StatutLivraisonRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.ZoneLivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
 import mg.vinaAkoho.vina_akoho.security.SessionFilter;
 import mg.vinaAkoho.vina_akoho.service.livraison.LivraisonService;
@@ -37,6 +39,7 @@ public class LivraisonController {
     private final VenteRepository venteRepository;
     private final LivreurRepository livreurRepository;
     private final StatutLivraisonRepository statutLivraisonRepository;
+    private final ZoneLivraisonRepository zoneLivraisonRepository;
 
     @ModelAttribute("ventesDisponibles")
         public Map<Long, String> getVentesDisponibles() {
@@ -72,6 +75,11 @@ public class LivraisonController {
     @ModelAttribute("statutsDisponibles")
     public List<statutLivraison> getStatutsDisponibles() {
         return statutLivraisonRepository.findAll();
+    }
+
+    @ModelAttribute("zonesDisponibles")
+    public List<ZoneLivraison> getZonesDisponibles() {
+        return zoneLivraisonRepository.findAllByOrderByLibelleAsc();
     }
 
     @ModelAttribute("livraisonForm")
@@ -121,7 +129,9 @@ public class LivraisonController {
 
     @GetMapping("/{id}")
     public String detailLivraison(@PathVariable Long id, Model model) {
-        model.addAttribute("livraison", livraisonService.trouverParId(id));
+        var livraison = livraisonService.trouverParId(id);
+        model.addAttribute("livraison", livraison);
+        model.addAttribute("statutEstLivre", livraisonService.estStatutLivre(livraison.getStatutLivraison()));
         model.addAttribute("historiquesLivraison", livraisonService.listerHistoriquePourLivraison(id));
         return "livraison/livraison-detail";
     }

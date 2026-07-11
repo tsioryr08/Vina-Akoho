@@ -88,6 +88,10 @@
                     <strong th:text="${vente.livraison.contact != null ? vente.livraison.contact : '-'}"></strong>
                 </div>
                 <div class="detail-row">
+                    <span>Zone</span>
+                    <strong th:text="${vente.livraison.zoneLivraison != null ? vente.livraison.zoneLivraison : '-'}"></strong>
+                </div>
+                <div class="detail-row">
                     <span>Date de livraison souhaitée</span>
                     <strong th:text="${vente.livraison.dateLivraison != null ? #temporals.format(vente.livraison.dateLivraison, 'dd/MM/yyyy') : '-'}"></strong>
                 </div>
