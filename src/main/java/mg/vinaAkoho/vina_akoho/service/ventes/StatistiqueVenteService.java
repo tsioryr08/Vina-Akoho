@@ -116,4 +116,10 @@ public class StatistiqueVenteService {
         }
         return resultat;
     }
+    public List<EvolutionVenteStatDTO> obtenirEvolution(LocalDate dateDebut, LocalDate dateFin,
+                                                     Long idCategorie, String granularite) {
+        LocalDateTime debut = dateDebut.atStartOfDay();
+        LocalDateTime fin = dateFin.atTime(23, 59, 59);
+        return construireEvolution(granularite, debut, fin, idCategorie);
+    }
 }

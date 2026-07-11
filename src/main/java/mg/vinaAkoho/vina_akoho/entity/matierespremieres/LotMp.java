@@ -13,8 +13,6 @@ import java.time.LocalDate;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.Fournisseur;
 import java.time.LocalDateTime;
 
-
-
 @Entity
 @Table(name = "lot_mp")
 public class LotMp {
