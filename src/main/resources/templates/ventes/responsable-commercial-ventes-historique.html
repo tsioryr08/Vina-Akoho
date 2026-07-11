@@ -96,7 +96,7 @@
                 <button
                   class="btn btn-ghost"
                   type="button"
-                  onclick="window.location.href = '/ventes/historique'"
+                  onclick="resetHistoriqueVentes()"
                 >
                   Réinitialiser
                 </button>
@@ -241,5 +241,95 @@
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
     <script th:src="@{/js/script_content.js}"></script>
+    <script th:inline="javascript">
+      (function () {
+        const contentSelector = '#vina-content';
+        const contentRoot = document.querySelector(contentSelector);
+
+        if (!contentRoot) {
+          return;
+        }
+
+        function buildUrlFromForm(form) {
+          const url = new URL(form.action, window.location.origin);
+          const formData = new FormData(form);
+
+          formData.forEach(function (value, key) {
+            if (value !== null && String(value).trim() !== '') {
+              url.searchParams.append(key, value);
+            }
+          });
+
+          return url.toString();
+        }
+
+        function swapContent(html, url) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const nextContent = doc.querySelector(contentSelector);
+
+          if (!nextContent) {
+            window.location.href = url;
+            return;
+          }
+
+          contentRoot.innerHTML = nextContent.innerHTML;
+          document.title = doc.title || document.title;
+          window.history.pushState({ url: url }, '', url);
+        }
+
+        async function loadPage(url) {
+          const response = await fetch(url, {
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
+
+          const html = await response.text();
+          swapContent(html, url);
+        }
+
+        document.addEventListener('submit', function (event) {
+          const form = event.target.closest('form');
+
+          if (!form || !contentRoot.contains(form)) {
+            return;
+          }
+
+          if ((form.method || 'get').toLowerCase() !== 'get') {
+            return;
+          }
+
+          event.preventDefault();
+          loadPage(buildUrlFromForm(form));
+        });
+
+        window.resetHistoriqueVentes = function () {
+          loadPage('/api/ventes/historique');
+        };
+
+        window.exporterExcel = function () {
+          var periode = document.getElementById('reportPeriod').value;
+          var zone = document.getElementById('reportZone').value;
+          var url =
+            '/api/ventes/historique/export/excel?periode=' +
+            encodeURIComponent(periode) +
+            '&zone=' +
+            encodeURIComponent(zone);
+          window.location.href = url;
+        };
+
+        window.exporterPdf = function () {
+          var periode = document.getElementById('reportPeriod').value;
+          var zone = document.getElementById('reportZone').value;
+          var url =
+            '/api/ventes/historique/export/pdf?periode=' +
+            encodeURIComponent(periode) +
+            '&zone=' +
+            encodeURIComponent(zone);
+          window.location.href = url;
+        };
+      })();
+    </script>
   </body>
 </html>
