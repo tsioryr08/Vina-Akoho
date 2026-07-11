@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/matieres-premieres")
+@RequestMapping("/api/matieres-premieres/data")
 public class MatierePremiereApiController {
 
     private final MatierePremiereService service;
@@ -41,17 +41,17 @@ public class MatierePremiereApiController {
 
     @GetMapping("/nouveau")
     public ResponseEntity<Void> redirigerAncienLienCreation() {
-        return ResponseEntity.status(302).location(URI.create("/matieres-premieres/nouveau")).build();
+        return ResponseEntity.status(302).location(URI.create("/api/matieres-premieres/nouveau")).build();
     }
 
     @GetMapping("/entree-stock")
     public ResponseEntity<Void> redirigerAncienLienEntreeStock() {
-        return ResponseEntity.status(302).location(URI.create("/matieres-premieres/entree-stock")).build();
+        return ResponseEntity.status(302).location(URI.create("/api/matieres-premieres/entree-stock")).build();
     }
 
     @GetMapping("/fiche")
     public ResponseEntity<Void> redirigerAncienLienFiche() {
-        return ResponseEntity.status(302).location(URI.create("/matieres-premieres/nouveau")).build();
+        return ResponseEntity.status(302).location(URI.create("/api/matieres-premieres/nouveau")).build();
     }
 
     @GetMapping("/{id}")

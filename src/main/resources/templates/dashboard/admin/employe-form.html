@@ -20,7 +20,7 @@
             <h1 th:text="${modeEdition} ? 'Modifier un compte employé' : 'Créer un nouveau compte'">Compte employé</h1>
             <p th:text="${modeEdition} ? 'Modifiez les informations du compte.' : 'Remplissez les informations pour créer un nouveau compte.'"></p>
           </div>
-          <a class="btn btn-ghost" th:href="@{/admin/employes}">← Retour à la liste</a>
+          <a class="btn btn-ghost" th:href="@{/api/admin/employes}">← Retour à la liste</a>
         </section>
 
         <div id="alerte" class="alert-box danger" style="display:none;"></div>
@@ -77,7 +77,7 @@
             </div>
 
             <div style="display:flex; gap:8px; justify-content:flex-end; padding-top:8px;">
-              <a class="btn btn-ghost" th:href="@{/admin/employes}">Annuler</a>
+              <a class="btn btn-ghost" th:href="@{/api/admin/employes}">Annuler</a>
               <button class="btn btn-purple" onclick="soumettre()">
                 <span th:text="${modeEdition} ? 'Enregistrer les modifications' : 'Créer le compte'"></span>
               </button>
@@ -162,7 +162,7 @@
           const json = await rep.json();
           if (json.success) {
             afficherSucces(modeEdition ? "Compte modifié avec succès." : "Compte créé avec succès.");
-            setTimeout(() => window.location.href = "/admin/employes", 1500);
+            setTimeout(() => window.location.href = "/api/admin/employes", 1500);
           } else {
             afficherAlerte(json.message);
           }
