@@ -27,6 +27,9 @@ public class VenteFormDTO {
      */
     private boolean livraisonRequise;
 
+    /** Zone de livraison choisie quand une livraison est requise. */
+    private String idZoneLivraison;
+
     private String adresseLivraison;
 
     private String contactLivraison;

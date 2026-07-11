@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
-
+//transporter les infos dont les autres parties de l'app a besoin pour creer une recette de produit
 public class CreateRecetteProduitDTO {
 
     @NotNull(message = "La catégorie est obligatoire")
