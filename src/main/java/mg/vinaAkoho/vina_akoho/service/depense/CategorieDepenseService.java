@@ -30,6 +30,12 @@ public class CategorieDepenseService {
         return versDTO(categorieDepense);
     }
 
+    public CategorieDepenseDTO trouverParIdSansException(Integer id) {
+        return categorieDepenseRepository.findById(id)
+                .map(this::versDTO)
+                .orElseGet(() -> CategorieDepenseDTO.builder().libelle("").build());
+    }
+
     private CategorieDepenseDTO versDTO(CategorieDepense categorieDepense) {
         return CategorieDepenseDTO.builder()
                 .id(categorieDepense.getId())
