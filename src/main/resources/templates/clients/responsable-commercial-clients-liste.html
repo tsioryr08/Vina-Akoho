@@ -14,9 +14,14 @@
       <div id="vina-content">
         <div class="page-header-row">
           <h1 class="client-page-title">Base de donnees Clients</h1>
-          <a class="btn btn-add-client" th:href="@{/api/clients/nouveau}">
-            + Ajouter un eleveur / client
-          </a>
+          <div style="display: flex; gap: 8px;">
+            <a class="btn btn-ghost btn-small" th:href="@{/clients/import}">
+              📥 Importer en masse
+            </a>
+            <a class="btn btn-add-client" th:href="@{/api/clients/nouveau}">
+              + Ajouter un eleveur / client
+            </a>
+          </div>
         </div>
 
         <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>

@@ -99,12 +99,20 @@
                 produit(s) trouvé(s)
               </p>
             </div>
-            <button
-              class="btn btn-black btn-small"
-              onclick="window.location.href = '/api/produits/nouveau'"
-            >
-              + Ajouter une référence
-            </button>
+            <div style="display: flex; gap: 8px;">
+              <a
+                th:href="@{/api/produits/import}"
+                class="btn btn-ghost btn-small"
+              >
+                📥 Importer en masse
+              </a>
+              <button
+                class="btn btn-black btn-small"
+                onclick="window.location.href = '/api/produits/nouveau'"
+              >
+                + Ajouter une référence
+              </button>
+            </div>
           </div>
           <div class="table-wrap">
             <table class="data-table">
