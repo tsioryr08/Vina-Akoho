@@ -35,7 +35,9 @@ import mg.vinaAkoho.vina_akoho.dto.ventes.VenteDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.VenteFormDTO;
 import mg.vinaAkoho.vina_akoho.entity.produit.Produit;
 import mg.vinaAkoho.vina_akoho.entity.ventes.ModePaiement;
+import mg.vinaAkoho.vina_akoho.entity.livraison.ZoneLivraison;
 import mg.vinaAkoho.vina_akoho.repository.clients.ClientRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.ZoneLivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.ProduitRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.ModePaiementRepository;
 import mg.vinaAkoho.vina_akoho.security.SessionFilter;
@@ -71,6 +73,7 @@ public class VenteController {
     private final ClientRepository clientRepository;
     private final ProduitRepository produitRepository;
     private final ModePaiementRepository modePaiementRepository;
+    private final ZoneLivraisonRepository zoneLivraisonRepository;
     private final ExportVenteService exportVenteService;
 
     @ModelAttribute("clientsDisponibles")
@@ -89,6 +92,11 @@ public class VenteController {
     @ModelAttribute("modesPaiementDisponibles")
     public List<ModePaiement> getModesPaiementDisponibles() {
         return modePaiementRepository.findAll();
+    }
+
+    @ModelAttribute("zonesLivraisonDisponibles")
+    public List<ZoneLivraison> getZonesLivraisonDisponibles() {
+        return zoneLivraisonRepository.findAllByOrderByLibelleAsc();
     }
 
     @ModelAttribute("panierForm")
@@ -1027,6 +1035,11 @@ public class VenteController {
         List<PanierItemDTO> panier = panier(session);
         if (panier.isEmpty()) {
             model.addAttribute("error", "Le panier est vide.");
+            return "ventes/responsable-commercial-ventes-nouvelles";
+        }
+
+        if (venteForm.isLivraisonRequise() && (venteForm.getIdZoneLivraison() == null || venteForm.getIdZoneLivraison().isBlank())) {
+            model.addAttribute("error", "La zone de livraison est obligatoire quand une livraison est requise.");
             return "ventes/responsable-commercial-ventes-nouvelles";
         }
 

@@ -128,7 +128,7 @@ public class SortieMpService {
         typeMouvement.setLibelle(libelle);
         return typeMouvementRepository.save(typeMouvement);
     }
-
+//entity mvtstockmpdto-> mvtstockmp pour envoyer au front
     private MouvementStockMpDTO toDTO(MouvementStockMp m) {
         MouvementStockMpDTO dto = new MouvementStockMpDTO();
         dto.setId(m.getId());

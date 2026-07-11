@@ -37,12 +37,12 @@
                         </div>
 
                         <div class="field">
-                            <label for="idStatutLivraison">Statut *</label>
-                            <select id="idStatutLivraison" th:field="*{idStatutLivraison}" class="form-control" required>
-                                <option value="">Sélectionner un statut</option>
-                                <option th:each="statut : ${statutsDisponibles}"
-                                        th:value="${statut.id}"
-                                        th:text="${statut.libelle}"></option>
+                            <label for="idZoneLivraison">Zone *</label>
+                            <select id="idZoneLivraison" th:field="*{idZoneLivraison}" class="form-control" required>
+                                <option value="">Sélectionner une zone</option>
+                                <option th:each="zone : ${zonesDisponibles}"
+                                        th:value="${zone.id}"
+                                        th:text="${zone.libelle}"></option>
                             </select>
                         </div>
 
