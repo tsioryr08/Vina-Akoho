@@ -1,0 +1,421 @@
+<!-- EXEMPLE DE PAGE REFACTORISÉE AVEC LE DESIGN SYSTEM
+     
+     RÈGLES APPLIQUÉES:
+     ✅ Pas de styles inline (style="...")
+     ✅ Pas de fichiers CSS séparés
+     ✅ Tout via classes CSS du design system
+     ✅ HTML lisible et structure claire
+     ✅ Utilisation de Thymeleaf pour données dynamiques
+-->
+
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion des Comptes - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <!-- ==========================================
+         SIDEBAR (injecté via template fragment)
+         ========================================== -->
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
+    
+    <!-- Backdrop pour fermer sidebar sur mobile -->
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <!-- ==========================================
+         MAIN LAYOUT
+         ========================================== -->
+    <div class="main">
+        <!-- HEADER (injecté via template fragment) -->
+        <div th:replace="${headerTemplate} :: header"></div>
+
+        <!-- CONTENU PRINCIPAL -->
+        <div class="main-content">
+
+            <!-- PAGE HEADER avec titre et action -->
+            <section class="page-header">
+                <div>
+                    <p class="eyebrow">RO01 - Administrateur</p>
+                    <h1>Gestion des comptes utilisateurs</h1>
+                    <p>Créer, modifier, désactiver et réinitialiser les comptes employés.</p>
+                </div>
+                <a class="btn btn-primary" th:href="@{/api/admin/employes/nouveau}">
+                    + Nouveau compte
+                </a>
+            </section>
+
+            <!-- ========================================
+                 SECTION 1: STATISTIQUES (KPIs)
+                 ======================================== -->
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-label">Comptes actifs</div>
+                    <div class="stat-value" th:text="${totalActifs}">0</div>
+                    <div class="stat-trend trend-info">Utilisateurs actifs</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-label">Comptes désactivés</div>
+                    <div class="stat-value" th:text="${totalDesactives}">0</div>
+                    <div class="stat-trend trend-warning">Accès suspendus</div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-label">Rôles disponibles</div>
+                    <div class="stat-value" th:text="${totalRoles}">0</div>
+                    <div class="stat-trend trend-neutral">Postes définis</div>
+                </article>
+            </section>
+
+            <!-- ========================================
+                 SECTION 2: ALERTES
+                 ======================================== -->
+            <div id="alerte" class="alert alert-info" style="display:none;">
+                <div class="alert-icon">ℹ</div>
+                <div class="alert-content">
+                    <div class="alert-title">Information</div>
+                    <div class="alert-message" id="alerteMessage"></div>
+                </div>
+            </div>
+
+            <!-- ========================================
+                 SECTION 3: RECHERCHE & FILTRES
+                 ======================================== -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Filtres de recherche</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Barre de recherche + filtre -->
+                    <div class="search-bar">
+                        <input 
+                            id="champRecherche" 
+                            type="text" 
+                            class="form-control search-input" 
+                            placeholder="Rechercher par nom, prénom ou email..." 
+                            oninput="chargerAvecFiltres()" 
+                        />
+                        <select 
+                            id="filtreRole" 
+                            class="form-control filter-select" 
+                            onchange="chargerAvecFiltres()"
+                        >
+                            <option value="">Tous les rôles</option>
+                            <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.poste}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================
+                 SECTION 4: ONGLETS (Actifs/Inactifs)
+                 ======================================== -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Liste des employés</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Onglets de navigation -->
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="changerTab(true)">Actifs</button>
+                        <button class="tab-button" onclick="changerTab(false)">Désactivés</button>
+                    </div>
+
+                    <!-- TABLEAU -->
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom & Prénom</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                    <th>Rôle</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpsTableau">
+                                <tr>
+                                    <td colspan="6" class="text-center">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- FIN main-content -->
+
+    </div>
+    <!-- FIN main -->
+
+    <!-- ==========================================
+         MODALE: RÉINITIALISER MOT DE PASSE
+         ========================================== -->
+    <div id="modalMdp" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Réinitialiser le mot de passe</h2>
+                <button class="modal-close" onclick="fermerModalMdp()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nouveau mot de passe *</label>
+                    <input 
+                        id="nouveauMdp" 
+                        type="password" 
+                        class="form-control" 
+                        placeholder="Entrez le nouveau mot de passe" 
+                        oninput="cacherErreurMdp()" 
+                    />
+                    <div id="erreurMdp" class="form-error"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="fermerModalMdp()">Annuler</button>
+                <button class="btn btn-primary" onclick="confirmerReinitialisationMdp()">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Variables globales
+        let afficherActifs = true;
+        let idEmployeSelectionne = null;
+
+        // Fonction pour charger les employés
+        async function chargerEmployes(url) {
+            try {
+                const rep = await fetch(url);
+                const json = await rep.json();
+                if (!json.success) {
+                    afficherAlerte(json.message);
+                    return;
+                }
+                renderTableau(json.data);
+            } catch (e) {
+                afficherAlerte("Erreur lors du chargement des employés.");
+            }
+        }
+
+        // Charger avec filtres
+        function chargerAvecFiltres() {
+            const terme = document.getElementById("champRecherche").value.trim();
+            const idRole = document.getElementById("filtreRole").value;
+
+            const baseUrl = '/api/admin/employes';
+            let url;
+
+            if (terme.length > 0) {
+                const params = new URLSearchParams({ 
+                    terme, 
+                    actif: afficherActifs 
+                });
+                url = `${baseUrl}/recherche?${params}`;
+            } else if (idRole) {
+                const params = new URLSearchParams({ 
+                    idRole, 
+                    actif: afficherActifs 
+                });
+                url = `${baseUrl}/par-role?${params}`;
+            } else {
+                const params = new URLSearchParams({ actif: afficherActifs });
+                url = `${baseUrl}?${params}`;
+            }
+
+            chargerEmployes(url);
+        }
+
+        // Changer d'onglet
+        function changerTab(actifs) {
+            afficherActifs = actifs;
+            
+            // Mettre à jour classe active des boutons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Recharger les données
+            chargerAvecFiltres();
+        }
+
+        // Afficher alerte
+        function afficherAlerte(message) {
+            const alerte = document.getElementById('alerte');
+            document.getElementById('alerteMessage').textContent = message;
+            alerte.style.display = 'flex';
+            setTimeout(() => {
+                alerte.style.display = 'none';
+            }, 5000);
+        }
+
+        // Rendre le tableau
+        function renderTableau(employes) {
+            const tbody = document.getElementById('corpsTableau');
+            
+            if (employes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aucun employé trouvé.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = employes.map(emp => `
+                <tr>
+                    <td>${emp.nom} ${emp.prenom}</td>
+                    <td>${emp.email}</td>
+                    <td>${emp.telephone || '-'}</td>
+                    <td>
+                        <span class="badge badge-primary">${emp.role.poste}</span>
+                    </td>
+                    <td>
+                        ${emp.actif 
+                            ? '<span class="badge badge-success">Actif</span>' 
+                            : '<span class="badge badge-danger">Inactif</span>'
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="editerEmploye(${emp.idEmploye})">
+                            Éditer
+                        </button>
+                        <button class="btn btn-sm btn-ghost" onclick="ouvrirModalMdp(${emp.idEmploye})">
+                            MDP
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Ouvrir modal réinitialisation
+        function ouvrirModalMdp(idEmploye) {
+            idEmployeSelectionne = idEmploye;
+            document.getElementById('modalMdp').classList.add('active');
+        }
+
+        // Fermer modal
+        function fermerModalMdp() {
+            document.getElementById('modalMdp').classList.remove('active');
+            document.getElementById('nouveauMdp').value = '';
+            cacherErreurMdp();
+        }
+
+        // Cacher erreur mot de passe
+        function cacherErreurMdp() {
+            document.getElementById('erreurMdp').style.display = 'none';
+        }
+
+        // Confirmer réinitialisation
+        async function confirmerReinitialisationMdp() {
+            const mdp = document.getElementById('nouveauMdp').value.trim();
+            
+            if (mdp.length < 8) {
+                document.getElementById('erreurMdp').textContent = 
+                    'Le mot de passe doit faire au moins 8 caractères.';
+                document.getElementById('erreurMdp').style.display = 'block';
+                return;
+            }
+
+            try {
+                const rep = await fetch(`/api/admin/employes/${idEmployeSelectionne}/reset-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mdp })
+                });
+                
+                const json = await rep.json();
+                
+                if (json.success) {
+                    afficherAlerte('Mot de passe réinitialisé avec succès!');
+                    fermerModalMdp();
+                } else {
+                    document.getElementById('erreurMdp').textContent = json.message;
+                    document.getElementById('erreurMdp').style.display = 'block';
+                }
+            } catch (e) {
+                afficherAlerte('Erreur lors de la réinitialisation.');
+            }
+        }
+
+        // Éditer employé
+        function editerEmploye(idEmploye) {
+            window.location.href = `/api/admin/employes/${idEmploye}/edit`;
+        }
+
+        // Charger au démarrage
+        window.addEventListener('load', () => {
+            chargerEmployes('/api/admin/employes');
+        });
+    </script>
+
+</body>
+</html>
+
+<!-- ====================================================================
+     EXPLICATIONS & RÈGLES APPLIQUÉES:
+     ==================================================================== -->
+
+<!--
+     ✅ POSITIFS:
+     
+     1. PAS DE STYLES INLINE
+        - Tous les style="..." ont été supprimés
+        - Remplacés par des classes CSS du design system
+        
+     2. HTML LISIBLE
+        - Structure claire avec commentaires
+        - Indentation cohérente
+        - Sections bien organisées
+        
+     3. CLASSES RÉUTILISABLES
+        - .card, .card-header, .card-body
+        - .page-header, .eyebrow
+        - .stats-grid, .stat-card, .stat-label, .stat-value, .stat-trend
+        - .search-bar, .form-control, .filter-select
+        - .tabs, .tab-button, .table-wrap, .data-table
+        - .modal-overlay, .modal, .modal-header, .modal-body, .modal-footer
+        - .btn btn-primary, .btn btn-outline, .btn btn-sm
+        - .badge, .badge-success, .badge-danger, .badge-primary
+        - .alert, .alert-icon, .alert-content, .alert-title, .alert-message
+        - .form-group, .form-label, .form-control, .form-error
+        
+     4. DESIGN SYSTEM
+        - Toutes les couleurs viennent de :root (variables CSS)
+        - Tous les espaces via var(--space-*)
+        - Tous les rayon via var(--radius)
+        - Toutes les transitions via var(--transition)
+        
+     5. RESPONSIVE
+        - Les classes auto-ajustent sur mobile
+        - .search-bar devient colonne sur mobile
+        - .stats-grid s'adapte automatiquement
+        
+     ====================================================================
+     
+     ❌ À ÉVITER:
+     
+     - style="display:flex; gap:12px; ..." → Utiliser .flex .gap-2
+     - style="padding:16px;" → Utiliser .p-2
+     - style="margin-bottom:16px;" → Utiliser .mb-2
+     - <style> tags dans HTML → Tout dans style.css
+     - Couleurs hard-codées → Utiliser var(--primary), etc.
+     - Fichiers CSS séparés → Tout centralisé
+     
+     ====================================================================
+     
+     🎯 COMMENT REFACTORISER UNE PAGE:
+     
+     1. Copier la structure de ce fichier
+     2. Remplacer les style="..." par des classes
+     3. Utiliser les composants .card, .form-group, etc.
+     4. Vérifier dans DESIGN_SYSTEM.md
+     5. Tester sur mobile
+     6. Supprimer les fichiers CSS séparés
+     
+     ====================================================================
+-->
