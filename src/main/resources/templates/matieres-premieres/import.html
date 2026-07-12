@@ -1,0 +1,36 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Import Matières Premières - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}" />
+  </head>
+  <body class="vina-body">
+  <div th:replace="${sidebarTemplate} :: sidebar"></div>
+    <div class="app-main-wrapper">
+      <header th:replace="~{layout/header :: header}"></header>
+      <div id="vina-content">
+        <section class="page-header theme-orange">
+          <div>
+            <p class="eyebrow">MATIÈRES PREMIÈRES</p>
+            <h1>Import en masse</h1>
+            <p class="muted-text">Importer plusieurs matières premières depuis un fichier Excel.</p>
+          </div>
+        </section>
+
+        <div th:replace="~{layout/fragment-import-excel :: formulaireImport('formImportMp', 'inputFichierMp', 'resultatImportMp', @{/api/matieres-premieres/import/modele})}"></div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/import-excel.js}"></script>
+    <script th:inline="javascript">
+      initImportExcel({
+        urlApercu: /*[[@{/api/matieres-premieres/import/apercu}]]*/ "",
+        urlImport: /*[[@{/api/matieres-premieres/import}]]*/ "",
+        inputFileId: "inputFichierMp",
+        formId: "formImportMp",
+        resultatContainerId: "resultatImportMp",
+      });
+    </script>
+  </body>
+</html>

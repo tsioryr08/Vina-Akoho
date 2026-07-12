@@ -224,6 +224,7 @@ Contient : fil d'Ariane (Matières Premières) et badge de rôle.
 - Les référentiels unite, fournisseur et type_mouvement (ligne ENTREE) doivent être présents en base avant le lancement (voir donnees-test.sql et init.md).
 - ApiResponse et GlobalExceptionHandler sont partagés avec tous les modules de l'équipe.
 - Le CSS static/assets/css/style.css est le CSS commun du projet — à ne pas modifier dans ce module.
+- Depuis le Sprint 3 (section 11), MatierePremiereService dépend aussi du module *F7 Dépenses* (CategorieDepenseRepository, PhaseRepository, StatutDepenseRepository, DepenseService) : chaque entrée de stock génère automatiquement la dépense d'achat correspondante.
 
 ---
 
@@ -332,3 +333,37 @@ Aucun fichier du module `matierespremieres` modifié dans cette copie (déjà co
 ### Vérification effectuée
 
 `mvn compile` exécuté à la racine de cette copie (`docs/Vina-Akoho`) : compilation réussie sans erreur, `.class` générés pour `DashboardController`, `ProduitService` et les DTOs modifiés. Pas de vérification fonctionnelle navigateur/curl sur cette copie (pas de base de données connectée dans cet environnement) — seule la compilation a été vérifiée. Le détail complet des tests fonctionnels (exécutés sur le projet local) est dans `docs/rapports-techniques/Rary.md` du projet local, section 8.
+
+---
+
+## 11. Sprint 3 — Génération automatique de la dépense d'achat (Entrée.MP → Dépense, module F7)
+
+Dernière mise à jour : 2026-07-11
+
+### Contexte
+
+Jusqu'ici, une entrée de stock de matière première (entreeStock) ne créait qu'un lot_mp et un mouvement_stock_mp : le coût d'achat (cout_unitaire × quantite) n'était reflété nulle part dans le module Dépenses (F7), qui restait alimenté uniquement par saisie manuelle via DepenseService. Décision : chaque entrée de stock doit désormais générer automatiquement la dépense d'achat correspondante, dans la même transaction que l'entrée de stock.
+
+Constat préalable : aucune donnée n'est seedée pour les tables categorie_depense, phase et statut_depense (ni migration Flyway, ni data.sql, ni DataInitializer). Les libellés utilisés par le code doivent donc être créés automatiquement s'ils n'existent pas encore en base (get-or-create), pour ne pas dépendre d'une saisie manuelle préalable.
+
+### Modifications apportées
+
+| Fichier | Modification |
+| --- | --- |
+| repository/depense/CategorieDepenseRepository.java | Ajout de la méthode dérivée findByLibelle(String). |
+| repository/depense/PhaseRepository.java | Ajout de la méthode dérivée findByLibelle(String). |
+| repository/depense/StatutDepenseRepository.java | Ajout de la méthode dérivée findByLibelle(String). |
+| service/matierespremieres/MatierePremiereService.java | Constructeur étendu : injection de CategorieDepenseRepository, PhaseRepository, StatutDepenseRepository et DepenseService. Ajout des constantes CATEGORIE_DEPENSE_ACHAT_MP ("Achat Matières Premières"), PHASE_ACHAT_MP ("Phase Initiale"), STATUT_DEPENSE_ACHAT_MP ("Payé"). Nouvelle méthode privée enregistrerDepenseAchat(mp, dto) appelée en fin de entreeStock(). Trois méthodes privées resolveCategorieDepenseAchatMp(), resolvePhaseAchatMp(), resolveStatutDepenseAchatMp() (get-or-create par libellé). |
+
+### Logique métier
+
+- enregistrerDepenseAchat construit un DepenseRequestDTO puis appelle depenseService.creer(...) :
+  - montant = coutUnitaire × quantite (calculé, jamais ressaisi)
+  - date = dateReception de l'entrée de stock
+  - designation = "Achat matière première - {nom MP} - {quantité} {unité} - Fournisseur: {nom fournisseur}"
+  - idCategorieDepense / idPhase / idStatutDepense = résolus par resolve*(), qui cherchent la ligne référentielle par libellé et la créent à la volée si absente
+- L'appel est fait à l'intérieur du @Transactional existant de entreeStock() : si la création de la dépense échoue, le lot_mp et le mouvement_stock_mp ne sont pas persistés non plus (cohérence garantie entre stock et dépenses).
+
+### Vérification effectuée
+
+mvn compile exécuté à la racine du projet : compilation réussie sans erreur, .class régénérés pour MatierePremiereService et les 3 repositories modifiés. Pas de vérification fonctionnelle navigateur/base de données dans cet environnement — seule la compilation a été vérifiée.

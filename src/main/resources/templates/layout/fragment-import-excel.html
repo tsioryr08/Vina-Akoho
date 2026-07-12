@@ -1,0 +1,29 @@
+<div xmlns:th="http://www.thymeleaf.org">
+  <section th:fragment="formulaireImport(formId, inputFileId, resultatId, urlModele)" class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">Import en masse (Excel)</h2>
+        <p class="card-subtitle">
+          Téléchargez le modèle, remplissez-le, puis importez-le ici.
+        </p>
+      </div>
+    </div>
+    <div class="card-body">
+      <a th:href="${urlModele}" class="btn btn-white" style="margin-bottom: 16px;">
+        Télécharger le modèle Excel
+      </a>
+
+      <form th:id="${formId}" class="form-grid">
+        <div class="field">
+          <label>Fichier Excel (.xlsx)</label>
+          <input type="file" th:id="${inputFileId}" accept=".xlsx" class="form-control" required />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Analyser le fichier</button>
+        </div>
+      </form>
+
+      <div th:id="${resultatId}" style="margin-top: 24px;"></div>
+    </div>
+  </section>
+</div>

@@ -110,9 +110,17 @@
                 produit(s) trouvé(s)
               </p>
             </div>
-            <a th:href="@{/api/produits/nouveau}" class="btn btn-primary btn-small">
-              + Ajouter une référence
-            </a>
+            <div style="display: flex; gap: 8px;">
+              <a
+                th:href="@{/api/produits/import}"
+                class="btn btn-ghost btn-small"
+              >
+                📥 Importer en masse
+              </a>
+              <a th:href="@{/api/produits/nouveau}" class="btn btn-primary btn-small">
+                + Ajouter une référence
+              </a>
+            </div>
           </div>
 
           <div class="table-wrap">

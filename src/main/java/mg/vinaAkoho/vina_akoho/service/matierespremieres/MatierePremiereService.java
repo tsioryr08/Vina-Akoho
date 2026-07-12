@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import mg.vinaAkoho.vina_akoho.dto.depense.DepenseRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.EntreeStockDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.FicheDetailDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.FournisseurDTO;
@@ -15,6 +16,9 @@ import mg.vinaAkoho.vina_akoho.dto.matierespremieres.LotDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.MatierePremiereListDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.MatierePremiereRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.UniteDTO;
+import mg.vinaAkoho.vina_akoho.entity.depense.CategorieDepense;
+import mg.vinaAkoho.vina_akoho.entity.depense.Phase;
+import mg.vinaAkoho.vina_akoho.entity.depense.StatutDepense;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.Fournisseur;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.LotMp;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.MatierePremiere;
@@ -25,12 +29,16 @@ import mg.vinaAkoho.vina_akoho.exception.matierespremieres.FournisseurNotFoundEx
 import mg.vinaAkoho.vina_akoho.exception.matierespremieres.MatierePremiereNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.matierespremieres.TypeMouvementNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.matierespremieres.UniteNotFoundException;
+import mg.vinaAkoho.vina_akoho.repository.depense.CategorieDepenseRepository;
+import mg.vinaAkoho.vina_akoho.repository.depense.PhaseRepository;
+import mg.vinaAkoho.vina_akoho.repository.depense.StatutDepenseRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.FournisseurRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.LotMpRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.MatierePremiereRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.MouvementStockMpRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.TypeMouvementRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.UniteRepository;
+import mg.vinaAkoho.vina_akoho.service.depense.DepenseService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,25 +48,41 @@ public class MatierePremiereService {
     private static final String STATUT_ALERTE = "SEUIL ATTEINT";
     private static final String STATUT_OK = "Stock Correct";
 
+    private static final String CATEGORIE_DEPENSE_ACHAT_MP = "Achat Matières Premières";
+    private static final String PHASE_ACHAT_MP = "Phase Initiale";
+    private static final String STATUT_DEPENSE_ACHAT_MP = "Payé";
+
     private final MatierePremiereRepository matierePremiereRepository;
     private final FournisseurRepository fournisseurRepository;
     private final UniteRepository uniteRepository;
     private final LotMpRepository lotMpRepository;
     private final TypeMouvementRepository typeMouvementRepository;
     private final MouvementStockMpRepository mouvementStockMpRepository;
+    private final CategorieDepenseRepository categorieDepenseRepository;
+    private final PhaseRepository phaseRepository;
+    private final StatutDepenseRepository statutDepenseRepository;
+    private final DepenseService depenseService;
 
     public MatierePremiereService(MatierePremiereRepository matierePremiereRepository,
                                   FournisseurRepository fournisseurRepository,
                                   UniteRepository uniteRepository,
                                   LotMpRepository lotMpRepository,
                                   TypeMouvementRepository typeMouvementRepository,
-                                  MouvementStockMpRepository mouvementStockMpRepository) {
+                                  MouvementStockMpRepository mouvementStockMpRepository,
+                                  CategorieDepenseRepository categorieDepenseRepository,
+                                  PhaseRepository phaseRepository,
+                                  StatutDepenseRepository statutDepenseRepository,
+                                  DepenseService depenseService) {
         this.matierePremiereRepository = matierePremiereRepository;
         this.fournisseurRepository = fournisseurRepository;
         this.uniteRepository = uniteRepository;
         this.lotMpRepository = lotMpRepository;
         this.typeMouvementRepository = typeMouvementRepository;
         this.mouvementStockMpRepository = mouvementStockMpRepository;
+        this.categorieDepenseRepository = categorieDepenseRepository;
+        this.phaseRepository = phaseRepository;
+        this.statutDepenseRepository = statutDepenseRepository;
+        this.depenseService = depenseService;
     }
 
     public List<MatierePremiereListDTO> lister() {
@@ -126,7 +150,50 @@ public class MatierePremiereService {
         mouvement.setDateMouvement(dto.dateReception());
         mouvementStockMpRepository.save(mouvement);
 
+        enregistrerDepenseAchat(mp, dto);
+
         return versDetailDTO(mp);
+    }
+
+    // Toute entrée de stock de matière première génère automatiquement la dépense d'achat correspondante
+    private void enregistrerDepenseAchat(MatierePremiere mp, EntreeStockDTO dto) {
+        DepenseRequestDTO depenseDto = new DepenseRequestDTO();
+        depenseDto.setDate(dto.dateReception());
+        depenseDto.setDesignation("Achat matière première - " + mp.getNom()
+                + " - " + dto.quantite() + " " + mp.getUnite().getLibelle()
+                + " - Fournisseur: " + mp.getFournisseur().getNom());
+        depenseDto.setMontant(dto.coutUnitaire().multiply(dto.quantite()));
+        depenseDto.setIdCategorieDepense(resolveCategorieDepenseAchatMp().getId());
+        depenseDto.setIdPhase(resolvePhaseAchatMp().getId());
+        depenseDto.setIdStatutDepense(resolveStatutDepenseAchatMp().getId());
+        depenseService.creer(depenseDto);
+    }
+
+    private CategorieDepense resolveCategorieDepenseAchatMp() {
+        return categorieDepenseRepository.findByLibelle(CATEGORIE_DEPENSE_ACHAT_MP)
+                .orElseGet(() -> {
+                    CategorieDepense categorie = new CategorieDepense();
+                    categorie.setLibelle(CATEGORIE_DEPENSE_ACHAT_MP);
+                    return categorieDepenseRepository.save(categorie);
+                });
+    }
+
+    private Phase resolvePhaseAchatMp() {
+        return phaseRepository.findByLibelle(PHASE_ACHAT_MP)
+                .orElseGet(() -> {
+                    Phase phase = new Phase();
+                    phase.setLibelle(PHASE_ACHAT_MP);
+                    return phaseRepository.save(phase);
+                });
+    }
+
+    private StatutDepense resolveStatutDepenseAchatMp() {
+        return statutDepenseRepository.findByLibelle(STATUT_DEPENSE_ACHAT_MP)
+                .orElseGet(() -> {
+                    StatutDepense statut = new StatutDepense();
+                    statut.setLibelle(STATUT_DEPENSE_ACHAT_MP);
+                    return statutDepenseRepository.save(statut);
+                });
     }
 
     public List<FournisseurDTO> listerFournisseurs() {

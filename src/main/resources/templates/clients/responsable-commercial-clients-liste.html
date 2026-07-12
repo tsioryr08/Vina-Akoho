@@ -12,18 +12,19 @@
     <div class="app-main-wrapper">
       <div id="vina-header" th:replace="~{layout/header}"></div>
       <div id="vina-content">
-        <section class="page-header theme-green">
-          <div>
-            <p class="eyebrow">CLIENTS</p>
-            <h1>Base de donnees Clients</h1>
-            <p class="muted-text">
-              Gestion des clients et suivi commercial.
-            </p>
+
+        <div class="page-header-row">
+          <h1 class="client-page-title">Base de donnees Clients</h1>
+          <div style="display: flex; gap: 8px;">
+            <a class="btn btn-ghost btn-small" th:href="@{/clients/import}">
+              📥 Importer en masse
+            </a>
+            <a class="btn btn-add-client" th:href="@{/api/clients/nouveau}">
+              + Ajouter un eleveur / client
+            </a>
           </div>
-           <a class="btn btn-add-client" th:href="@{/api/clients/nouveau}">
-            + Ajouter un eleveur / client
-          </a>
-        </section>
+        </div>
+
 
         <div class="alert-box success" th:if="${succes != null}" th:text="${succes}"></div>
 
