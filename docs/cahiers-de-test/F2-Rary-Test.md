@@ -489,6 +489,52 @@ Résultat : **5/5 — 0 échec**
 
 ---
 
+## Sprint 3 — Génération automatique de la dépense d'achat (Entrée.MP → Dépense, module F7)
+
+---
+
+Date : 2026-07-11
+Testeur : Rary
+Type : Test unitaire automatisé (`MatierePremiereServiceTest.entreeStock_creeUneDepenseAvecMontantEtDesignationCorrects`)
+Résultat attendu : Entrée de 500 kg de "Maïs Concassé" à 1250 Ar/kg (fournisseur Agro-HautesTerres) le 2026-07-11 → une Depense est créée avec montant=625000 (500×1250), date=2026-07-11, designation contenant le nom de la MP, la quantité, l'unité et le fournisseur.
+Résultat obtenu : `depenseService.creer(...)` appelé une fois avec DepenseRequestDTO{montant=625000, date=2026-07-11, designation="Achat matière première - Maïs Concassé - 500 kg - Fournisseur: Agro-HautesTerres"}.
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Le montant n'est jamais ressaisi manuellement, il est calculé (coutUnitaire × quantite) dans MatierePremiereService.enregistrerDepenseAchat().
+
+---
+
+Date : 2026-07-11
+Testeur : Rary
+Type : Test unitaire automatisé (`MatierePremiereServiceTest.entreeStock_creeLesReferentielsDepenseQuandAbsentsEnBase`)
+Résultat attendu : Si les référentiels "Achat Matières Premières" (CategorieDepense), "Phase Initiale" (Phase) et "Payé" (StatutDepense) n'existent pas encore en base, l'entrée de stock les crée automatiquement (get-or-create) et les utilise pour la dépense.
+Résultat obtenu : `categorieDepenseRepository.save()`, `phaseRepository.save()` et `statutDepenseRepository.save()` appelés une fois chacun ; la dépense créée référence bien les ids générés (99/98/97).
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Vérifie le comportement get-or-create rendu nécessaire par l'absence de toute donnée seed pour ces 3 tables (aucune migration Flyway ni data.sql ne les alimente).
+
+---
+
+Date : 2026-07-11
+Testeur : Rary
+Type : Test unitaire automatisé (`MatierePremiereServiceTest.entreeStock_neCreePasDeNouveauReferentielQuandDejaPresentEnBase`)
+Résultat attendu : Si les 3 référentiels existent déjà en base (recherchés par libellé), aucune nouvelle ligne n'est créée — les ids existants sont réutilisés.
+Résultat obtenu : `categorieDepenseRepository.save()`, `phaseRepository.save()` et `statutDepenseRepository.save()` jamais appelés (`never()`).
+Statut :
+☑ Succès
+☐ Échec
+Commentaire : Évite la duplication des lignes référentielles à chaque entrée de stock.
+
+---
+
+Commande : `mvn -Dtest=MatierePremiereServiceTest test`
+
+Résultat : **3/3 — 0 échec** (8/8 au total pour `MatierePremiereServiceTest`, en comptant les 5 tests Sprint 2 déjà existants)
+
+---
+
 ## Bilan global
 
 | Tâche | Tests rédigés | Succès | Échecs |
