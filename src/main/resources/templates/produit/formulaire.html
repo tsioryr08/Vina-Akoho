@@ -7,16 +7,15 @@
     <title th:if="${produitId != null}">Modifier Produit - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body" xmlns:th="http://www.thymeleaf.org">
+  <body class="vina-body page-produit-form">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
-      <div th:replace="${headerTemplate} :: header"></div>
-      <div id="vina-header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
-            <p class="eyebrow">ADMINISTRATION</p>
+            <p class="eyebrow">CATALOGUE</p>
             <h1 th:if="${produitId == null}">Nouveau Produit</h1>
             <h1 th:if="${produitId != null}">Modifier le Produit</h1>
             <p class="muted-text">
@@ -27,26 +26,43 @@
               <span th:if="${produitId != null}">modifier le produit</span>.
             </p>
           </div>
+          <span class="role-badge role-orange" th:if="${produitId == null}">Création</span>
+          <span class="role-badge role-orange" th:if="${produitId != null}">Édition</span>
+        </section>
+
+        <section class="tab-list" role="tablist">
+          <a th:href="@{/api/produits}" class="tab-link">Liste Produits</a>
+          <a th:href="@{/api/produits/nouveau}" class="tab-link" th:classappend="${produitId == null} ? ' active' : ''">Nouvelle Référence</a>
+          <a th:if="${produitId != null}" th:href="@{/api/produits/{id}(id=${produitId})}" class="tab-link">Détail Produit</a>
         </section>
 
         <div
           th:if="${success}"
-          class="info-banner success"
+          class="alert-box success"
           th:text="${success}"
         ></div>
         <div
           th:if="${error}"
-          class="info-banner error"
+          class="alert-box danger"
           th:text="${error}"
         ></div>
 
-        <div class="form-container">
+        <section class="form-card produit-form-card">
+          <div class="form-section-heading">
+            <span>1</span>
+            <div>
+              <h2 th:if="${produitId == null}">Créer une référence produit</h2>
+              <h2 th:if="${produitId != null}">Mettre à jour la référence produit</h2>
+              <p>Renseignez les informations commerciales et techniques du produit.</p>
+            </div>
+          </div>
+
           <form
             th:action="${produitId == null} ? @{/api/produits} : @{/api/produits/{id}(id=${produitId})}"
             th:method="${produitId == null} ? 'post' : 'post'"
             th:object="${produit}"
           >
-            <div class="form-grid">
+            <div class="form-row produit-form-row">
               <div class="field ref-field" th:if="${produitId != null}">
                 <label for="ref">Référence</label>
                 <input
@@ -65,7 +81,7 @@
               </div>
 
               <div class="field nom-field">
-                <label for="nom">Désignation *</label>
+                <label for="nom">Désignation <span class="text-danger">*</span></label>
                 <input
                   type="text"
                   id="nom"
@@ -81,7 +97,7 @@
               </div>
 
               <div class="field cat-field">
-                <label for="idCategorie">Catégorie *</label>
+                <label for="idCategorie">Catégorie <span class="text-danger">*</span></label>
                 <select
                   id="idCategorie"
                   th:field="*{idCategorie}"
@@ -102,7 +118,7 @@
               </div>
 
               <div class="field prix-field">
-                <label for="prixVente">Prix de vente (Ar) *</label>
+                <label for="prixVente">Prix de vente (Ar) <span class="text-danger">*</span></label>
                 <input
                   type="number"
                   id="prixVente"
@@ -171,21 +187,18 @@
 
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">
-                <span th:if="${produitId == null}">➕ Créer</span>
-                <span th:if="${produitId != null}">💾 Mettre à jour</span>
+                <span th:if="${produitId == null}">Créer</span>
+                <span th:if="${produitId != null}">Mettre à jour</span>
               </button>
-              <a th:href="@{/api/produits}" class="btn btn-secondary"
-                >↩️ Annuler</a
+              <a th:href="@{/api/produits}" class="btn btn-ghost"
+                >Annuler</a
               >
             </div>
           </form>
-        </div>
+        </section>
 
         <div id="vina-footer"></div>
       </div>
-
-      <script src="/static/assets/js/auth.js"></script>
-      <script src="/static/assets/js/app-shell.js"></script>
     </div>
   <script th:src="@{/js/script_content.js}"></script>
 </body>

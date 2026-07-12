@@ -1,32 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Détail du Produit - VINA AKOHO</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
-  <body class="vina-body">
+  <body class="vina-body page-produit-detail">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
-      <div th:replace="${headerTemplate} :: header"></div>
-      <div id="vina-header"></div>
-    <div id="vina-content">
+    <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-content">
 
         <section class="page-header theme-orange">
             <div>
-                <p class="eyebrow">ADMINISTRATION</p>
+                <p class="eyebrow">CATALOGUE</p>
                 <h1>Détail du Produit</h1>
                 <p class="muted-text">Visualisation complète des informations du produit.</p>
             </div>
+            <span class="role-badge role-orange">Consultation</span>
         </section>
 
-        <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
-        <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
-        <div th:if="${info}" class="info-banner info" th:text="${info}"></div>
+        <section class="tab-list" role="tablist">
+            <a th:href="@{/api/produits}" class="tab-link">Liste Produits</a>
+            <a th:href="@{/api/produits/nouveau}" class="tab-link">Nouvelle Référence</a>
+            <a th:href="@{/api/produits/{id}(id=${produit.id})}" class="tab-link active">Détail Produit</a>
+        </section>
 
-        <div class="detail-container">
+        <div th:if="${success}" class="alert-box success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert-box danger" th:text="${error}"></div>
+        <div th:if="${info}" class="alert-box info" th:text="${info}"></div>
+
+        <section class="detail-container produit-detail-container">
             <div class="detail-header">
                 <div>
                     <h1 th:text="${produit.nom}">Nom du produit</h1>
@@ -112,8 +118,8 @@
                                     <td th:text="'Ar ' + ${#numbers.formatDecimal(historique.ancienPrix, 0, 0)}">Ar 40 000</td>
                                     <td th:text="'Ar ' + ${#numbers.formatDecimal(historique.nouveauPrix, 0, 0)}">Ar 45 000</td>
                                     <td>
-                                        <span th:if="${historique.nouveauPrix > historique.ancienPrix}" class="badge badge-success">+Ar ${#numbers.formatDecimal(historique.nouveauPrix - historique.ancienPrix, 0, 0)}</span>
-                                        <span th:if="${historique.nouveauPrix < historique.ancienPrix}" class="badge badge-danger">-Ar ${#numbers.formatDecimal(historique.ancienPrix - historique.nouveauPrix, 0, 0)}</span>
+                                        <span th:if="${historique.nouveauPrix > historique.ancienPrix}" class="badge badge-success" th:text="'+Ar ' + ${#numbers.formatDecimal(historique.nouveauPrix - historique.ancienPrix, 0, 0)}"></span>
+                                        <span th:if="${historique.nouveauPrix < historique.ancienPrix}" class="badge badge-danger" th:text="'-Ar ' + ${#numbers.formatDecimal(historique.ancienPrix - historique.nouveauPrix, 0, 0)}"></span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -131,20 +137,17 @@
                 </div>
 
                 <div class="detail-actions">
-                    <a th:href="@{/api/produits/{id}/modifier(id=${produit.id})}" class="btn btn-edit">Modifier</a>
-                    <a th:if="${produit.actif}" th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}" class="btn btn-delete" onclick="return confirm('Désactiver ce produit ?')">Désactiver</a>
-                    <a th:unless="${produit.actif}" th:href="@{/api/produits/{id}/reactiver(id=${produit.id})}" class="btn btn-reactiver" onclick="return confirm('Réactiver ce produit ?')">Réactiver</a>
-                    <a th:href="@{/api/produits}" class="btn btn-back">Retour à la liste</a>
+                    <a th:href="@{/api/produits/{id}/modifier(id=${produit.id})}" class="btn btn-primary">Modifier</a>
+                    <a th:if="${produit.actif}" th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}" class="btn btn-danger" onclick="return confirm('Désactiver ce produit ?')">Désactiver</a>
+                    <a th:unless="${produit.actif}" th:href="@{/api/produits/{id}/reactiver(id=${produit.id})}" class="btn btn-primary" onclick="return confirm('Réactiver ce produit ?')">Réactiver</a>
+                    <a th:href="@{/api/produits}" class="btn btn-ghost">Retour à la liste</a>
                 </div>
             </div>
-        </div>
+        </section>
 
         <div id="vina-footer"></div>
+      </div>
     </div>
-
-    <script src="/static/assets/js/auth.js"></script>
-    <script src="/static/assets/js/app-shell.js"></script>
-</div>
-<script th:src="@{/js/script_content.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <title>Entrée en Stock - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body">
+  <body class="vina-body page-matiere-entree">
     <div
       th:replace="${sidebarTemplate} :: sidebar"
     ></div>
@@ -14,50 +14,53 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
             <p class="eyebrow">MATIÈRES PREMIÈRES</p>
-            <h1>Entrée de matiere premiere en Stock</h1>
+            <h1>Entrée de matière première en stock</h1>
             <p class="muted-text">
               Réception physique de la marchandise — enregistrez un lot arrivé à
               Mahitsy.
             </p>
           </div>
+          <span class="role-badge role-orange">Réception</span>
+        </section>
+
+       <section class="tab-list" role="tablist">
+          <a th:href="@{/api/matieres-premieres}" class="tab-link active">Suivi Stock</a>
+          <a th:href="@{/api/matieres-premieres/alertes}" class="tab-link">Alertes</a>
+          <a th:href="@{/api/matieres-premieres/entree-stock}" class="tab-link">Ajouter Matière</a>
+          <a th:href="@{/api/matieres-premieres/nouveau}" class="tab-link">Créer Fiche Produit</a>
         </section>
 
         <div
           th:if="${successMessage}"
-          class="info-banner success"
+          class="alert-box success"
           th:text="${successMessage}"
         ></div>
         <div
           th:if="${errorMessage}"
-          class="info-banner error"
+          class="alert-box danger"
           th:text="${errorMessage}"
         ></div>
 
-        <section
-          class="form-section"
-          style="
-            max-width: 800px;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: var(--shadow-sm);
-            margin: 0 auto;
-          "
-        >
-          <div class="alert-box">
-            <strong>Règle de Gestion :</strong> Le prix d'achat n'est plus
-            modifiable ici. Il est automatiquement récupéré depuis le coût
-            unitaire défini lors de la création de la matière première.
+        <section class="form-card matiere-entree-card matiere-entree-form-card">
+          <div class="form-section-heading">
+            <span>1</span>
+            <div>
+              <h2>Réception d'un lot</h2>
+              <p>Sélectionnez la matière, indiquez la quantité reçue puis confirmez la date d'entrée.</p>
+            </div>
           </div>
 
+
+
           <form method="post" th:action="@{/api/matieres-premieres/entree-stock}">
-            <div class="form-grid">
+            <div class="form-row matiere-entree-row">
               <div class="field">
-                <label for="mpSelect">Sélectionner la matière première *</label>
+                <label for="mpSelect">Sélectionner la matière première <span class="text-danger">*</span></label>
                 <select
                   id="mpSelect"
                   name="idMatierePremiere"
@@ -75,7 +78,7 @@
               </div>
 
               <div class="field">
-                <label for="quantite">Quantité reçue (Kilos ou Sacs) *</label>
+                <label for="quantite">Quantité reçue (Kilos ou Sacs) <span class="text-danger">*</span></label>
                 <input
                   type="number"
                   id="quantite"
@@ -87,10 +90,9 @@
                   required
                 />
               </div>
+
               <div class="field">
-                <label for="coutUnitaire"
-                  >Coût unitaire de cet achat (Ariary)</label
-                >
+                <label for="coutUnitaire">Coût unitaire de cet achat (Ariary)</label>
                 <input
                   type="number"
                   id="coutUnitaire"
@@ -100,7 +102,6 @@
                   min="0.01"
                   step="0.01"
                   readonly
-                  style="height: 50px"
                 />
                 <p class="help-text">
                   Désactivé — Lié à la fiche technique d'origine.
@@ -108,7 +109,7 @@
               </div>
 
               <div class="field">
-                <label for="dateReception">Date de réception *</label>
+                <label for="dateReception">Date de réception <span class="text-danger">*</span></label>
                 <input
                   type="date"
                   id="dateReception"
@@ -119,13 +120,13 @@
               </div>
             </div>
 
-            <div class="form-actions">
+            <div class="form-actions matiere-entree-actions">
+              <a th:href="@{/api/matieres-premieres}" class="btn btn-ghost"
+                >Annuler</a
+              >
               <button type="submit" class="btn btn-primary">
                 Valider l'entrée du Lot
               </button>
-              <a th:href="@{/api/matieres-premieres}" class="btn btn-secondary"
-                >Annuler</a
-              >
             </div>
           </form>
         </section>

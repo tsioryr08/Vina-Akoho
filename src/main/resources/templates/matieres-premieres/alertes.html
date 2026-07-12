@@ -7,53 +7,35 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body">
+  <body class="vina-body page-matiere-alertes">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
-            <p class="eyebrow">MATIÈRES PREMIÈRES</p>
-            <h1>Alertes Stock — Seuil Atteint</h1>
-            <p>
+            <h1>Alertes Stock </h1>
+            <p class="muted-text">
               Matières premières dont le stock actuel est inférieur ou égal au
               seuil minimum.
             </p>
           </div>
+          <span class="role-badge role-orange">Alertes</span>
         </section>
 
-        <!-- Sous-navigation interne -->
-        <div
-          style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px"
-        >
-          <a th:href="@{/api/matieres-premieres}" class="btn btn-ghost btn-small"
-            >← Retour à la liste</a
-          >
-          <a
-            th:href="@{/api/matieres-premieres/alertes}"
-            class="btn btn-primary btn-small"
-            >Alertes</a
-          >
-          <a
-            th:href="@{/api/matieres-premieres/entree-stock}"
-            class="btn btn-ghost btn-small"
-            >Ajouter Matière</a
-          >
-          <a
-            th:href="@{/api/matieres-premieres/nouveau}"
-            class="btn btn-ghost btn-small"
-            >Créer Fiche Produit</a
-          >
-        </div>
+        <section class="tab-list" role="tablist">
+          <a th:href="@{/api/matieres-premieres}" class="tab-link">Suivi Stock</a>
+          <a th:href="@{/api/matieres-premieres/alertes}" class="tab-link active">Alertes</a>
+          <a th:href="@{/api/matieres-premieres/entree-stock}" class="tab-link">Ajouter Matière</a>
+          <a th:href="@{/api/matieres-premieres/nouveau}" class="tab-link">Créer Fiche Produit</a>
+        </section>
 
-        <!-- Messages flash session -->
         <div
           th:if="${successMessage}"
-          class="alert-box alert-success"
+          class="alert-box success"
           th:text="${successMessage}"
         ></div>
         <div
@@ -71,9 +53,14 @@
           </article>
         </section>
 
-        <!-- Tableau des alertes -->
-        <section class="form-section">
-          <h2>Matières Premières en Alerte</h2>
+        <section class="form-card">
+          <div class="form-section-heading">
+            <span>1</span>
+            <div>
+              <h2>Matières premières en alerte</h2>
+              <p>Articles sous le seuil minimal, à traiter en priorité pour éviter la rupture.</p>
+            </div>
+          </div>
           <div class="table-wrap">
             <table class="data-table">
               <thead>
@@ -110,18 +97,8 @@
                   </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(alertes)}">
-                  <td
-                    colspan="7"
-                    style="text-align: center; padding: 32px; color: #64748b"
-                  >
-                    <span
-                      style="
-                        font-size: 24px;
-                        display: block;
-                        margin-bottom: 8px;
-                      "
-                      >✓</span
-                    >
+                  <td colspan="7" class="empty-state-cell empty-state-cell-large">
+                    <span class="empty-state-icon">✓</span>
                     Aucune matière première en alerte. Tous les stocks sont
                     corrects.
                   </td>
@@ -130,35 +107,18 @@
             </table>
           </div>
 
-          <!-- Couverture stock vs seuil pour les matières en alerte -->
-          <div th:if="${!#lists.isEmpty(alertes)}" style="margin-top: 24px">
-            <h3
-              style="
-                font-size: 15px;
-                font-weight: 700;
-                color: #334155;
-                margin-bottom: 16px;
-              "
-            >
-              Couverture Stock vs Seuil
-            </h3>
+          <div th:if="${!#lists.isEmpty(alertes)}" class="alertes-coverage-wrap">
+            <h3 class="alertes-coverage-title">Couverture Stock vs Seuil</h3>
             <div class="coverage-grid">
               <div
                 class="coverage-card"
                 th:each="mp : ${alertes}"
                 th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}"
               >
-                <div
-                  style="
-                    display: flex;
-                    justify-content: space-between;
-                    font-size: 13px;
-                    margin-bottom: 4px;
-                  "
-                >
+                <div class="coverage-item-head">
                   <strong th:text="${mp.nom}"></strong>
                   <span
-                    style="color: #ef4444; font-weight: 700"
+                    class="coverage-rate is-low"
                     th:text="${#numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"
                   ></span>
                 </div>
@@ -168,7 +128,7 @@
                     th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"
                   ></div>
                 </div>
-                <p style="margin-top: 8px; font-size: 12px; color: #64748b">
+                <p class="coverage-meta">
                   Stock :
                   <strong
                     th:text="${mp.quantiteStock} + ' ' + ${mp.uniteLibelle}"

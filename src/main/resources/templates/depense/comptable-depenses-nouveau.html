@@ -12,12 +12,12 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
       <div class="content">
         <section class="page-header theme-red">
           <div>
-            <p class="eyebrow">RO01 - Administrateur</p>
+  
             <h1 th:text="${modeEdition != null && modeEdition ? 'Modifier une dépense' : 'Enregistrer une nouvelle dépense'}">Enregistrer une nouvelle dépense</h1>
             <p th:text="${modeEdition != null && modeEdition ? 'Modifiez les détails de la sortie de fonds.' : 'Saisissez les détails de la sortie de fonds pour le suivi financier.'}">
               Saisissez les détails de la sortie de fonds pour le suivi

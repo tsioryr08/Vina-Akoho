@@ -153,20 +153,80 @@
 
   function setActiveSidebarLink() {
     const current = normalizeUrl(window.location.href);
+    const links = Array.from(document.querySelectorAll("#vina-sidebar a.sidebar-link[href]"));
+    const sectionKeywords = [
+      "production",
+      "matieres-premieres",
+      "produits",
+      "ventes",
+      "clients",
+      "livraison",
+      "stock",
+      "comptable",
+      "admin"
+    ];
+    let bestMatch = null;
+    let bestScore = -1;
 
-    document.querySelectorAll("#vina-sidebar a").forEach(function (link) {
+    function getTargetPath(link) {
       const href = link.getAttribute("href");
 
-      if (!href) {
+      if (!href || href.indexOf("javascript:") === 0) {
+        return null;
+      }
+
+      return normalizeUrl(new URL(href, window.location.href).href);
+    }
+
+    function getDashboardLink() {
+      return links.find(function (link) {
+        const label = (link.textContent || "").toLowerCase();
+        return label.indexOf("dashboard") !== -1;
+      }) || links[0] || null;
+    }
+
+    links.forEach(function (link) {
+      link.classList.remove("active");
+      link.removeAttribute("aria-current");
+    });
+
+    links.forEach(function (link) {
+      const target = getTargetPath(link);
+
+      if (!target) {
         return;
       }
 
-      const target = normalizeUrl(new URL(href, window.location.href).href);
+      const isExactMatch = target === current;
+      const isPrefixMatch = target !== "/" && current.indexOf(target + "/") === 0;
+      const isIncludedMatch = target !== "/" && current.indexOf(target) !== -1;
 
-      if (target === current) {
-        link.classList.add("active");
+      if (!isExactMatch && !isPrefixMatch && !isIncludedMatch) {
+        return;
+      }
+
+      const score = (isExactMatch ? 3000 : isPrefixMatch ? 2000 : 1000) + target.length;
+
+      if (score >= bestScore) {
+        bestScore = score;
+        bestMatch = link;
       }
     });
+
+    if (!bestMatch) {
+      const hasKnownKeyword = sectionKeywords.some(function (keyword) {
+        return current.indexOf(keyword) !== -1;
+      });
+
+      if (hasKnownKeyword) {
+        bestMatch = getDashboardLink();
+      }
+    }
+
+    if (bestMatch) {
+      bestMatch.classList.add("active");
+      bestMatch.setAttribute("aria-current", "page");
+    }
   }
 
   function normalizeUrl(url) {

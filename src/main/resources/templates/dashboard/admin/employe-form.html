@@ -6,92 +6,86 @@
     <title th:text="${modeEdition} ? 'Modifier un compte - VINA AKOHO' : 'Nouveau compte - VINA AKOHO'">Compte - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body>
-    <div th:replace="~{layout/admin :: sidebar}"></div>
-    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+  <body class="vina-body">
+    <div id="vina-sidebar" th:replace="~{layout/admin}"></div>
+    <div class="app-main-wrapper">
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
-    <div class="main">
-      <div th:replace="~{layout/header-admin :: header}"></div>
-
-      <div class="content">
-        <section class="page-header">
-          <div>
-            <p class="eyebrow">RO01 - Administrateur</p>
-            <h1 th:text="${modeEdition} ? 'Modifier un compte employé' : 'Créer un nouveau compte'">Compte employé</h1>
-            <p th:text="${modeEdition} ? 'Modifiez les informations du compte.' : 'Remplissez les informations pour créer un nouveau compte.'"></p>
-          </div>
-          <a class="btn btn-ghost" th:href="@{/api/admin/employes}">← Retour à la liste</a>
-        </section>
-
-        <div id="alerte" class="alert-box danger" style="display:none;"></div>
-        <div id="succes" class="alert-box" style="display:none; background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; border-radius:8px; padding:12px 16px; margin-bottom:16px;"></div>
-
-        <section class="card" style="max-width:600px;">
-          <div class="card-header">
+      <div id="vina-content">
+          <section class="page-header">
             <div>
-              <h2 class="card-title" th:text="${modeEdition} ? 'Informations du compte' : 'Informations du nouveau compte'"></h2>
-              <p class="card-subtitle">Tous les champs marqués * sont obligatoires.</p>
+             
+              <h1 th:text="${modeEdition} ? 'Modifier un compte employé' : 'Créer un nouveau compte'">Compte employé</h1>
+              <p class="muted-text" th:text="${modeEdition} ? 'Modifiez les informations du compte.' : 'Remplissez les informations pour créer un nouveau compte.'"></p>
             </div>
-          </div>
+            <div class="header-actions">
+              <a class="btn btn-outline" th:href="@{/api/admin/employes}">← Retour à la liste</a>
+            </div>
+          </section>
 
-          <div style="display:flex; flex-direction:column; gap:16px; padding-top:8px;">
-            <div style="display:flex; gap:12px;">
-              <div style="flex:1;">
-                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Nom *</label>
-                <input id="nom" type="text" placeholder="Nom de famille"
-                  style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
-              </div>
-              <div style="flex:1;">
-                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Prénom *</label>
-                <input id="prenom" type="text" placeholder="Prénom"
-                  style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
+          <div id="alerte" class="info-banner error" style="display:none;"></div>
+          <div id="succes" class="info-banner success" style="display:none;"></div>
+
+          <section class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title" th:text="${modeEdition} ? 'Informations du compte' : 'Informations du nouveau compte'"></h2>
+                <p class="card-subtitle">Tous les champs marqués * sont obligatoires.</p>
               </div>
             </div>
 
-            <div>
-              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Email *</label>
-              <input id="email" type="email" placeholder="email@vinaakoho.mg"
-                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
-            </div>
+            <div class="flex flex-col gap-4">
+              <div class="grid gap-3" style="grid-template-columns: 1fr 1fr;">
+                <div class="form-group">
+                  <label class="form-label">Nom *</label>
+                  <input id="nom" type="text" placeholder="Nom de famille" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Prénom *</label>
+                  <input id="prenom" type="text" placeholder="Prénom" class="form-control" />
+                </div>
+              </div>
 
-            <div>
-              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Contact</label>
-              <input id="contact" type="text" placeholder="+261 34 00 000 00"
-                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
-            </div>
+              <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input id="email" type="email" placeholder="email@vinaakoho.mg" class="form-control" />
+              </div>
 
-            <!-- Mot de passe uniquement en création -->
-            <div th:if="${!modeEdition}">
-              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Mot de passe *</label>
-              <input id="mdp" type="password" placeholder="Mot de passe"
-                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;" />
-            </div>
+              <div class="form-group">
+                <label class="form-label">Contact</label>
+                <input id="contact" type="text" placeholder="+261 34 00 000 00" class="form-control" />
+              </div>
 
-            <div>
-              <label style="font-size:13px; font-weight:600; display:block; margin-bottom:4px;">Rôle *</label>
-              <select id="idRole"
-                style="width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;">
-                <option value="">-- Sélectionner un rôle --</option>
-                <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.poste}"></option>
-              </select>
-            </div>
+              <!-- Mot de passe uniquement en création -->
+              <div th:if="${!modeEdition}" class="form-group">
+                <label class="form-label">Mot de passe *</label>
+                <input id="mdp" type="password" placeholder="Mot de passe" class="form-control" />
+              </div>
 
-            <div style="display:flex; gap:8px; justify-content:flex-end; padding-top:8px;">
-              <a class="btn btn-ghost" th:href="@{/api/admin/employes}">Annuler</a>
-              <button class="btn btn-purple" onclick="soumettre()">
-                <span th:text="${modeEdition} ? 'Enregistrer les modifications' : 'Créer le compte'"></span>
-              </button>
+              <div class="form-group">
+                <label class="form-label">Rôle *</label>
+                <select id="idRole" class="form-control">
+                  <option value="">-- Sélectionner un rôle --</option>
+                  <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.poste}"></option>
+                </select>
+              </div>
+
+              <div class="form-actions justify-end">
+                <a class="btn btn-outline" th:href="@{/api/admin/employes}">Annuler</a>
+                <button class="btn btn-primary" onclick="soumettre()">
+                  <span th:text="${modeEdition} ? 'Enregistrer les modifications' : 'Créer le compte'"></span>
+                </button>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
       </div>
 
-      <div class="app-footer" style="padding:16px 24px; border-top:1px solid var(--border); background:#fff; color:var(--muted); font-size:12px; text-align:center;">
-        VINA AKOHO — Gestion des comptes
-      </div>
+      <div id="vina-footer" th:replace="~{layout/footer}"></div>
     </div>
 
-    <script src="/assets/js/script_content.js"></script>
+    <script th:src="@{/js/auth.js}"></script>
+    <script th:src="@{/js/app-shell.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
     <script th:inline="javascript">
       const modeEdition = /*[[${modeEdition}]]*/ false;
       const idEmploye   = /*[[${idEmploye}]]*/ null;
