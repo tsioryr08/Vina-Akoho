@@ -7,35 +7,70 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .stats-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
+        .chart-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 20px; margin-top: 20px; }
         .chart-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .stat-big-number { font-size: 3em; font-weight: bold; color: #2c3e50; text-align: center; padding: 40px 0; }
+        .chart-card h3 { margin-bottom: 8px; }
+        .chart-card p { color: #64748b; margin-top: 0; margin-bottom: 16px; }
+        .stat-big-number { font-size: 3em; font-weight: bold; color: #2c3e50; text-align: center; padding: 24px 0 16px; }
+        .stat-caption { text-align: center; color: #64748b; font-size: 0.95rem; }
+        .legend-list { display: grid; gap: 10px; }
+        .legend-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+        .legend-label { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 999px; flex: 0 0 auto; }
+        .legend-name { font-weight: 700; color: #1f2937; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .legend-meta { color: #64748b; font-size: 0.92rem; white-space: nowrap; }
+        .empty-note { color: #64748b; font-style: italic; }
+        @media (max-width: 1100px) { .stats-grid, .chart-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="vina-body">
 <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
 <div class="app-main-wrapper">
-    <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+    <div id="vina-header" th:replace="~{layout/header}"></div>
 
     <div id="vina-content">
-        <section class="page-header">
+        <section class="page-header theme-green">
             <div>
-                <p class="eyebrow">Livraisons</p>
+                <p class="eyebrow">RO03 - LIVRAISONS</p>
                 <h1>Statistiques des Livraisons</h1>
-                <p>Analyse de la répartition des livraisons par zone.</p>
+                <p>Vue d'ensemble pour comprendre rapidement où les livraisons sont concentrées et combien de zones sont actives.</p>
             </div>
+            <span class="role-badge role-green">Analyse</span>
         </section>
 
         <div class="stats-grid">
+            <section class="stat-card">
+                <div class="stat-label">Total livraisons</div>
+                <div id="totalLivraisons" class="stat-big-number">--</div>
+                <div class="stat-caption">Nombre total de livraisons enregistrées.</div>
+            </section>
+
+            <section class="stat-card">
+                <div class="stat-label">Zones actives</div>
+                <div id="zonesActives" class="stat-big-number">--</div>
+                <div class="stat-caption">Nombre de zones ayant au moins une livraison.</div>
+            </section>
+
+            <section class="stat-card">
+                <div class="stat-label">Zone dominante</div>
+                <div id="zoneDominante" class="stat-big-number">--</div>
+                <div class="stat-caption">Zone qui concentre le plus de livraisons.</div>
+            </section>
+        </div>
+
+        <div class="chart-grid">
             <section class="chart-card">
-                <h3>Répartition par Zone</h3>
+                <h3>Répartition des livraisons par zone</h3>
+                <p>Le graphique montre la part de chaque zone dans le total général.</p>
                 <canvas id="zoneChart" style="max-height: 300px;"></canvas>
             </section>
 
             <section class="chart-card">
-                <h3>Total Livraisons</h3>
-                <div id="totalLivraisons" class="stat-big-number">--</div>
+                <h3>Lecture rapide</h3>
+                <p>Le tableau résume chaque zone avec son volume et sa part du total.</p>
+                <div class="legend-list" id="zoneLegend"></div>
             </section>
         </div>
     </div>
@@ -47,25 +82,52 @@
 <script>
     async function loadStats() {
         try {
-            // Fetch données zones
             const zRes = await fetch('/api/statistiques/livraisons/zones');
             const zoneData = await zRes.json();
 
-            // Fetch total
             const tRes = await fetch('/api/statistiques/livraisons/total');
             const total = await tRes.text();
 
-            // Affichage du total
             document.getElementById('totalLivraisons').innerText = total;
 
-            // Création du graphique
+            const zoneEntries = Object.entries(zoneData)
+                .map(([zone, count]) => ({ zone, count: Number(count) || 0 }))
+                .sort((a, b) => b.count - a.count);
+
+            const activeZones = zoneEntries.filter(entry => entry.count > 0).length;
+            const topZone = zoneEntries[0];
+
+            document.getElementById('zonesActives').innerText = activeZones;
+            document.getElementById('zoneDominante').innerText = topZone ? topZone.zone : '--';
+
+            const legendContainer = document.getElementById('zoneLegend');
+            const palette = ['#5c3d1e', '#1a472a', '#8b6239', '#2a6f4a', '#c41c2e'];
+            const totalCount = zoneEntries.reduce((sum, entry) => sum + entry.count, 0) || 1;
+
+            if (zoneEntries.length === 0) {
+                legendContainer.innerHTML = '<p class="empty-note">Aucune donnée de livraison disponible.</p>';
+            } else {
+                legendContainer.innerHTML = zoneEntries.map((entry, index) => {
+                    const percent = ((entry.count / totalCount) * 100).toFixed(1);
+                    return `
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <span class="legend-dot" style="background:${palette[index % palette.length]}"></span>
+                                <span class="legend-name">${entry.zone}</span>
+                            </div>
+                            <div class="legend-meta">${entry.count} livraison(s) · ${percent}%</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
             new Chart(document.getElementById('zoneChart').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(zoneData),
+                    labels: zoneEntries.map(entry => entry.zone),
                     datasets: [{
-                        data: Object.values(zoneData),
-                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b']
+                        data: zoneEntries.map(entry => entry.count),
+                        backgroundColor: palette
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }

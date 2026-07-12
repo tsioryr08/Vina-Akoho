@@ -9,15 +9,16 @@
 <body class="vina-body">
     <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
             <section class="page-header theme-green">
-                <div></div>
+                <div>
+                   
                     <h1>Recettes</h1>
-                    <p class="muted-text">Recettes calculees automatiquement a partir des ventes non annulees et du prix de vente des produits.</p>
+                    <p class="muted-text">Recettes calculées automatiquement à partir des ventes non annulées et du prix de vente des produits.</p>
                 </div>
                 <div class="header-actions">
-                    <a class="btn btn-white" th:href="@{/api/ventes}">Liste des ventes</a>
+                    <a class="btn btn-white" th:href="@{/api/ventes}">← Retour aux ventes</a>
                     <a class="btn btn-green" th:href="@{/api/ventes/nouvelle}">+ Nouvelle Vente</a>
                 </div>
             </section>
@@ -30,18 +31,24 @@
             </section>
 
             <section class="card">
-                <form class="filter-bar report-filters" th:action="@{/api/ventes/recettes}" method="get">
-                    <div class="field">
-                        <label for="debut">Date debut</label>
-                        <input id="debut" name="debut" type="date" class="form-control" th:value="${debut}">
+                <div class="card-header">
+                    <h3 class="card-title">Filtrage par période</h3>
+                    <p class="card-subtitle">Sélectionnez les dates pour voir les recettes correspondantes</p>
+                </div>
+                <form class="recettes-filter-form" th:action="@{/api/ventes/recettes}" method="get">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="debut" class="form-label">Date début</label>
+                            <input id="debut" name="debut" type="date" class="form-control" th:value="${debut}">
+                        </div>
+                        <div class="form-group">
+                            <label for="fin" class="form-label">Date fin</label>
+                            <input id="fin" name="fin" type="date" class="form-control" th:value="${fin}">
+                        </div>
                     </div>
-                    <div class="field">
-                        <label for="fin">Date fin</label>
-                        <input id="fin" name="fin" type="date" class="form-control" th:value="${fin}">
-                    </div>
-                    <div class="toolbar-actions">
-                        <button class="btn btn-green" type="submit">Appliquer</button>
-                        <a class="btn btn-ghost" th:href="@{/api/ventes/recettes}">Reinitialiser</a>
+                    <div class="form-actions">
+                        <button class="btn btn-outline" type="reset" onclick="window.location.href='/api/ventes/recettes'">Réinitialiser</button>
+                        <button class="btn btn-primary" type="submit">Appliquer</button>
                     </div>
                 </form>
             </section>
@@ -69,13 +76,13 @@
                 </article>
             </section>
 
-            <section class="table-card">
-                <div class="table-card-header">
+            <section class="card">
+                <div class="card-header">
                     <div>
-                        <h2 class="card-title">Recettes par periode</h2>
-                        <p class="card-subtitle">Montant = quantite vendue x prix de vente du produit.</p>
+                        <h2 class="card-title">Recettes par période</h2>
+                        <p class="card-subtitle">Montant = quantité vendue × prix de vente du produit</p>
                     </div>
-                    <span class="badge badge-light-green" th:text="${nombreLignes + ' ligne(s)'}">0 ligne</span>
+                    <span class="badge badge-primary" th:text="${nombreLignes + ' ligne(s)'}">0 ligne</span>
                 </div>
 
                 <div class="table-wrap">
@@ -85,7 +92,7 @@
                                 <th>Date</th>
                                 <th>Produit</th>
                                 <th>Prix vente</th>
-                                <th>Quantite</th>
+                                <th>Quantité</th>
                                 <th>Recette</th>
                             </tr>
                         </thead>
@@ -95,16 +102,16 @@
                                 <td>
                                     <strong th:text="${recette.produitNom}">Produit</strong>
                                     <br>
-                                    <small class="muted-text" th:text="${'Produit #' + recette.produitId}">Produit #1</small>
+                                    <small class="text-muted" th:text="${'Produit #' + recette.produitId}">Produit #1</small>
                                 </td>
                                 <td th:text="${#numbers.formatDecimal(recette.prixVente, 0, 'COMMA', 2, 'POINT')} + ' Ar'">0 Ar</td>
                                 <td th:text="${#numbers.formatDecimal(recette.quantiteVendue, 0, 'COMMA', 2, 'POINT')}">0</td>
                                 <td><strong th:text="${#numbers.formatDecimal(recette.montantRecette, 0, 'COMMA', 2, 'POINT')} + ' Ar'">0 Ar</strong></td>
                             </tr>
                             <tr th:if="${recettes == null or #lists.isEmpty(recettes)}">
-                                <td colspan="5" class="empty-state">
-                                    <p>Aucune recette trouvee sur cette periode.</p>
-                                    <p>Les ventes annulees ne sont pas comptabilisees.</p>
+                                <td colspan="5" class="text-center p-4">
+                                    <p class="text-muted">📊 Aucune recette trouvée sur cette période.</p>
+                                    <p class="text-muted small">Les ventes annulées ne sont pas comptabilisées.</p>
                                 </td>
                             </tr>
                         </tbody>

@@ -12,12 +12,12 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
       <div class="content">
-        <section class="page-header theme-red">
+        <section class="page-header">
           <div>
-            <p class="eyebrow">RO01 - Administrateur</p>
+    
             <h1>Registre des Dépenses</h1>
             <p>
               Journal de saisie et de contrôle de toutes les sorties d’argent de
@@ -26,7 +26,7 @@
           </div>
           <div class="header-actions">
             <a
-              class="btn btn-green"
+              class="btn btn-primary"
               th:href="@{/api/depenses/comptable-depenses-nouveau}"
               >+ Nouvelle dépense</a
             >
@@ -34,11 +34,11 @@
         </section>
         <section class="stats-grid">
           <article class="stat-card">
-            <div class="stat-label" th:text="'Total — ' + ${dateDuJour}">
+            <div class="stat-label" th:text="'Total dépenses — ' + ${dateDuJour}">
               Total
             </div>
             <div
-              class="stat-value"
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantTotalDepenses, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
@@ -50,7 +50,7 @@
               th:text="${categorieDepense1.libelle}"
             ></div>
             <div
-              class="stat-value"
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantCategorieDepense1, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
@@ -62,7 +62,7 @@
               th:text="${categorieDepense2.libelle}"
             ></div>
             <div
-              class="stat-value"
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantCategorieDepense2, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
@@ -74,7 +74,7 @@
               th:text="${categorieDepense3.libelle}"
             ></div>
             <div
-              class="stat-value"
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantCategorieDepense3, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
@@ -89,46 +89,50 @@
           <form
             th:action="@{/api/depenses/recherche}"
             method="get"
-            class="filter-bar depense-filter-bar"
+            class="filter-form"
           >
-            <div class="form-group">
-              <label class="form-label">Mot-clé</label>
-              <input
-                class="form-control"
-                type="text"
-                name="motCle"
-                placeholder="Rechercher..."
-                th:value="${motCle != null ? motCle : ''}"
-              />
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Mot-clé</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  name="motCle"
+                  placeholder="Rechercher..."
+                  th:value="${motCle != null ? motCle : ''}"
+                />
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Catégorie</label>
-              <select class="form-control" name="idCategorie">
-                <option value="">Toutes</option>
-                <option
-                  th:each="categorie : ${categoriesDepense}"
-                  th:value="${categorie.id}"
-                  th:text="${categorie.libelle}"
-                  th:selected="${idCategorie != null and idCategorie == categorie.id}"
-                ></option>
-              </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Catégorie</label>
+                <select class="form-control" name="idCategorie">
+                  <option value="">Toutes les catégories</option>
+                  <option
+                    th:each="categorie : ${categoriesDepense}"
+                    th:value="${categorie.id}"
+                    th:text="${categorie.libelle}"
+                    th:selected="${idCategorie != null and idCategorie == categorie.id}"
+                  ></option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Période (Du)</label>
+                <input
+                  class="form-control"
+                  type="date"
+                  name="dateDu"
+                  th:value="${dateDu != null ? dateDu : ''}"
+                />
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Période (Du)</label>
-              <input
-                class="form-control"
-                type="date"
-                name="dateDu"
-                th:value="${dateDu != null ? dateDu : ''}"
-              />
-            </div>
-            <div class="filter-actions">
+            <div class="form-actions">
               <button type="submit" class="btn btn-primary">Filtrer</button>
               <a
                 th:href="@{/api/depenses/comptable-depenses}"
-                class="btn btn-white"
+                class="btn btn-outline"
               >
-                Reset
+                Réinitialiser
               </a>
             </div>
           </form>
@@ -156,17 +160,17 @@
                   <td th:text="${depense.designation}"></td>
                   <td>
                     <span
-                      class="badge"
+                      class="badge badge-info"
                       th:text="${depense.libelleCategorieDepense}"
                     ></span>
                   </td>
                   <td
-                    class="text-danger"
+                    class="text-danger fw-bold"
                     th:text="${depense.montant + ' Ar'}"
                   ></td>
                   <td>
                     <span
-                      class="badge"
+                      class="badge badge-warning"
                       th:text="${depense.libelleStatutDepense}"
                     ></span>
                   </td>

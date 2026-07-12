@@ -10,15 +10,20 @@
     </div>
   </div>
 
+  <div class="sidebar-intro">
+    <div class="sidebar-intro-title">Navigation rapide</div>
+    <p class="sidebar-intro-text">Accès direct aux écritures, dépenses et indicateurs financiers.</p>
+  </div>
+
   <nav class="sidebar-nav">
     <div class="sidebar-section">Principal</div>
-    <a class="sidebar-link" th:href="@{/api/comptabilite}">Dashboard <span class="sidebar-code">F9</span></a>
+    <a class="sidebar-link" th:href="@{/api/comptabilite}"><span class="sidebar-link-label">Dashboard</span> <span class="sidebar-code">F9</span></a>
     <div class="sidebar-section">Finance</div>
-    <a class="sidebar-link" href="#">Vue d'ensemble financiere <span class="sidebar-code">F1</span></a>
-    <a class="sidebar-link" th:href="@{/api/depenses/comptable-depenses}">Registre des Depenses <span class="sidebar-code">F2</span></a>
-    <a class="sidebar-link" href="#">Cout de revient<span class="sidebar-code">F3</span></a>
-    <a class="sidebar-link" href="#">Rapports financiers <span class="sidebar-code">F5</span></a>
-    <a class="sidebar-link" href="#">Voir creances <span class="sidebar-code">F5b</span></a>
+    <a class="sidebar-link" href="#"><span class="sidebar-link-label">Vue d'ensemble financiere</span> <span class="sidebar-code">F1</span></a>
+    <a class="sidebar-link" th:href="@{/api/depenses/comptable-depenses}"><span class="sidebar-link-label">Registre des Depenses</span> <span class="sidebar-code">F2</span></a>
+    <a class="sidebar-link" href="#"><span class="sidebar-link-label">Cout de revient</span><span class="sidebar-code">F3</span></a>
+    <a class="sidebar-link" href="#"><span class="sidebar-link-label">Rapports financiers</span> <span class="sidebar-code">F5</span></a>
+    <a class="sidebar-link" href="#"><span class="sidebar-link-label">Voir creances</span> <span class="sidebar-code">F5b</span></a>
   </nav>
 </aside>
 </body>
