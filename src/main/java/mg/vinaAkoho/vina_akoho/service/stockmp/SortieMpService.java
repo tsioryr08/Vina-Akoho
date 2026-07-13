@@ -1,6 +1,7 @@
 package mg.vinaAkoho.vina_akoho.service.stockmp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,6 +115,7 @@ public class SortieMpService {
                 mouvement.setIdEmploye(employe.getId());
                 mouvement.setReferenceDocument(requete.getReferenceDocument());
                 mouvement.setObservation("Sortie automatique - production catégorie #" + requete.getIdCategorie());
+                mouvement.setDateMouvement(LocalDate.now());
 
                 mouvementsCrees.add(mouvementStockMpRepository.save(mouvement));
 
