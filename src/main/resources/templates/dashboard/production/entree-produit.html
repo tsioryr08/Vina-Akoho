@@ -198,10 +198,6 @@
         formSection.style.display = "none";
         resultSection.classList.add("is-visible");
         resultSection.scrollIntoView({ behavior: "smooth" });
-
-        setTimeout(function () {
-          window.location.href = "/api/production";
-        }, 3000);
       }
 
       document.getElementById("nouvelleProductionBtn").addEventListener("click", function () {
