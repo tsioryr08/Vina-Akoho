@@ -26,6 +26,50 @@
                 <a class="tab-link" th:href="@{/api/livraisons/historique}">Historique</a>
                 <a class="tab-link" th:href="@{/api/livraisons/nouvelle}">Nouvelle livraison</a>
             </div>
+            <section class="card">
+    <div class="card-header">
+        <h2 class="card-title">Filtrer les livraisons</h2>
+    </div>
+    <div class="card-body">
+        <form th:action="@{/api/livraisons}" method="get" class="livraisons-filter-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="recherche">Client / livreur</label>
+                    <input id="recherche" type="text" name="recherche" class="form-control"
+                           placeholder="Nom du client ou du livreur..." th:value="${param.recherche}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="statut">Statut</label>
+                    <select id="statut" name="statut" class="form-control">
+                        <option value="">Tous les statuts</option>
+                        <option th:each="s : ${statutsDisponibles}" th:value="${s.libelle}" th:text="${s.libelle}"
+                                th:selected="${param.statut == s.libelle}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="zone">Zone</label>
+                    <select id="zone" name="zone" class="form-control">
+                        <option value="">Toutes les zones</option>
+                        <option th:each="z : ${zonesDisponibles}" th:value="${z.libelle}" th:text="${z.libelle}"
+                                th:selected="${param.zone == z.libelle}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="dateDebut">Date début</label>
+                    <input id="dateDebut" type="date" name="dateDebut" class="form-control" th:value="${param.dateDebut}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="dateFin">Date fin</label>
+                    <input id="dateFin" type="date" name="dateFin" class="form-control" th:value="${param.dateFin}">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-outline" type="button" onclick="window.location.href='/api/livraisons'">Réinitialiser</button>
+                <button class="btn btn-primary" type="submit">Appliquer les filtres</button>
+            </div>
+        </form>
+    </div>
+</section>
 
             <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
             <div th:if="${error}" class="info-banner error" th:text="${error}"></div>
@@ -77,5 +121,46 @@
     <script th:src="@{/static/assets/js/auth.js}"></script>
     <script th:src="@{/static/assets/js/app-shell.js}"></script>
 <script th:src="@{/js/script_content.js}"></script>
+
+<script th:src="@{/js/auth.js}"></script>
+<script th:src="@{/js/app-shell.js}"></script>
+<script th:src="@{/js/script_content.js}"></script>
+<script th:inline="javascript">
+    const contentSelector = '#vina-content';
+    const contentRoot = document.querySelector(contentSelector);
+    if (contentRoot) {
+        function buildUrlFromForm(form) {
+            const url = new URL(form.action, window.location.origin);
+            const formData = new FormData(form);
+            formData.forEach(function (value, key) {
+                if (value !== null && String(value).trim() !== '') {
+                    url.searchParams.append(key, value);
+                }
+            });
+            return url.toString();
+        }
+        function swapContent(html, url) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const nextContent = doc.querySelector(contentSelector);
+            if (!nextContent) { window.location.href = url; return; }
+            contentRoot.innerHTML = nextContent.innerHTML;
+            document.title = doc.title || document.title;
+            window.history.pushState({ url: url }, '', url);
+        }
+        async function loadPage(url) {
+            const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const html = await response.text();
+            swapContent(html, url);
+        }
+        document.addEventListener('submit', function (event) {
+            const form = event.target.closest('.livraisons-filter-form'); // 👈 seule ligne différente
+            if (!form || !contentRoot.contains(form)) return;
+            if ((form.method || 'get').toLowerCase() !== 'get') return;
+            event.preventDefault();
+            loadPage(buildUrlFromForm(form));
+        });
+    }
+</script>
 </body>
 </html>
