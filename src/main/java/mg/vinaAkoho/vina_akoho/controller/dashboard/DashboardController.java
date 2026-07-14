@@ -3,12 +3,11 @@ package mg.vinaAkoho.vina_akoho.controller.dashboard;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.ventes.EvolutionVenteStatDTO;
@@ -40,23 +39,34 @@ public class DashboardController {
 
 
     @GetMapping("/admin")
-    public String admin(Model model) {
+        public String admin(
+                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebutEvolution,
+                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFinEvolution,
+                @RequestParam(required = false) String granulariteEvolution,
+                Model model) {
+
         List<Employe> actifs = employeRepository.findByActif(true);
         model.addAttribute("employes", actifs);
         model.addAttribute("totalActifs", actifs.size());
         model.addAttribute("totalDesactives", employeRepository.findByActif(false).size());
 
-        // Évolution des ventes sur les 30 derniers jours (granularité jour),
-        // identique au défaut de la page statistiques pour un rendu cohérent.
-        LocalDate debut = LocalDate.now().minusDays(30);
-        LocalDate fin = LocalDate.now();
+        // Évolution des ventes — filtrable désormais (date + granularité),
+        // 30 derniers jours / granularité jour par défaut si aucun filtre fourni.
+        LocalDate debut = dateDebutEvolution != null ? dateDebutEvolution : LocalDate.now().minusDays(30);
+        LocalDate fin = dateFinEvolution != null ? dateFinEvolution : LocalDate.now();
+        String granularite = granulariteEvolution != null ? granulariteEvolution : "jour";
+
         List<EvolutionVenteStatDTO> evolutionVentes = statistiqueVenteService
-                .obtenirStatistiques(debut, fin, null, "montant", "jour")
+                .obtenirStatistiques(debut, fin, null, "montant", granularite)
                 .getEvolution();
+
         model.addAttribute("evolutionVentes", evolutionVentes);
+        model.addAttribute("dateDebutEvolution", debut);
+        model.addAttribute("dateFinEvolution", fin);
+        model.addAttribute("granulariteEvolution", granularite);
 
         return "dashboard/admin/index";
-    }
+        }
 
     @GetMapping("/achats")
     public String achats() {

@@ -12,12 +12,12 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
       <div class="content">
-        <section class="page-header theme-red">
+        <section class="page-header">
           <div>
-            <p class="eyebrow">${currentUser != null ? currentUser.role.poste : 'Comptable'}</p>
+    
             <h1>Registre des Dépenses</h1>
             <p>
               Journal de saisie et de contrôle de toutes les sorties d’argent de
@@ -26,7 +26,7 @@
           </div>
           <div class="header-actions">
             <a
-              class="btn btn-green"
+              class="btn btn-primary"
               th:href="@{/api/depenses/comptable-depenses-nouveau}"
               >+ Nouvelle dépense</a
             >
@@ -34,49 +34,51 @@
         </section>
         <section class="stats-grid">
           <article class="stat-card">
-            <div class="stat-label" th:text="'Total — ' + ${dateDuJour}">Total</div>
+            <div class="stat-label" th:text="'Total dépenses — ' + ${dateDuJour}">
+              Total
+            </div>
             <div
-              class="stat-value"
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantTotalDepenses, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
             </div>
-            <div
-              class="stat-trend trend-info"
-              th:text="${nombreOperationsDepenses} + (${nombreOperationsDepenses} > 1 ? ' opérations' : ' opération')"
-            >
-              0 opération
-            </div>
           </article>
           <article class="stat-card">
-            <div class="stat-label" th:text="${categorieDepense1.libelle}"></div>
             <div
-              class="stat-value"
+              class="stat-label"
+              th:text="${categorieDepense1.libelle}"
+            ></div>
+            <div
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantCategorieDepense1, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
             </div>
-            <div class="stat-trend trend-warning">Budget mensuel</div>
           </article>
           <article class="stat-card">
-            <div class="stat-label" th:text="${categorieDepense2.libelle}"></div>
             <div
-              class="stat-value"
+              class="stat-label"
+              th:text="${categorieDepense2.libelle}"
+            ></div>
+            <div
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantCategorieDepense2, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
             </div>
-            <div class="stat-trend trend-info">Ce mois</div>
           </article>
           <article class="stat-card">
-            <div class="stat-label" th:text="${categorieDepense3.libelle}"></div>
             <div
-              class="stat-value"
+              class="stat-label"
+              th:text="${categorieDepense3.libelle}"
+            ></div>
+            <div
+              class="stat-value text-danger"
               th:text="${#numbers.formatDecimal(montantCategorieDepense3, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
             >
               0 Ar
             </div>
-            <div class="stat-trend trend-warning">Transport</div>
           </article>
         </section>
 
@@ -84,39 +86,56 @@
           <div class="card-header">
             <h2 class="card-title">Filtres et Recherche</h2>
           </div>
-          <div class="filter-bar depense-filter-bar">
-            <div class="form-group">
-              <label class="form-label">Mot-clé</label>
-              <input
-                class="form-control"
-                type="text"
-                placeholder="Rechercher..."
-              />
+          <form
+            th:action="@{/api/depenses/recherche}"
+            method="get"
+            class="filter-form"
+          >
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Mot-clé</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  name="motCle"
+                  placeholder="Rechercher..."
+                  th:value="${motCle != null ? motCle : ''}"
+                />
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Catégorie</label>
-              <select class="form-control">
-                <option>Toutes</option>
-                <option>Charges fixes</option>
-                <option>Matières premières</option>
-              </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Catégorie</label>
+                <select class="form-control" name="idCategorie">
+                  <option value="">Toutes les catégories</option>
+                  <option
+                    th:each="categorie : ${categoriesDepense}"
+                    th:value="${categorie.id}"
+                    th:text="${categorie.libelle}"
+                    th:selected="${idCategorie != null and idCategorie == categorie.id}"
+                  ></option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Période (Du)</label>
+                <input
+                  class="form-control"
+                  type="date"
+                  name="dateDu"
+                  th:value="${dateDu != null ? dateDu : ''}"
+                />
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Période (Du)</label>
-              <input class="form-control" type="date" />
-            </div>
-            <div class="filter-actions">
-              <button
-                class="btn btn-primary"
-                onclick="alert('Filtrage en cours...')"
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Filtrer</button>
+              <a
+                th:href="@{/api/depenses/comptable-depenses}"
+                class="btn btn-outline"
               >
-                Filtrer
-              </button>
-              <button class="btn btn-white" onclick="window.location.reload()">
-                Reset
-              </button>
+                Réinitialiser
+              </a>
             </div>
-          </div>
+          </form>
         </section>
 
         <section class="card depense-register-card">
@@ -127,7 +146,6 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Référence</th>
                   <th>Date</th>
                   <th>Désignation</th>
                   <th>Catégorie</th>
@@ -138,22 +156,21 @@
               </thead>
               <tbody>
                 <tr th:each="depense : ${depenses}">
-                  <td th:text="${'DEP-' + depense.id}"></td>
                   <td th:text="${depense.date}"></td>
                   <td th:text="${depense.designation}"></td>
                   <td>
                     <span
-                      class="badge"
+                      class="badge badge-info"
                       th:text="${depense.libelleCategorieDepense}"
                     ></span>
                   </td>
                   <td
-                    class="text-danger"
+                    class="text-danger fw-bold"
                     th:text="${depense.montant + ' Ar'}"
                   ></td>
                   <td>
                     <span
-                      class="badge"
+                      class="badge badge-warning"
                       th:text="${depense.libelleStatutDepense}"
                     ></span>
                   </td>

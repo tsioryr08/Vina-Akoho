@@ -6,216 +6,213 @@
     <title>Enregistrer un Client - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body">
+  <body class="vina-body page-client-nouveau">
     <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
       <div id="vina-content">
         <section class="page-header theme-green">
           <div>
-            <p class="eyebrow">RESPONSABLE COMMERCIAL</p>
             <h1>Enregistrer un Client / Partenaire</h1>
-            <div class="header-accent-line"></div>
+            <p>
+              Fiche d'identification et de logistique organisée pour éviter de
+              faire défiler toute la page.
+            </p>
           </div>
+          <span class="role-badge role-green">Nouveau client</span>
         </section>
 
-        <form
-          method="post"
-          th:action="@{/api/clients/nouveau}"
-          th:object="${inscription}"
-        >
-          <section class="form-section">
-            <div class="form-section-heading">
-              <h2>Section 1 - Identification de l'Acheteur</h2>
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">Code Client Unique</label>
-                <input
-                  type="text"
-                  class="form-control form-control-disabled"
-                  value="CLT-2026-XXXX"
-                  disabled
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="idTypeClient"
-                  >Profil du Client *</label
-                >
-                <select
-                  class="form-control"
-                  id="idTypeClient"
-                  th:field="*{idTypeClient}"
-                  required
-                >
-                  <option value="" disabled>Choisir un profil</option>
-                  <option
-                    th:each="typeClient : ${typesClient}"
-                    th:value="${typeClient.id}"
-                    th:text="${typeClient.libelle}"
-                  ></option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="nom"
-                  >Nom du Client / Raison Sociale *</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nom"
-                  th:field="*{nom}"
-                  placeholder="ex: Etablissement Razafy"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="prenom"
-                  >Prenom / Contact *</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="prenom"
-                  th:field="*{prenom}"
-                  placeholder="ex: Jean Claude"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="numeroTelephone"
-                  >Telephone de Contact *</label
-                >
-                <input
-                  type="tel"
-                  class="form-control"
-                  id="numeroTelephone"
-                  th:field="*{numeroTelephone}"
-                  placeholder="034 XX XX XX X"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="tailleCheptel"
-                  >Taille cheptel</label
-                >
-                <input
-                  type="number"
-                  class="form-control"
-                  id="tailleCheptel"
-                  th:field="*{tailleCheptel}"
-                  min="0"
-                  placeholder="ex: 40"
-                />
-              </div>
-            </div>
-          </section>
-
-          <section class="form-section">
-            <div class="form-section-heading">
-              <h2>Section 2 - Logistique & Services</h2>
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label" for="idZoneLivraison"
-                  >Zone / Axe de livraison principal *</label
-                >
-                <select
-                  class="form-control"
-                  id="idZoneLivraison"
-                  th:field="*{idZoneLivraison}"
-                  required
-                >
-                  <option value="ZONE001">Mahitsy Centre</option>
-                  <option value="ZONE002">Peripherie</option>
-                  <option value="ZONE003">Antananarivo Ville</option>
-                  <option value="ZONE004">Axe Ankazobe</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="idLocalite">Localite</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="idLocalite"
-                  th:field="*{idLocalite}"
-                  placeholder="ex: LOC002"
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="adresse"
-                  >Adresse ou Repere precis *</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="adresse"
-                  th:field="*{adresse}"
-                  placeholder="ex: En face du bureau de la commune..."
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="idService"
-                  >Service rattache *</label
-                >
-                <select
-                  class="form-control"
-                  id="idService"
-                  th:field="*{idService}"
-                  required
-                >
-                  <option value="" disabled>Choisir un service</option>
-                  <option
-                    th:each="service : ${services}"
-                    th:value="${service.id}"
-                    th:text="${service.libelle}"
-                  ></option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group form-group-spaced">
-              <label class="form-label" for="isActif">Compte actif</label>
-              <select class="form-control" id="isActif" th:field="*{isActif}">
-                <option th:value="true">Oui</option>
-                <option th:value="false">Non</option>
-              </select>
-            </div>
-            <div class="form-group form-group-spaced-large">
-              <label class="form-label" for="notes"
-                >Conditions particulieres :</label
-              >
-              <textarea
-                class="form-control"
-                id="notes"
-                th:field="*{notes}"
-                rows="4"
-                placeholder="Notez ici les credits ou prix negocies..."
-              ></textarea>
-            </div>
-          </section>
-
-          <p class="login-error" aria-live="polite" th:text="${erreur}"></p>
-          <p
-            class="login-note"
-            th:if="${succes != null}"
-            th:text="${succes}"
-          ></p>
-
-          <div class="form-actions-row">
-            <button
-              type="button"
-              class="btn btn-ghost btn-large"
-              onclick="history.back()"
+        <section class="client-workspace">
+          <div class="client-workspace-main">
+            <form
+              method="post"
+              th:action="@{/api/clients/nouveau}"
+              th:object="${inscription}"
             >
-              Annuler
-            </button>
-            <button type="submit" class="btn btn-save-client btn-large">
-              Enregistrer le Client
-            </button>
+              <section class="form-section">
+                <div class="form-section-heading">
+                  <span>1</span>
+                  <div>
+                    <h2>Identification de l'acheteur</h2>
+                    <p>Les champs clés sont regroupés pour aller droit au but.</p>
+                  </div>
+                </div>
+                <div class="form-row client-form-row">
+                  <div class="form-group form-group-wide">
+                    <label class="form-label">Code Client Unique</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-disabled"
+                      value="CLT-2026-XXXX"
+                      disabled
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="idTypeClient">Profil du Client *</label>
+                    <select
+                      class="form-control"
+                      id="idTypeClient"
+                      th:field="*{idTypeClient}"
+                      required
+                    >
+                      <option value="" disabled>Choisir un profil</option>
+                      <option
+                        th:each="typeClient : ${typesClient}"
+                        th:value="${typeClient.id}"
+                        th:text="${typeClient.libelle}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="nom">Nom du Client / Raison Sociale *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nom"
+                      th:field="*{nom}"
+                      placeholder="ex: Etablissement Razafy"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="prenom">Prenom / Contact *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="prenom"
+                      th:field="*{prenom}"
+                      placeholder="ex: Jean Claude"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="numeroTelephone">Telephone de Contact *</label>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="numeroTelephone"
+                      th:field="*{numeroTelephone}"
+                      placeholder="034 XX XX XX X"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="tailleCheptel">Taille cheptel</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="tailleCheptel"
+                      th:field="*{tailleCheptel}"
+                      min="0"
+                      placeholder="ex: 40"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section class="form-section">
+                <div class="form-section-heading">
+                  <span>2</span>
+                  <div>
+                    <h2>Logistique & services</h2>
+                    <p>Les informations de livraison et de service sont regroupées dans une grille plus dense.</p>
+                  </div>
+                </div>
+                <div class="form-row client-form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="idZoneLivraison">Zone / Axe de livraison principal *</label>
+                    <select
+                      class="form-control"
+                      id="idZoneLivraison"
+                      th:field="*{idZoneLivraison}"
+                      required
+                    >
+                      <option value="ZONE001">Mahitsy Centre</option>
+                      <option value="ZONE002">Peripherie</option>
+                      <option value="ZONE003">Antananarivo Ville</option>
+                      <option value="ZONE004">Axe Ankazobe</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="idLocalite">Localite</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="idLocalite"
+                      th:field="*{idLocalite}"
+                      placeholder="ex: LOC002"
+                    />
+                  </div>
+                  <div class="form-group form-group-wide">
+                    <label class="form-label" for="adresse">Adresse ou Repere precis *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="adresse"
+                      th:field="*{adresse}"
+                      placeholder="ex: En face du bureau de la commune..."
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="idService">Service rattache *</label>
+                    <select
+                      class="form-control"
+                      id="idService"
+                      th:field="*{idService}"
+                      required
+                    >
+                      <option value="" disabled>Choisir un service</option>
+                      <option
+                        th:each="service : ${services}"
+                        th:value="${service.id}"
+                        th:text="${service.libelle}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="isActif">Compte actif</label>
+                    <select class="form-control" id="isActif" th:field="*{isActif}">
+                      <option th:value="true">Oui</option>
+                      <option th:value="false">Non</option>
+                    </select>
+                  </div>
+                  <div class="form-group form-group-wide">
+                    <label class="form-label" for="notes">Conditions particulieres :</label>
+                    <textarea
+                      class="form-control"
+                      id="notes"
+                      th:field="*{notes}"
+                      rows="3"
+                      placeholder="Notez ici les credits ou prix negocies..."
+                    ></textarea>
+                  </div>
+                </div>
+              </section>
+
+              <p class="login-error" aria-live="polite" th:text="${erreur}"></p>
+              <p
+                class="login-note"
+                th:if="${succes != null}"
+                th:text="${succes}"
+              ></p>
+
+              <div class="form-actions-row">
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-large"
+                  onclick="history.back()"
+                >
+                  Annuler
+                </button>
+                <button type="submit" class="btn btn-save-client btn-large">
+                  Enregistrer le Client
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </section>
         <div id="vina-footer"></div>
       </div>
     </div>

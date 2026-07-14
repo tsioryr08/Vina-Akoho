@@ -9,7 +9,7 @@
 <body class="vina-body">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         <div id="vina-content">
             <section class="page-header">
                 <div>
@@ -75,15 +75,16 @@
                     <form class="form-grid" th:action="@{/api/livraisons/{id}/statut(id=${livraison.id})}" method="post">
                         <div class="field field-full">
                             <label for="nouveauStatut">Nouveau statut</label>
-                            <select id="nouveauStatut" name="nouveauStatut" class="form-control" required>
+                            <select id="nouveauStatut" name="nouveauStatut" class="form-control" required th:disabled="${statutEstLivre}">
                                 <option value="">Sélectionner un statut</option>
                                 <option th:each="statut : ${statutsDisponibles}"
                                         th:value="${statut.libelle}"
                                         th:text="${statut.libelle}"></option>
                             </select>
+                            <small th:if="${statutEstLivre}" class="muted-text">Le statut est verrouillé car la livraison est déjà livrée.</small>
                         </div>
                         <div class="form-actions field-full">
-                            <button type="submit" class="btn btn-green">Mettre à jour</button>
+                            <button type="submit" class="btn btn-green" th:disabled="${statutEstLivre}">Mettre à jour</button>
                         </div>
                     </form>
                 </div>

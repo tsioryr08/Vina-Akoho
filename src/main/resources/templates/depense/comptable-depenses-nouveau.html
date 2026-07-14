@@ -12,14 +12,14 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
       <div class="content">
         <section class="page-header theme-red">
           <div>
-            <p class="eyebrow">COMPTABILITÉ ET FINANCES</p>
-            <h1>Enregistrer une nouvelle dépense</h1>
-            <p>
+  
+            <h1 th:text="${modeEdition != null && modeEdition ? 'Modifier une dépense' : 'Enregistrer une nouvelle dépense'}">Enregistrer une nouvelle dépense</h1>
+            <p th:text="${modeEdition != null && modeEdition ? 'Modifiez les détails de la sortie de fonds.' : 'Saisissez les détails de la sortie de fonds pour le suivi financier.'}">
               Saisissez les détails de la sortie de fonds pour le suivi
               financier.
             </p>
@@ -55,7 +55,11 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label">Catégorie *</label>
-                  <select class="form-control" th:field="*{idCategorieDepense}" required>
+                  <select
+                    class="form-control"
+                    th:field="*{idCategorieDepense}"
+                    required
+                  >
                     <option value="" selected disabled>
                       Choisir une catégorie
                     </option>
@@ -80,7 +84,12 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label">Date *</label>
-                  <input type="date" class="form-control" th:field="*{date}" required />
+                  <input
+                    type="date"
+                    class="form-control"
+                    th:field="*{date}"
+                    required
+                  />
                 </div>
                 <div class="form-group">
                   <label class="form-label"
@@ -96,7 +105,11 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label">Statut du paiement</label>
-                  <select class="form-control" th:field="*{idStatutDepense}" required>
+                  <select
+                    class="form-control"
+                    th:field="*{idStatutDepense}"
+                    required
+                  >
                     <option
                       th:each="statut : ${statutsDepense}"
                       th:value="${statut.id}"
@@ -122,7 +135,7 @@
                 >
                   Annuler
                 </button>
-                <button type="submit" class="btn btn-red">
+                <button type="submit" class="btn btn-red" th:text="${modeEdition != null && modeEdition ? 'Enregistrer les modifications' : 'Confirmer la dépense'}">
                   Confirmer la dépense
                 </button>
               </div>
@@ -131,7 +144,7 @@
         </div>
       </div>
 
-      <div class="app-footer">VINA AKOHO — Comptabilité & Encaissements</div>
+      <div class="app-footer">VINA AKOHO — Panneau d'Administration</div>
     </div>
 
     <script src="/assets/js/script_content.js"></script>

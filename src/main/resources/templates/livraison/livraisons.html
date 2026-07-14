@@ -9,7 +9,7 @@
 <body class="vina-body">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="app-main-wrapper">
-        <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
+        <div id="vina-header" th:replace="~{layout/header}"></div>
         
         <div id="vina-content">
             <section class="page-header">
@@ -51,16 +51,16 @@
                             <td th:text="${liv.dateLivraison}">2026-01-01</td>
                             <td>
                                 <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
-                                    <a class="link-action" th:href="@{'/livraisons/' + ${liv.id}}">Détail</a>
+                                    <a class="link-action" th:href="@{'/api/livraisons/' + ${liv.id}}">Détail</a>
                                     <form th:action="@{/api/livraisons/{id}/statut(id=${liv.id})}" method="post" style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin:0;">
-                                        <select name="nouveauStatut" class="form-control" style="min-width: 180px;" required>
+                                        <select name="nouveauStatut" class="form-control" style="min-width: 180px;" required th:disabled="${#strings.equalsIgnoreCase(liv.statutLivraison, 'Livrée') or #strings.equalsIgnoreCase(liv.statutLivraison, 'Livree')}">
                                             <option value="" disabled th:selected="${liv.statutLivraison == null}">Changer le statut</option>
                                             <option th:each="statut : ${statutsDisponibles}"
                                                     th:value="${statut.libelle}"
                                                     th:text="${statut.libelle}"
                                                     th:selected="${liv.statutLivraison == statut.libelle}"></option>
                                         </select>
-                                        <button type="submit" class="btn btn-green btn-small">Valider</button>
+                                        <button type="submit" class="btn btn-green btn-small" th:disabled="${#strings.equalsIgnoreCase(liv.statutLivraison, 'Livrée') or #strings.equalsIgnoreCase(liv.statutLivraison, 'Livree')}">Valider</button>
                                     </form>
                                 </div>
                             </td>

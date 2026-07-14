@@ -46,11 +46,11 @@ window.VinaAkohoAuth = {
             .replace(/\s+/g, '_')
             .replace(/[-]/g, '_');
         const routes = {
-            'ADMIN': '/admin',
-            'ADMINISTRATEUR': '/admin',
+            'ADMIN': '/api/admin',
+            'ADMINISTRATEUR': '/api/admin',
             'RESPONSABLE_ACHATS': '/achats',
             'RESPONSABLE_PRODUCTION': '/production',
-            'GESTIONNAIRE_DE_STOCK': '/stock',
+            'GESTIONNAIRE_DE_STOCK': '/api/stock',
             'RESPONSABLE_COMMERCIAL': '/commercial',
             'COMPTABLE': '/comptabilite',
             'LIVREUR': '/livraison'

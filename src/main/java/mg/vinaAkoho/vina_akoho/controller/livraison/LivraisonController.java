@@ -1,6 +1,9 @@
 package mg.vinaAkoho.vina_akoho.controller.livraison;
 
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,9 +21,11 @@ import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonFormDTO;
 import mg.vinaAkoho.vina_akoho.entity.livraison.livreur;
 import mg.vinaAkoho.vina_akoho.entity.livraison.statutLivraison;
+import mg.vinaAkoho.vina_akoho.entity.livraison.ZoneLivraison;
 import mg.vinaAkoho.vina_akoho.entity.ventes.Vente;
 import mg.vinaAkoho.vina_akoho.repository.livraison.LivreurRepository;
 import mg.vinaAkoho.vina_akoho.repository.livraison.StatutLivraisonRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.ZoneLivraisonRepository;
 import mg.vinaAkoho.vina_akoho.repository.ventes.VenteRepository;
 import mg.vinaAkoho.vina_akoho.security.SessionFilter;
 import mg.vinaAkoho.vina_akoho.service.livraison.LivraisonService;
@@ -34,11 +39,33 @@ public class LivraisonController {
     private final VenteRepository venteRepository;
     private final LivreurRepository livreurRepository;
     private final StatutLivraisonRepository statutLivraisonRepository;
+    private final ZoneLivraisonRepository zoneLivraisonRepository;
 
     @ModelAttribute("ventesDisponibles")
-    public List<Vente> getVentesDisponibles() {
-        return venteRepository.findAll();
+        public Map<Long, String> getVentesDisponibles() {
+        return venteRepository.findAllWithClientAndLignesProduitOrderByDateVenteDesc().stream()
+            .collect(Collectors.toMap(
+                Vente::getId,
+                this::formaterLibelleVente,
+                (premier, second) -> premier,
+                LinkedHashMap::new
+            ));
     }
+
+        private String formaterLibelleVente(Vente vente) {
+        String client = vente.getClient() != null
+            ? vente.getClient().getNom() + " " + vente.getClient().getPrenom()
+            : "Client inconnu";
+
+        String produits = vente.getLignes() == null || vente.getLignes().isEmpty()
+            ? "Produit inconnu"
+            : vente.getLignes().stream()
+                .map(ligne -> ligne.getProduit() != null ? ligne.getProduit().getNom() : "Produit inconnu")
+                .distinct()
+                .collect(Collectors.joining(", "));
+
+        return client + " - " + produits;
+        }
 
     @ModelAttribute("livreursDisponibles")
     public List<livreur> getLivreursDisponibles() {
@@ -48,6 +75,11 @@ public class LivraisonController {
     @ModelAttribute("statutsDisponibles")
     public List<statutLivraison> getStatutsDisponibles() {
         return statutLivraisonRepository.findAll();
+    }
+
+    @ModelAttribute("zonesDisponibles")
+    public List<ZoneLivraison> getZonesDisponibles() {
+        return zoneLivraisonRepository.findAllByOrderByLibelleAsc();
     }
 
     @ModelAttribute("livraisonForm")
@@ -97,7 +129,9 @@ public class LivraisonController {
 
     @GetMapping("/{id}")
     public String detailLivraison(@PathVariable Long id, Model model) {
-        model.addAttribute("livraison", livraisonService.trouverParId(id));
+        var livraison = livraisonService.trouverParId(id);
+        model.addAttribute("livraison", livraison);
+        model.addAttribute("statutEstLivre", livraisonService.estStatutLivre(livraison.getStatutLivraison()));
         model.addAttribute("historiquesLivraison", livraisonService.listerHistoriquePourLivraison(id));
         return "livraison/livraison-detail";
     }

@@ -1,6 +1,7 @@
 package mg.vinaAkoho.vina_akoho.service.stockmp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,8 +77,9 @@ public class SortieMpService {
 
         // 2. Pour chaque ligne de la recette, déduire la matière première
         for (RecetteProduitDTO ligne : recette) {
-            BigDecimal besoin = ligne.getQuantiteMp();
-
+            //BigDecimal besoin = ligne.getQuantiteMp();
+            BigDecimal besoin = ligne.getQuantiteMp().multiply(requete.getQuantiteAProduire());
+            
             List<LotMp> lots = lotMpRepository
                     .findByMatierePremiereIdAndQuantiteRestanteGreaterThanOrderByDateAchatAsc(
                             ligne.getIdMp(), BigDecimal.ZERO);
@@ -113,6 +115,7 @@ public class SortieMpService {
                 mouvement.setIdEmploye(employe.getId());
                 mouvement.setReferenceDocument(requete.getReferenceDocument());
                 mouvement.setObservation("Sortie automatique - production catégorie #" + requete.getIdCategorie());
+                mouvement.setDateMouvement(LocalDate.now());
 
                 mouvementsCrees.add(mouvementStockMpRepository.save(mouvement));
 
@@ -128,7 +131,7 @@ public class SortieMpService {
         typeMouvement.setLibelle(libelle);
         return typeMouvementRepository.save(typeMouvement);
     }
-
+//entity mvtstockmpdto-> mvtstockmp pour envoyer au front
     private MouvementStockMpDTO toDTO(MouvementStockMp m) {
         MouvementStockMpDTO dto = new MouvementStockMpDTO();
         dto.setId(m.getId());

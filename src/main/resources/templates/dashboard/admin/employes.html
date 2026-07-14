@@ -11,16 +11,16 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
       <div class="content">
         <section class="page-header">
           <div>
-            <p class="eyebrow">RO01 - Administrateur</p>
+    
             <h1>Gestion des comptes utilisateurs</h1>
             <p>Créer, modifier, désactiver et réinitialiser les comptes employés.</p>
           </div>
-          <a class="btn btn-purple" th:href="@{/admin/employes/nouveau}">+ Nouveau compte</a>
+          <a class="btn btn-purple" th:href="@{/api/admin/employes/nouveau}">+ Nouveau compte</a>
         </section>
 
         <!-- KPIs -->
@@ -178,7 +178,7 @@
                 : '<span class="badge badge-danger">Désactivé</span>'}
             </td>
             <td style="display:flex; gap:6px; flex-wrap:wrap;">
-              <a href="/admin/employes/${e.id}/modifier" class="btn btn-ghost btn-small">Modifier</a>
+              <a href="/api/admin/employes/${e.id}/modifier" class="btn btn-ghost btn-small">Modifier</a>
               ${e.actif
                 ? `<button class="btn btn-small" style="background:#fef3c7; color:#92400e;" onclick="toggleStatut(${e.id}, false)">Désactiver</button>`
                 : `<button class="btn btn-small" style="background:#d1fae5; color:#065f46;" onclick="toggleStatut(${e.id}, true)">Réactiver</button>`}

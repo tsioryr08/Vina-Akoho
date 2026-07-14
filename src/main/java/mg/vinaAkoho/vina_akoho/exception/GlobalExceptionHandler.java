@@ -15,6 +15,10 @@ import mg.vinaAkoho.vina_akoho.exception.stockmp.StockInsuffisantException;
 import mg.vinaAkoho.vina_akoho.exception.admin.EmployeNotFoundException;
 import mg.vinaAkoho.vina_akoho.exception.admin.EmailDejaUtiliseException;
 import mg.vinaAkoho.vina_akoho.exception.admin.MdpIdentifiqueException;
+import mg.vinaAkoho.vina_akoho.exception.matierespremieres.MatierePremiereNotFoundException;
+import mg.vinaAkoho.vina_akoho.exception.matierespremieres.FournisseurNotFoundException;
+import mg.vinaAkoho.vina_akoho.exception.matierespremieres.UniteNotFoundException;
+import mg.vinaAkoho.vina_akoho.exception.matierespremieres.TypeMouvementNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -87,5 +91,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(MatierePremiereNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMatierePremiereNotFound(MatierePremiereNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(FournisseurNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleFournisseurNotFound(FournisseurNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(UniteNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUniteNotFound(UniteNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(TypeMouvementNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTypeMouvementNotFound(TypeMouvementNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
     }
 }

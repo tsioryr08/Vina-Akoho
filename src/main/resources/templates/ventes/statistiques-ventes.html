@@ -11,11 +11,10 @@
     <div th:replace="~{layout/responsableCommercial :: sidebar}"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="main">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
       <div class="content page-stats-ventes">
         <section class="page-header theme-green">
           <div>
-            <p class="eyebrow">STATISTIQUES</p>
             <h1>Produits & Ventes</h1>
             <p>
               Top produits/catégories vendus et évolution du chiffre d'affaires.
@@ -71,23 +70,6 @@
                     th:selected="${triProduits == 'montant'}"
                   >
                     Montant des ventes
-                  </option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Granularité évolution</label>
-                <select id="granularite" class="form-control">
-                  <option value="jour" th:selected="${granularite == 'jour'}">
-                    Jour
-                  </option>
-                  <option
-                    value="semaine"
-                    th:selected="${granularite == 'semaine'}"
-                  >
-                    Semaine
-                  </option>
-                  <option value="mois" th:selected="${granularite == 'mois'}">
-                    Mois
                   </option>
                 </select>
               </div>
@@ -320,7 +302,6 @@
           dateDebut: document.getElementById("dateDebut").value,
           dateFin: document.getElementById("dateFin").value,
           triProduits: document.getElementById("triProduits").value,
-          granularite: document.getElementById("granularite").value,
         });
         const idCategorie = document.getElementById("idCategorie").value;
         if (idCategorie) params.append("idCategorie", idCategorie);

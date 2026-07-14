@@ -14,7 +14,7 @@
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
       <div id="vina-content">
         <section
           class="page-header theme-orange"

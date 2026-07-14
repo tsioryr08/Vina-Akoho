@@ -8,10 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
 @Controller
+@RequestMapping("/api/admin/employes")
 public class AdminViewController {
 
     private final RoleRepository roleRepository;
@@ -23,7 +25,7 @@ public class AdminViewController {
         this.employeRepository = employeRepository;
     }
 
-    @GetMapping("/admin/employes")
+    @GetMapping({"", "/"})
     public String listeEmployes(Model model) {
         List<Role> roles = roleRepository.findAll();
         model.addAttribute("roles", roles);
@@ -33,14 +35,14 @@ public class AdminViewController {
         return "dashboard/admin/employes";
     }
 
-    @GetMapping("/admin/employes/nouveau")
+    @GetMapping("/nouveau")
     public String formulaireCreation(Model model) {
         model.addAttribute("roles", roleRepository.findAll());
         model.addAttribute("modeEdition", false);
         return "dashboard/admin/employe-form";
     }
 
-    @GetMapping("/admin/employes/{id}/modifier")
+    @GetMapping("/{id}/modifier")
     public String formulaireModification(@PathVariable Integer id, Model model) {
         model.addAttribute("roles", roleRepository.findAll());
         model.addAttribute("modeEdition", true);

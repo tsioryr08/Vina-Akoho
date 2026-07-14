@@ -7,83 +7,17 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body>
-    <aside class="sidebar" id="vina-sidebar">
-      <div class="sidebar-brand">
-        <!-- <img
-          th:src="@{/static/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        /> -->
-        <img
-          th:src="@{/images/VINA_AKOHO_LOGO.png}"
-          alt="VINA AKOHO"
-          class="brand-mark"
-        />
-
-        <div>
-          <div class="brand-title">VINA AKOHO</div>
-          <div class="brand-subtitle">${currentUser != null ? currentUser.role.poste : 'Stock'}</div>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link active" href="#"
-          >Dashboard <span class="sidebar-code">F9</span></a
-        >
-
-        <div class="sidebar-section">Mouvements et Lots</div>
-        <a class="sidebar-link" href="#"
-          >Mouvements Stocks <span class="sidebar-code">S1</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Gestion Lots & Péremptions <span class="sidebar-code">S2</span></a
-        >
-
-        <div class="sidebar-section">Surveillance</div>
-        <a class="sidebar-link" href="#"
-          >Alertes de Seuil <span class="sidebar-code">S3</span></a
-        >
-        <a class="sidebar-link" href="#"
-          >Inventaire Périodique <span class="sidebar-code">S4</span></a
-        >
-
-        <div class="sidebar-section">Reporting</div>
-        <a class="sidebar-link" href="#"
-          >Rapport de Stock <span class="sidebar-code">S5</span></a
-        >
-        <a class="sidebar-link" href="#">Suggestions Promotions</a>
-      </nav>
-    </aside>
+  <body class="vina-body page-stock-dashboard">
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
-    <div class="main">
-      <div class="topbar">
-        <div class="topbar-left">
-          <button class="menu-button" id="vina-menu-button" type="button">
-            ☰
-          </button>
-          <span class="breadcrumb">Dashboard Stock</span>
-        </div>
-        <div class="topbar-actions">
-          <span class="role-pill">${currentUser != null ? currentUser.role.poste : 'Stock'}</span>
-          <button
-            class="btn btn-ghost btn-small"
-            id="vina-logout-button"
-           
-            type="button"
-          >
-            Déconnexion
-          </button>
-        </div>
-      </div>
+    <div class="app-main-wrapper">
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
       <div class="content">
         <section class="page-header theme-blue">
           <div>
-            <p class="eyebrow">DASHBOARD</p>
             <h1>Gestion des Approvisionnements & Stocks</h1>
             <p>
               Contrôle des seuils critiques, expirations FIFO et état des stocks
@@ -98,42 +32,27 @@
               <div>
                 <h2 class="card-title">Seuils Critiques Minimums</h2>
                 <p class="card-subtitle">
-                  RG03 — Alertes sur les matières premières sous seuil.
+                  Alertes sur les matières premières sous seuil.
                 </p>
               </div>
             </div>
 
-            <div th:each="mp : ${alertesMp}"
-                 th:class="${mp.quantiteStock.signum() == 0} ? 'alert-box danger' : 'alert-box warning'">
-              <span th:class="${mp.quantiteStock.signum() == 0} ? 'alert-label critical' : 'alert-label attention'"
-                    th:text="${mp.quantiteStock.signum() == 0} ? 'CRITIQUE' : 'ATTENTION'">CRITIQUE</span>
-              <span th:text="${mp.nom + ' (' + mp.fournisseurNom + ') : Reste ' + mp.quantiteStock + ' ' + mp.uniteLibelle + ' (Seuil alerte : ' + mp.seuilMinimum + ' ' + mp.uniteLibelle + ').'}">
-                Matière première : Reste X (Seuil alerte : Y).
-              </span>
+            <div class="alertes-scroll-panel" th:if="${!#lists.isEmpty(alertesMp)}">
+              <div th:each="mp : ${alertesMp}"
+                   th:class="${mp.quantiteStock.signum() == 0} ? 'alert-box danger' : 'alert-box warning'">
+                <span th:class="${mp.quantiteStock.signum() == 0} ? 'alert-label critical' : 'alert-label attention'"
+                      th:text="${mp.quantiteStock.signum() == 0} ? 'CRITIQUE' : 'ATTENTION'">CRITIQUE</span>
+                <span th:text="${mp.nom + ' (' + mp.fournisseurNom + ') : Reste ' + mp.quantiteStock + ' ' + mp.uniteLibelle + ' (Seuil alerte : ' + mp.seuilMinimum + ' ' + mp.uniteLibelle + ').'}">
+                  Matière première : Reste X (Seuil alerte : Y).
+                </span>
+              </div>
             </div>
-            <p th:if="${#lists.isEmpty(alertesMp)}" style="color: #64748b; padding: 8px 0;">
+            <p th:if="${#lists.isEmpty(alertesMp)}" class="stock-empty-hint">
               ✓ Aucune matière première sous le seuil d'alerte.
             </p>
           </div>
 
-          <div class="card" style="margin-bottom: 0">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title">
-                  Suivi des Expirations et Traitement FIFO
-                </h2>
-                <p class="card-subtitle">
-                  RG08 — Priorisation des lots proches de l'expiration.
-                </p>
-              </div>
-            </div>
-
-            <div class="alert-box info">
-              Lot MP-SOJA-044 (Tourteau de Soja) : Expire dans 5 jours. Règle :
-              À utiliser impérativement sur la prochaine session de production.
-            </div>
-          </div>
-        </section>
+          
 
         <section class="card">
           <div class="card-header">

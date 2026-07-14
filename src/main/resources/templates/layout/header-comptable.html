@@ -1,17 +1,16 @@
-<div class="topbar" th:fragment="header(breadcrumb)">
-  <div class="topbar-left">
-    <button class="menu-button" id="vina-menu-button" type="button">☰</button>
-    <span class="breadcrumb" th:text="${breadcrumb}">Comptabilité</span>
-  </div>
-  <div class="topbar-actions">
-    <span class="role-pill" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO05</span>
-    <button
-      class="btn btn-ghost btn-small"
-      id="vina-logout-button"
-     
-      type="button"
-    >
-      Déconnexion
-    </button>
-  </div>
-</div>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <header th:fragment="header(breadcrumb='Dashboard')" class="topbar">
+    <div class="topbar-left">
+      <button class="menu-button" id="vina-menu-button" type="button">☰</button>
+      <span class="breadcrumb" th:text="${breadcrumb}">Dashboard</span>
+    </div>
+    <div class="topbar-actions">
+      <span class="role-pill" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO05</span>
+      <button class="btn btn-ghost btn-small" id="vina-logout-button" type="button">
+        Déconnexion
+      </button>
+    </div>
+  </header>
+</body>
+</html>

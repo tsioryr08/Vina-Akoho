@@ -13,6 +13,7 @@ import mg.vinaAkoho.vina_akoho.repository.depense.DepenseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -59,6 +60,22 @@ public class DepenseService {
 
     public long compterToutes() {
         return depenseRepository.count();
+    }
+
+    public List<DepenseDTO> rechercher(String motCle, Integer idCategorie, LocalDate dateDu) {
+        return depenseRepository.findAll()
+                .stream()
+                .filter(depense -> {
+                    if (motCle == null || motCle.isBlank()) {
+                        return true;
+                    }
+                    String designation = depense.getDesignation();
+                    return designation != null && designation.toLowerCase().contains(motCle.toLowerCase());
+                })
+                .filter(depense -> idCategorie == null || Objects.equals(depense.getIdCategorieDepense(), idCategorie))
+                .filter(depense -> dateDu == null || (depense.getDate() != null && !depense.getDate().isBefore(dateDu)))
+                .map(this::versDTO)
+                .toList();
     }
 
     public DepenseDTO creer(DepenseRequestDTO requete) {
