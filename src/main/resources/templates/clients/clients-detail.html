@@ -6,50 +6,18 @@
     <title>Profil Client - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body page-client-detail">
-    <div th:replace="${sidebarTemplate} :: sidebar"></div>
+  <body class="vina-body">
+    <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
       <div id="vina-content">
         <section class="page-header theme-green">
           <div>
-            <p class="eyebrow">CLIENTS</p>
-            <h1>Détail client</h1>
+            <h1>Detail Client</h1>
             <p class="muted-text">
-              Fiche complète: identité, informations de livraison et historique commercial.
+              Informations commerciales et logistiques du client.
             </p>
-            <p
-              class="muted-text"
-              th:text="${'Client: ' + client.nom + ' ' + client.prenom}"
-            >
-              Client: Rakoto Jean
-            </p>
-          </div>
-          <span
-            class="role-badge role-green"
-            th:text="${client.isActif ? 'Client actif' : 'Client inactif'}"
-            >Client actif</span
-          >
-        </section>
-
-        <section class="tab-list" role="tablist">
-          <a class="tab-link" th:href="@{/api/clients/espace}">Liste clients</a>
-          <a class="tab-link active" th:href="@{/api/clients/{id}(id=${client.id})}">Fiche client</a>
-          <a
-            class="tab-link"
-            th:href="@{/api/clients/{id}/modifier(id=${client.id})}"
-            >Modifier</a
-          >
-        </section>
-
-        <section class="form-card client-detail-actions-card">
-          <div class="form-section-heading">
-            <span>1</span>
-            <div>
-              <h2>Actions rapides</h2>
-              <p>Accès direct aux opérations de gestion pour ce client.</p>
-            </div>
           </div>
           <div class="header-actions">
             <a class="btn btn-white" th:href="@{/api/clients/espace}">Retour</a>
@@ -74,18 +42,18 @@
           </div>
         </section>
 
-        <div class="alert-box success" th:if="${succes != null}" th:text="${succes}"></div>
+        <p class="login-note" th:if="${succes != null}" th:text="${succes}"></p>
 
-        <section class="client-identity-strip">
-          <div class="client-identity-main">
+        <div class="profile-header-card">
+          <div class="profile-identity">
             <div
-              class="client-avatar-sm"
+              class="avatar-circle"
               th:text="${#strings.substring(client.nom, 0, 1) + #strings.substring(client.prenom, 0, 1)}"
             >
               RJ
             </div>
-            <div>
-              <h2 th:text="${client.nom + ' ' + client.prenom}">Rakoto Jean</h2>
+            <div class="profile-info">
+              <h1 th:text="${client.nom + ' ' + client.prenom}">Rakoto Jean</h1>
               <p
                 th:text="${client.dateInscription == null ? 'Date inscription non renseignee' : 'Client depuis ' + client.dateInscription}"
               >
@@ -93,25 +61,89 @@
               </p>
             </div>
           </div>
-          <span
-            class="role-badge role-green"
-            th:text="${client.isActif ? 'Actif' : 'Inactif'}"
-            >Actif</span
-          >
+          <div class="profile-status">
+            <span
+              class="badge badge-blue"
+              th:text="${client.isActif ? 'Client actif' : 'Client inactif'}"
+              >Client actif</span
+            >
+          </div>
+        </div>
+
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Code client</div>
+            <div
+              class="stat-value"
+              th:text="${'CLT-' + #numbers.formatInteger(client.id, 3)}"
+            >
+              CLT-001
+            </div>
+            <div class="stat-trend trend-info">Identifiant unique</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Type client</div>
+            <div
+              class="stat-value"
+              th:text="${client.typeClient == null ? '--' : client.typeClient}"
+            >
+              Eleveur
+            </div>
+            <div class="stat-trend trend-positive">Profil commercial</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Cheptel</div>
+            <div
+              class="stat-value"
+              th:text="${client.tailleCheptel == null ? '--' : client.tailleCheptel}"
+            >
+              40
+            </div>
+            <div class="stat-trend trend-info">Nombre de tetes</div>
+          </article>
         </section>
 
-        <section class="client-top-grid">
-          <div class="card card-spaced client-contact-sheet">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Coordonnées client</h2>
-              <p class="card-subtitle">Informations d'identité, de contact et de livraison.</p>
+        <section class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-label">Total achats</div>
+            <div
+              class="stat-value"
+              th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.totalAchats, 0, 'COMMA', 2, 'POINT') + ' Ar'}"
+            >
+              0 Ar
             </div>
+            <div class="stat-trend trend-info">Prix total</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Montant réglé</div>
+            <div
+              class="stat-value"
+              th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.totalRegle, 0, 'COMMA', 2, 'POINT') + ' Ar'}"
+            >
+              0 Ar
+            </div>
+            <div class="stat-trend trend-positive">Ventes validées</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Solde restant</div>
+            <div
+              class="stat-value"
+              th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.soldeRestant, 0, 'COMMA', 2, 'POINT') + ' Ar'}"
+            >
+              0 Ar
+            </div>
+            <div class="stat-trend trend-negative">Montant à recouvrer</div>
+          </article>
+        </section>
+
+        <div class="card card-spaced">
+          <div class="card-header">
+            <h2 class="card-title">Coordonnees & Informations</h2>
           </div>
           <div class="card-body">
             <div class="info-grid">
               <div class="contact-box">
-                <label>Téléphone</label>
+                <label>Telephone</label>
                 <div
                   th:text="${client.numeroTelephone == null ? '--' : client.numeroTelephone}"
                 >
@@ -142,7 +174,7 @@
                   LOC002
                 </div>
               </div>
-              <div class="contact-box col-span-2 client-address-box">
+              <div class="contact-box col-span-2">
                 <label>Adresse</label>
                 <div
                   th:text="${client.adresse == null ? '--' : client.adresse}"
@@ -159,54 +191,11 @@
               </div>
             </div>
           </div>
-          </div>
-
-          <div class="client-kpi-right-wrap">
-            <section class="card client-kpi-sheet">
-              <div class="card-header">
-                <div>
-                  <h2 class="card-title">Synthèse client</h2>
-                  <p class="card-subtitle">Vue compacte des indicateurs essentiels.</p>
-                </div>
-              </div>
-              <div class="card-body">
-                <div class="client-kpi-list">
-                  <article class="client-kpi-item">
-                    <span>Code client</span>
-                    <strong th:text="${'CLT-' + #numbers.formatInteger(client.id, 3)}">CLT-001</strong>
-                  </article>
-                  <article class="client-kpi-item">
-                    <span>Type client</span>
-                    <strong th:text="${client.typeClient == null ? '--' : client.typeClient}">Eleveur</strong>
-                  </article>
-                  <article class="client-kpi-item">
-                    <span>Cheptel</span>
-                    <strong th:text="${client.tailleCheptel == null ? '--' : client.tailleCheptel + ' tetes'}">40 tetes</strong>
-                  </article>
-                  <article class="client-kpi-item">
-                    <span>Total achats</span>
-                    <strong th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.totalAchats, 0, 'COMMA', 2, 'POINT') + ' Ar'}">0 Ar</strong>
-                  </article>
-                  <article class="client-kpi-item">
-                    <span>Montant regle</span>
-                    <strong th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.totalRegle, 0, 'COMMA', 2, 'POINT') + ' Ar'}">0 Ar</strong>
-                  </article>
-                  <article class="client-kpi-item">
-                    <span>Solde restant</span>
-                    <strong class="text-danger" th:text="${historiqueAchats == null ? '0 Ar' : #numbers.formatDecimal(historiqueAchats.soldeRestant, 0, 'COMMA', 2, 'POINT') + ' Ar'}">0 Ar</strong>
-                  </article>
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
+        </div>
 
         <div class="card card-spaced">
           <div class="card-header">
-            <div>
-              <h2 class="card-title">Historique des achats</h2>
-              <p class="card-subtitle">Détail des ventes associées, factures et soldes restants.</p>
-            </div>
+            <h2 class="card-title">Historique des achats</h2>
           </div>
           <div class="card-body">
             <div class="table-wrap">
@@ -230,7 +219,7 @@
                     <td th:text="${'VTE-' + #numbers.formatInteger(vente.id, 3)}">VTE-001</td>
                     <td th:text="${vente.dateVente == null ? '--' : #temporals.format(vente.dateVente, 'dd/MM/yyyy HH:mm')}">01/07/2026 10:00</td>
                     <td>
-                      <div class="client-lines-list" th:if="${vente.lignes != null and !#lists.isEmpty(vente.lignes)}">
+                      <div th:if="${vente.lignes != null and !#lists.isEmpty(vente.lignes)}">
                         <div th:each="ligne, iterStat : ${vente.lignes}">
                           <span th:text="${ligne.nomProduit + ' x ' + ligne.quantite + (ligne.unite != null and ligne.unite != '' ? ' ' + ligne.unite : '')}">Aliment x 2 kg</span>
                           <span th:if="${!iterStat.last}">, </span>
@@ -256,10 +245,7 @@
 
         <div class="card card-spaced">
           <div class="card-header">
-            <div>
-              <h2 class="card-title">Synthèse des ventes</h2>
-              <p class="card-subtitle">Vue condensée de toutes les ventes du client.</p>
-            </div>
+            <h2 class="card-title">Toutes les ventes du client</h2>
           </div>
           <div class="card-body">
             <div class="table-wrap">
@@ -298,6 +284,8 @@
         <div id="vina-footer"></div>
       </div>
     </div>
+    <script th:src="@{/static/js/auth.js}"></script>
+    <script th:src="@{/static/js/app-shell.js}"></script>
   <script th:src="@{/js/script_content.js}"></script>
 </body>
 </html>

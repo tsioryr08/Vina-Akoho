@@ -11,10 +11,11 @@
     <div th:replace="~{layout/responsableCommercial :: sidebar}"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="main">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
       <div class="content page-stats-ventes">
         <section class="page-header theme-green">
           <div>
+            <p class="eyebrow">STATISTIQUES</p>
             <h1>Produits & Ventes</h1>
             <p>
               Top produits/catégories vendus et évolution du chiffre d'affaires.

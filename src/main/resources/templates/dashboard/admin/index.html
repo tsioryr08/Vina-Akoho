@@ -8,85 +8,50 @@
     <link rel="stylesheet" th:href="@{/css/statistiques-ventes.css}" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   </head>
-  <body class="page-admin-dashboard">
+  <body>
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
 
       <div class="content page-stats-ventes">
-        <section class="page-header theme-green">
+        <section class="page-header">
           <div>
-            <p class="eyebrow">ADMINISTRATION</p>
-            <h1>Panneau d'administration système</h1>
-            <p class="muted-text">
-              Vue de synthèse pour suivre les comptes utilisateurs, les rôles,
-              et l'évolution globale des activités.
+            <h1>Panneau d'Administration Système & Paramètres</h1>
+            <p>
+              Gestion des utilisateurs, rôles assignés, journal d'activité et
+              validations de clôture.
             </p>
           </div>
-          <div class="header-actions">
-            <a class="btn btn-purple" th:href="@{/api/admin/employes/nouveau}">
-              + Nouveau compte
-            </a>
-            <a class="btn btn-ghost" th:href="@{/api/admin/employes}">
-              Voir les comptes
-            </a>
-          </div>
         </section>
 
-        <section class="stats-grid admin-kpi-grid">
-          <article class="stat-card">
-            <div class="stat-label">Comptes actifs</div>
-            <div class="stat-value" th:text="${totalActifs}">0</div>
-            <div class="stat-trend trend-positive">Utilisateurs connectés</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Comptes désactivés</div>
-            <div class="stat-value" th:text="${totalDesactives}">0</div>
-            <div class="stat-trend trend-warning">Accès suspendus</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Rôles disponibles</div>
-            <div class="stat-value" th:text="${totalRoles}">0</div>
-            <div class="stat-trend trend-info">Postes définis</div>
-          </article>
-        </section>
-
-        <section class="admin-layout-grid">
-          <div class="card admin-filter-card">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title">Filtres d'évolution</h2>
-                <p class="card-subtitle">
-                  Ajustez la période et la granularité de l'analyse.
-                </p>
+        <!-- EVOLUTION DES VENTES -->
+         <!-- FILTRES ÉVOLUTION DES VENTES -->
+        <section class="card">
+          <div class="card-body">
+            <form id="filtresEvolutionForm" class="form-grid">
+              <div class="field">
+                <label>Date début</label>
+                <input type="date" id="evoDateDebut" class="form-control" th:value="${dateDebutEvolution}" />
               </div>
-            </div>
-            <div class="card-body">
-              <form id="filtresEvolutionForm" class="admin-filter-grid">
-                <div class="field">
-                  <label>Date début</label>
-                  <input type="date" id="evoDateDebut" class="form-control" th:value="${dateDebutEvolution}" />
-                </div>
-                <div class="field">
-                  <label>Date fin</label>
-                  <input type="date" id="evoDateFin" class="form-control" th:value="${dateFinEvolution}" />
-                </div>
-                <div class="field">
-                  <label>Granularité</label>
-                  <select id="evoGranularite" class="form-control">
-                    <option value="jour" th:selected="${granulariteEvolution == 'jour'}">Jour</option>
-                    <option value="semaine" th:selected="${granulariteEvolution == 'semaine'}">Semaine</option>
-                    <option value="mois" th:selected="${granulariteEvolution == 'mois'}">Mois</option>
-                  </select>
-                </div>
-              </form>
-            </div>
+              <div class="field">
+                <label>Date fin</label>
+                <input type="date" id="evoDateFin" class="form-control" th:value="${dateFinEvolution}" />
+              </div>
+              <div class="field">
+                <label>Granularité</label>
+                <select id="evoGranularite" class="form-control">
+                  <option value="jour" th:selected="${granulariteEvolution == 'jour'}">Jour</option>
+                  <option value="semaine" th:selected="${granulariteEvolution == 'semaine'}">Semaine</option>
+                  <option value="mois" th:selected="${granulariteEvolution == 'mois'}">Mois</option>
+                </select>
+              </div>
+            </form>
           </div>
-
-          <section class="card admin-chart-card">
+        </section>
+        <section class="card">
           <div class="card-header">
             <div>
               <h2 class="card-title">Évolution des ventes</h2>
@@ -94,18 +59,20 @@
             </div>
           </div>
           <div class="card-body">
-            <div class="chart-container admin-chart-frame">
+            <div class="chart-container">
               <canvas id="chartEvolution"></canvas>
             </div>
           </div>
-          </section>
+        </section>
 
-          <div class="card admin-table-card">
+        <section class="grid-2">
+          <div class="card">
             <div class="card-header">
               <div>
-                <h2 class="card-title">Utilisateurs actifs & rôles assignés</h2>
+                <h2 class="card-title">Utilisateurs actifs & Rôles assignés</h2>
                 <p class="card-subtitle">
-                  RG01 — Suivi des comptes actifs et permissions par rôle organisationnel.
+                  RG01 — Suivi des comptes actifs et permissions par rôle
+                  organisationnel.
                 </p>
               </div>
             </div>
@@ -129,11 +96,11 @@
                         th:if="${emp.derniereConnexion != null}"
                         class="derniere-connexion"
                         th:attr="data-ts=${emp.derniereConnexion}"
-                      ></span>
+                      >
+                      </span>
                       <span
                         th:unless="${emp.derniereConnexion != null}"
-                        class="muted-text"
-                        style="font-style: italic"
+                        style="color: #94a3b8; font-style: italic"
                       >
                         Jamais connecté
                       </span>
@@ -148,7 +115,10 @@
                     </td>
                   </tr>
                   <tr th:if="${#lists.isEmpty(employes)}">
-                    <td colspan="4" class="empty-table-message">
+                    <td
+                      colspan="4"
+                      style="text-align: center; padding: 24px; color: #64748b"
+                    >
                       Aucun utilisateur actif.
                     </td>
                   </tr>
@@ -156,19 +126,43 @@
               </table>
             </div>
 
-            <div class="card-actions admin-actions-row">
-              <a class="btn btn-purple" th:href="@{/api/admin/employes/nouveau}">
-                + Créer un nouveau compte
-              </a>
-              <a class="btn btn-ghost" th:href="@{/api/admin/employes}">
-                Voir tous les comptes
-              </a>
+            <div class="card-actions" style="margin-top: 16px">
+              <a class="btn btn-purple" th:href="@{/api/admin/employes/nouveau}"
+                >+ Créer un nouveau compte</a
+              >
+              <a class="btn btn-ghost" th:href="@{/api/admin/employes}"
+                >Voir tous les comptes</a
+              >
             </div>
           </div>
         </section>
+
+        <!-- KPIs -->
+        <section class="stats-grid" style="margin-bottom: 24px">
+          <article class="stat-card">
+            <div class="stat-label">Comptes actifs</div>
+            <div class="stat-value" th:text="${totalActifs}">0</div>
+            <div class="stat-trend trend-info">Utilisateurs actifs</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Comptes désactivés</div>
+            <div class="stat-value" th:text="${totalDesactives}">0</div>
+            <div class="stat-trend trend-warning">Accès suspendus</div>
+          </article>
+        </section>
       </div>
 
-      <div class="app-footer admin-footer">
+      <div
+        class="app-footer"
+        style="
+          padding: 16px 24px;
+          border-top: 1px solid var(--border);
+          background: #fff;
+          color: var(--muted);
+          font-size: 12px;
+          text-align: center;
+        "
+      >
         VINA AKOHO — Panneau d'Administration
       </div>
     </div>

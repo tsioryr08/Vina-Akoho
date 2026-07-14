@@ -1,14 +1,22 @@
+<!doctype html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
   <body>
-    <header th:fragment="header(breadcrumb='Dashboard')" class="topbar">
+    <header th:fragment="header" class="topbar">
       <div class="topbar-left">
-        <button class="menu-button" id="vina-menu-button" type="button">☰</button>
-        <span class="breadcrumb" th:text="${breadcrumb}">Dashboard</span>
+        <button class="menu-button" id="vina-menu-button" type="button">
+          &nbsp;
+        </button>
+        <span class="breadcrumb">Dashboard</span>
       </div>
       <div class="topbar-actions">
         <span class="role-pill" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO01</span>
-        <button class="btn btn-ghost btn-small" id="vina-logout-button" type="button">
-          Déconnexion
+        <button
+          class="btn btn-ghost btn-small"
+          id="vina-logout-button"
+         
+          type="button"
+        >
+          Deconnexion
         </button>
       </div>
     </header>

@@ -6,93 +6,91 @@
     <title>Entrée Produit - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body page-production-entree">
+  <body>
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
-    <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
-      <div id="vina-content">
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="vina-menu-button" type="button">☰</button>
+          <span class="breadcrumb">Production / Entrée Produit</span>
+        </div>
+        <div class="topbar-actions"></div>
+          <button
+            class="btn btn-ghost btn-small"
+            id="vina-logout-button"
+            
+            type="button"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
         <section class="page-header theme-orange">
           <div>
-     
+            <p class="eyebrow">PRODUCTION</p>
             <h1>Entrée Produit</h1>
             <p class="muted-text">
               Enregistrez une fabrication : les matières premières sont
               automatiquement déduites selon la recette.
             </p>
           </div>
-          <span class="role-badge role-orange">Fabrication</span>
         </section>
 
-        <section class="tab-list" role="tablist">
-          <a th:href="@{/api/production}" class="tab-link">Tableau de bord</a>
-          <a th:href="@{/api/production/entree-produit}" class="tab-link active">Entrée Produit</a>
-        </section>
-
-        <section id="formSection" class="form-card production-entree-card production-entree-form-card">
-          <div class="form-section-heading">
-            <span>1</span>
-            <div>
-              <h2>Enregistrer une nouvelle production</h2>
-              <p>Sélectionnez le produit, indiquez la quantité, puis validez l'entrée du lot fabriqué.</p>
+        <!-- FORMULAIRE -->
+        <section id="formSection" class="card" style="max-width: 800px; margin: 0 auto;">
+          <div class="card-body">
+            <div class="alert-box">
+              <strong>Règle de Gestion :</strong> La quantité de matières
+              premières consommées est calculée automatiquement à partir de
+              la recette active du produit sélectionné.
             </div>
+
+            <div id="errorBanner" class="info-banner error" style="display:none;"></div>
+
+            <form id="formEntreeProduit">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="produitSelect">Produit à fabriquer *</label>
+                  <select id="produitSelect" name="idProduit" class="form-control" required>
+                    <option value="">Sélectionner une option...</option>
+                    <option th:each="p : ${produits}" th:value="${p.id}" th:text="${p.nom}"
+                            th:selected="${produitSelectionne != null and produitSelectionne == p.id}"></option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="quantite">Quantité à produire *</label>
+                  <input type="number" id="quantite" name="quantiteAProduire" class="form-control"
+                         placeholder="ex: 50" min="0.01" step="0.01" required
+                         th:value="${quantiteProposee}" />
+                </div>
+
+                <div class="field">
+                  <label for="datePeremption">Date de péremption (optionnel)</label>
+                  <input type="date" id="datePeremption" name="datePeremption" class="form-control" />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                  Valider la production
+                </button>
+                <a th:href="@{/api/production}" class="btn btn-secondary">Annuler</a>
+              </div>
+            </form>
           </div>
-
-        
-
-          <div id="errorBanner" class="alert-box danger production-error-banner"></div>
-
-          <form id="formEntreeProduit">
-            <div class="form-row production-entree-row">
-              <div class="field">
-                <label for="produitSelect">Produit à fabriquer <span class="text-danger">*</span></label>
-                <select id="produitSelect" name="idProduit" class="form-control" required>
-                  <option value="">Sélectionner une option...</option>
-                  <option
-                    th:each="p : ${produits}"
-                    th:value="${p.id}"
-                    th:text="${p.nom}"
-                    th:selected="${produitSelectionne != null and produitSelectionne == p.id}"
-                  ></option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="quantite">Quantité à produire <span class="text-danger">*</span></label>
-                <input
-                  type="number"
-                  id="quantite"
-                  name="quantiteAProduire"
-                  class="form-control"
-                  placeholder="ex: 50"
-                  min="0.01"
-                  step="0.01"
-                  required
-                  th:value="${quantiteProposee}"
-                />
-              </div>
-
-              <div class="field">
-                <label for="datePeremption">Date de péremption (optionnel)</label>
-                <input type="date" id="datePeremption" name="datePeremption" class="form-control" />
-              </div>
-            </div>
-
-            <div class="form-actions production-entree-actions">
-              <a th:href="@{/api/production}" class="btn btn-ghost">Annuler</a>
-              <button type="submit" class="btn btn-primary" id="submitBtn">
-                Valider la production
-              </button>
-            </div>
-          </form>
         </section>
 
-        <section id="resultSection" class="form-card production-entree-card production-result-card">
+        <!-- RÉSULTAT (affiché après succès, remplace le popup) -->
+        <section id="resultSection" class="card" style="max-width: 800px; margin: 24px auto 0; display:none;">
           <div class="card-header">
             <div>
-              <h2 class="card-title">Production enregistrée</h2>
+              <h2 class="card-title">✅ Production enregistrée</h2>
               <p class="card-subtitle" id="resultSubtitle"></p>
             </div>
           </div>
@@ -108,7 +106,7 @@
               </div>
             </div>
 
-            <h3 class="production-result-title">Matières premières consommées (FIFO)</h3>
+            <h3 style="margin-top: 24px;">Matières premières consommées (FIFO)</h3>
             <div class="table-wrap">
               <table class="data-table">
                 <thead>
@@ -122,16 +120,17 @@
               </table>
             </div>
 
-            <div class="card-actions production-result-actions">
+            <div class="card-actions" style="margin-top: 24px;">
               <button type="button" class="btn btn-primary" id="nouvelleProductionBtn">
                 Nouvelle production
               </button>
-              <a th:href="@{/api/production}" class="btn btn-ghost">Retour au dashboard</a>
+              <a th:href="@{/api/production}" class="btn btn-white">Retour au dashboard</a>
             </div>
           </div>
         </section>
-        <div id="vina-footer"></div>
       </div>
+
+      <div class="app-footer">VINA AKOHO — Production</div>
     </div>
 
     <script>
@@ -143,7 +142,7 @@
 
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
-        errorBanner.classList.remove("is-visible");
+        errorBanner.style.display = "none";
         submitBtn.disabled = true;
         submitBtn.textContent = "Validation en cours...";
 
@@ -167,11 +166,11 @@
             afficherResultat(data.data);
           } else {
             errorBanner.textContent = "Erreur : " + data.message;
-            errorBanner.classList.add("is-visible");
+            errorBanner.style.display = "block";
           }
         } catch (err) {
           errorBanner.textContent = "Erreur réseau : impossible de contacter le serveur.";
-          errorBanner.classList.add("is-visible");
+          errorBanner.style.display = "block";
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = "Valider la production";
@@ -196,16 +195,23 @@
         });
 
         formSection.style.display = "none";
-        resultSection.classList.add("is-visible");
+        resultSection.style.display = "block";
         resultSection.scrollIntoView({ behavior: "smooth" });
+<<<<<<< HEAD
+=======
+
+        setTimeout(function () {
+          window.location.href = "/production";
+        }, 3000);
+>>>>>>> parent of 8fd9abf (Merge pull request #74 from tsioryr08/feature/maude-desing)
       }
 
       document.getElementById("nouvelleProductionBtn").addEventListener("click", function () {
         form.reset();
-        resultSection.classList.remove("is-visible");
+        resultSection.style.display = "none";
         formSection.style.display = "block";
       });
     </script>
-    <script th:src="@{/js/script_content.js}"></script>
+    <script src="/assets/js/script_content.js"></script>
   </body>
 </html>

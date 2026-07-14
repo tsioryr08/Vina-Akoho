@@ -2,7 +2,6 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <body>
 <aside th:fragment="sidebar" class="sidebar" id="vina-sidebar">
-    <!-- BRAND SECTION -->
     <div class="sidebar-brand">
         <img th:src="@{/images/VINA_AKOHO_LOGO.png}" alt="VINA AKOHO" class="brand-mark" />
         <div>
@@ -11,58 +10,32 @@
         </div>
     </div>
 
-
-    <!-- NAVIGATION MENU -->
     <nav class="sidebar-nav">
-        <!-- SECTION: Principal -->
         <div class="sidebar-section">Principal</div>
-        <a class="sidebar-link" th:href="@{/api/admin}">
-            <span class="sidebar-link-label">Dashboard</span>
-            <span class="sidebar-code">A1</span>
-        </a>
+        <a class="sidebar-link" th:href="@{/api/admin}">Dashboard <span class="sidebar-code">A1</span></a>
 
-        <!-- SECTION: Finance -->
         <div class="sidebar-section">Finance</div>
-        <a class="sidebar-link" th:href="@{/api/benefices}">
-            <span class="sidebar-link-label">Calcul des Bénéfices</span>
-            <span class="sidebar-code">F1</span>
-        </a>
+        <!-- Nouveau lien ajouté ici -->
+        <a class="sidebar-link" th:href="@{/api/benefices}">Calcul des Bénéfices <span class="sidebar-code">F1</span></a>
 
-        <!-- SECTION: Utilisateurs -->
         <div class="sidebar-section">Utilisateurs</div>
-        <a class="sidebar-link" th:href="@{/api/admin/employes}">
-            <span class="sidebar-link-label">Gestion des comptes</span>
-            <span class="sidebar-code">A2</span>
-        </a>
-        <a class="sidebar-link" th:href="@{/api/admin/employes/nouveau}">
-            <span class="sidebar-link-label">Ajout nouveau compte</span>
-            <span class="sidebar-code">A2</span>
-        </a>
 
-        <!-- SECTION: Statistiques -->
+        <a class="sidebar-link" th:href="@{/api/admin/employes}"
+          >Gestion des comptes <span class="sidebar-code">A2</span></a
+        >
+        <a class="sidebar-link" th:href="@{/api/admin/employes/nouveau}"
+          >Ajout nouveau compte <span class="sidebar-code">A2</span></a
+        >
+
         <div class="sidebar-section">Statistiques</div>
-        <a class="sidebar-link" th:href="@{/api/ventes/statistiques}">
-            <span class="sidebar-link-label">Produits & Ventes</span>
-            <span class="sidebar-code">S1</span>
-        </a>
+        <a class="sidebar-link" th:href="@{/api/ventes/statistiques}">Produits & Ventes <span class="sidebar-code">S1</span></a>
 
-        <!-- SECTION: Categories -->
-        <div class="sidebar-section">Catégories</div>
-        <a class="sidebar-link" th:href="@{/api/categories}">
-            <span class="sidebar-link-label">Liste des catégories</span>
-            <span class="sidebar-code">A7</span>
-        </a>
-        <a class="sidebar-link" th:href="@{/api/categories/nouveau}">
-            <span class="sidebar-link-label">Ajouter catégorie</span>
-            <span class="sidebar-code">A7b</span>
-        </a>
+        <div class="sidebar-section">Categories</div>
+        <a class="sidebar-link" th:href="@{/api/categories}">Liste des categories<span class="sidebar-code">A7</span></a>
+        <a class="sidebar-link" th:href="@{/api/categories/nouveau}">Ajout categorie <span class="sidebar-code">A7b</span></a>
 
-        <!-- SECTION: Dépenses -->
-        <div class="sidebar-section">Dépenses</div>
-        <a class="sidebar-link" th:href="@{/api/depenses/comptable-depenses}">
-            <span class="sidebar-link-label">Registre des dépenses</span>
-            <span class="sidebar-code">A7c</span>
-        </a>
+        <div class="sidebar-section">Depenses</div>
+        <a class="sidebar-link" th:href="@{/api/depenses/comptable-depenses}">Registre des dépenses <span class="sidebar-code">A7c</span></a>
     </nav>
 </aside>
 </body>

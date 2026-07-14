@@ -7,37 +7,39 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body page-matiere-liste">
-    <div th:replace="${sidebarTemplate} :: sidebar"></div>
+  <body class="vina-body">
+        <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
+            <p class="eyebrow">MATIÈRES PREMIÈRES</p>
             <h1>Suivi du Stock de Matières</h1>
-            <p class="muted-text">
+            <p>
               Consultez en temps réel l'état et la disponibilité des matières
               premières en stock.
             </p>
           </div>
-          <span class="role-badge role-orange">Suivi Stock</span>
         </section>
 
-        <section class="tab-list" role="tablist">
-          <a th:href="@{/api/matieres-premieres}" class="tab-link active">Suivi Stock</a>
-          <a th:href="@{/api/matieres-premieres/alertes}" class="tab-link">Alertes</a>
-          <a th:href="@{/api/matieres-premieres/entree-stock}" class="tab-link">Ajouter Matière</a>
-          <a th:href="@{/api/matieres-premieres/nouveau}" class="tab-link">Créer Fiche Produit</a>
-          <a th:href="@{/matieres-premieres/import}" class="tab-link">📥 Importer Matières</a>
-          <a th:href="@{/fournisseurs/import}" class="tab-link">📥 Importer Fournisseurs</a>
-        </section>
+        <!-- Sous-navigation interne -->
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px">
+          <a th:href="@{/matieres-premieres}" class="btn btn-ghost btn-small">Suivi Stock</a>
+          <a th:href="@{/matieres-premieres/alertes}" class="btn btn-ghost btn-small">Alertes</a>
+          <a th:href="@{/matieres-premieres/entree-stock}" class="btn btn-ghost btn-small">Ajouter Matière</a>
+          <a th:href="@{/matieres-premieres/nouveau}" class="btn btn-ghost btn-small">Créer Fiche Produit</a>
+          <a th:href="@{/matieres-premieres/import}" class="btn btn-primary btn-small">📥 Importer Matières</a>
+          <a th:href="@{/fournisseurs/import}" class="btn btn-ghost btn-small">📥 Importer Fournisseurs</a>
+        </div>
 
+        <!-- Messages flash session -->
         <div
           th:if="${successMessage}"
-          class="alert-box success"
+          class="alert-box alert-success"
           th:text="${successMessage}"
         ></div>
         <div
@@ -70,14 +72,9 @@
           </article>
         </section>
 
-        <section class="form-card">
-          <div class="form-section-heading">
-            <span>1</span>
-            <div>
-              <h2>Stock disponible par matière</h2>
-              <p>Vue détaillée par article, fournisseur, seuil et statut actuel.</p>
-            </div>
-          </div>
+        <!-- Tableau de suivi -->
+        <section class="form-section">
+          <h2>Stock Disponible par Matière</h2>
           <div class="table-wrap">
             <table class="data-table">
               <thead>
@@ -123,7 +120,10 @@
                   </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(mps)}">
-                  <td colspan="7" class="empty-state-cell">
+                  <td
+                    colspan="7"
+                    style="text-align: center; padding: 24px; color: #64748b"
+                  >
                     Aucune matière première enregistrée.
                     <a th:href="@{/api/matieres-premieres/nouveau}"
                       >En créer une →</a
@@ -135,28 +135,33 @@
           </div>
         </section>
 
-        <section class="form-card" th:if="${!#lists.isEmpty(mps.?[seuilMinimum != null])}">
-          <div class="form-section-heading">
-            <span>2</span>
-            <div>
-              <h2>Couverture stock actuel vs seuil minimum</h2>
-              <p>
-                Pourcentage du stock actuel par rapport au seuil minimum d'alerte.
-                En dessous de 100%, une commande est recommandée.
-              </p>
-            </div>
-          </div>
+        <!-- Couverture Stock Actuel vs Seuil Minimum -->
+        <section
+          class="form-section"
+          th:if="${!#lists.isEmpty(mps.?[seuilMinimum != null])}"
+        >
+          <h2>Couverture Stock Actuel vs Seuil Minimum</h2>
+          <p style="color: #64748b; margin-bottom: 20px">
+            Pourcentage du stock actuel par rapport au seuil minimum d'alerte.
+            En dessous de 100%, une commande est recommandée.
+          </p>
           <div class="coverage-grid">
             <div
               class="coverage-card"
               th:each="mp : ${mps}"
               th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}"
             >
-              <div class="coverage-item-head">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 13px;
+                  margin-bottom: 4px;
+                "
+              >
                 <strong th:text="${mp.nom}"></strong>
                 <span
-                  class="coverage-rate"
-                  th:classappend="${mp.statut == 'SEUIL ATTEINT'} ? ' is-low' : ' is-ok'"
+                  th:style="${mp.statut == 'SEUIL ATTEINT'} ? 'color: #ef4444; font-weight: 700;' : 'color: #16a34a; font-weight: 700;'"
                   th:text="${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? '100%+' : #numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"
                 ></span>
               </div>

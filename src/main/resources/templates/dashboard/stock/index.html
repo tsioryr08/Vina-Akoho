@@ -7,17 +7,18 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body page-stock-dashboard">
+  <body>
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
 
       <div class="content">
         <section class="page-header theme-blue">
           <div>
+            <p class="eyebrow">DASHBOARD</p>
             <h1>Gestion des Approvisionnements & Stocks</h1>
             <p>
               Contrôle des seuils critiques, expirations FIFO et état des stocks
@@ -32,27 +33,42 @@
               <div>
                 <h2 class="card-title">Seuils Critiques Minimums</h2>
                 <p class="card-subtitle">
-                  Alertes sur les matières premières sous seuil.
+                  RG03 — Alertes sur les matières premières sous seuil.
                 </p>
               </div>
             </div>
 
-            <div class="alertes-scroll-panel" th:if="${!#lists.isEmpty(alertesMp)}">
-              <div th:each="mp : ${alertesMp}"
-                   th:class="${mp.quantiteStock.signum() == 0} ? 'alert-box danger' : 'alert-box warning'">
-                <span th:class="${mp.quantiteStock.signum() == 0} ? 'alert-label critical' : 'alert-label attention'"
-                      th:text="${mp.quantiteStock.signum() == 0} ? 'CRITIQUE' : 'ATTENTION'">CRITIQUE</span>
-                <span th:text="${mp.nom + ' (' + mp.fournisseurNom + ') : Reste ' + mp.quantiteStock + ' ' + mp.uniteLibelle + ' (Seuil alerte : ' + mp.seuilMinimum + ' ' + mp.uniteLibelle + ').'}">
-                  Matière première : Reste X (Seuil alerte : Y).
-                </span>
-              </div>
+            <div th:each="mp : ${alertesMp}"
+                 th:class="${mp.quantiteStock.signum() == 0} ? 'alert-box danger' : 'alert-box warning'">
+              <span th:class="${mp.quantiteStock.signum() == 0} ? 'alert-label critical' : 'alert-label attention'"
+                    th:text="${mp.quantiteStock.signum() == 0} ? 'CRITIQUE' : 'ATTENTION'">CRITIQUE</span>
+              <span th:text="${mp.nom + ' (' + mp.fournisseurNom + ') : Reste ' + mp.quantiteStock + ' ' + mp.uniteLibelle + ' (Seuil alerte : ' + mp.seuilMinimum + ' ' + mp.uniteLibelle + ').'}">
+                Matière première : Reste X (Seuil alerte : Y).
+              </span>
             </div>
-            <p th:if="${#lists.isEmpty(alertesMp)}" class="stock-empty-hint">
+            <p th:if="${#lists.isEmpty(alertesMp)}" style="color: #64748b; padding: 8px 0;">
               ✓ Aucune matière première sous le seuil d'alerte.
             </p>
           </div>
 
-          
+          <div class="card" style="margin-bottom: 0">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">
+                  Suivi des Expirations et Traitement FIFO
+                </h2>
+                <p class="card-subtitle">
+                  RG08 — Priorisation des lots proches de l'expiration.
+                </p>
+              </div>
+            </div>
+
+            <div class="alert-box info">
+              Lot MP-SOJA-044 (Tourteau de Soja) : Expire dans 5 jours. Règle :
+              À utiliser impérativement sur la prochaine session de production.
+            </div>
+          </div>
+        </section>
 
         <section class="card">
           <div class="card-header">

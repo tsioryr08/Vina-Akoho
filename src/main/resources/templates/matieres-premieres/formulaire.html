@@ -7,34 +7,47 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body page-matiere-form">
+  <body class="vina-body">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
-            <h1>Création de la Fiche Produit</h1>
-            <p class="muted-text">
+            <p class="eyebrow">MATIÈRES PREMIÈRES</p>
+            <h1>1. Création de la Fiche Produit (Catalogue)</h1>
+            <p style="color: #64748b; font-style: italic">
               Enregistrez une nouvelle matière première avec son prix officiel.
             </p>
           </div>
-          <span class="role-badge role-orange">Catalogue</span>
         </section>
 
-     <section class="tab-list" role="tablist">
-          <a th:href="@{/api/matieres-premieres}" class="tab-link active">Suivi Stock</a>
-          <a th:href="@{/api/matieres-premieres/alertes}" class="tab-link">Alertes</a>
-          <a th:href="@{/api/matieres-premieres/entree-stock}" class="tab-link">Ajouter Matière</a>
-          <a th:href="@{/api/matieres-premieres/nouveau}" class="tab-link">Créer Fiche Produit</a>
-        </section>
+        <!-- Sous-navigation interne -->
+        <div
+          style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px"
+        >
+          <a th:href="@{/api/matieres-premieres}" class="btn btn-ghost btn-small"
+            >Suivi Stock</a
+          >
+          <a
+            th:href="@{/api/matieres-premieres/entree-stock}"
+            class="btn btn-ghost btn-small"
+            >Ajouter Matière</a
+          >
+          <a
+            th:href="@{/api/matieres-premieres/nouveau}"
+            class="btn btn-primary btn-small"
+            >Créer Fiche Produit</a
+          >
+        </div>
 
+        <!-- Messages flash session -->
         <div
           th:if="${successMessage}"
-          class="alert-box success"
+          class="alert-box alert-success"
           th:text="${successMessage}"
         ></div>
         <div
@@ -43,21 +56,15 @@
           th:text="${errorMessage}"
         ></div>
 
-        <section class="form-card">
-          <div class="form-section-heading">
-            <span>1</span>
-            <div>
-              <h2>Informations de la matière première</h2>
-              <p>Renseignez la référence catalogue et ses paramètres de base.</p>
-            </div>
-          </div>
-
+        <div class="form-section">
+          <h2>Informations de la Matière Première</h2>
           <form method="post" th:action="@{/api/matieres-premieres/nouveau}">
-            <div class="form-row matiere-form-row">
-              <div class="field">
-                <label>
-                  Nom de la matière première <span class="text-danger">*</span>
-                </label>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label"
+                  >Nom de la matière première
+                  <span style="color: #ef4444">*</span></label
+                >
                 <input
                   type="text"
                   name="nom"
@@ -66,11 +73,11 @@
                   required
                 />
               </div>
-
-              <div class="field">
-                <label>
-                  Fournisseur principal <span class="text-danger">*</span>
-                </label>
+              <div class="form-group">
+                <label class="form-label"
+                  >Fournisseur principal
+                  <span style="color: #ef4444">*</span></label
+                >
                 <select name="idFournisseur" class="form-control" required>
                   <option value="">-- Choisir le fournisseur --</option>
                   <option
@@ -80,29 +87,26 @@
                   ></option>
                 </select>
               </div>
-
-              <div class="field">
-                <label>
-                  Coût unitaire officiel (Ariary) <span class="text-danger">*</span>
-                </label>
+              <div class="form-group">
+                <label class="form-label"
+                  >Coût unitaire officiel (Ariary)
+                  <span style="color: #ef4444">*</span></label
+                >
                 <input
                   type="number"
                   name="coutUnitaire"
                   class="form-control"
-                  placeholder="ex: 1200"
+                  placeholder="ex: 1200 (Prix bloqué pour les futurs lots)"
                   min="0"
                   step="0.01"
                   required
                 />
-                <small class="help-text">Prix bloqué pour les futurs lots.</small>
               </div>
-
-              <div class="field">
-                <label>
-                  Unité de mesure <span class="text-danger">*</span>
-                </label>
+              <div class="form-group">
+                <label class="form-label"
+                  >Unité de mesure <span style="color: #ef4444">*</span></label
+                >
                 <select name="idUnite" class="form-control" required>
-                  <option value="" disabled selected>Choisir l'unité</option>
                   <option
                     th:each="u : ${unites}"
                     th:value="${u.id}"
@@ -110,9 +114,8 @@
                   ></option>
                 </select>
               </div>
-
-              <div class="field field-full">
-                <label>Seuil minimum d'alerte</label>
+              <div class="form-group">
+                <label class="form-label">Seuil minimum d'alerte</label>
                 <input
                   type="number"
                   name="seuilMinimum"
@@ -124,12 +127,16 @@
               </div>
             </div>
 
-            <div class="form-actions matiere-form-actions">
-              <a th:href="@{/api/matieres-premieres}" class="btn btn-ghost">Annuler</a>
-              <button type="submit" class="btn btn-primary">Enregistrer la référence</button>
+            <div class="form-actions" style="margin-top: 32px">
+              <a th:href="@{/api/matieres-premieres}" class="btn btn-ghost"
+                >Annuler</a
+              >
+              <button type="submit" class="btn btn-primary">
+                Enregistrer la référence
+              </button>
             </div>
           </form>
-        </section>
+        </div>
       </div>
     </div>
   <script th:src="@{/js/script_content.js}"></script>

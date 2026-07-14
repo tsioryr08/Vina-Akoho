@@ -14,7 +14,7 @@
 
     <div class="main">
       <div
-        th:replace="~{layout/header}"
+        th:replace="${headerTemplate} :: header"
       ></div>
 
       <div class="content">

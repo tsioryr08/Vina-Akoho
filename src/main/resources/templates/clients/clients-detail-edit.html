@@ -6,15 +6,14 @@
     <title>Modifier le Profil - VINA AKOHO</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body page-client-edit">
+  <body class="vina-body">
     <div id="vina-sidebar" th:replace="${sidebarTemplate} :: sidebar"></div>
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-header" th:replace="${headerTemplate} :: header"></div>
       <div id="vina-content">
         <section class="page-header theme-green">
-          <div>
-            <p class="eyebrow">CLIENTS</p>
+          <div></div>
             <h1>Modifier le Profil Client</h1>
             <p
               class="muted-text"
@@ -30,20 +29,11 @@
           </div>
         </section>
 
-        <section class="tab-list" role="tablist">
-          <a class="tab-link" th:href="@{/api/clients/espace}">Liste clients</a>
-          <a class="tab-link" th:href="@{/api/clients/{id}(id=${client.id})}">Fiche client</a>
-          <a class="tab-link active" th:href="@{/api/clients/{id}/modifier(id=${client.id})}">Modifier</a>
-        </section>
+        <p class="login-error" aria-live="polite" th:text="${erreur}"></p>
 
-        <p class="alert-box danger" aria-live="polite" th:if="${erreur != null}" th:text="${erreur}"></p>
-
-        <div class="form-card card-spaced">
+        <div class="card">
           <div class="card-header">
-            <div>
-              <h2 class="card-title">Informations générales</h2>
-              <p class="card-subtitle">Les champs marqués d'un * sont obligatoires.</p>
-            </div>
+            <h2 class="card-title">Informations generales</h2>
           </div>
           <div class="card-body">
             <form
@@ -51,13 +41,6 @@
               th:action="@{/api/clients/{id}/modifier(id=${client.id})}"
               th:object="${inscription}"
             >
-              <div class="form-section-heading">
-                <span>1</span>
-                <div>
-                  <h2>Identité du client</h2>
-                  <p>Informations de base pour identifier rapidement le client.</p>
-                </div>
-              </div>
               <div class="form-grid">
                 <div class="form-group">
                   <label class="form-label" for="nom"
@@ -97,7 +80,7 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="tailleCheptel"
-                    >Taille du cheptel</label
+                    >Taille cheptel</label
                   >
                   <input
                     type="number"
@@ -107,16 +90,6 @@
                     min="0"
                   />
                 </div>
-              </div>
-
-              <div class="form-section-heading">
-                <span>2</span>
-                <div>
-                  <h2>Profil commercial</h2>
-                  <p>Catégorie, service suivi et état d'activation du compte.</p>
-                </div>
-              </div>
-              <div class="form-grid">
                 <div class="form-group">
                   <label class="form-label" for="idTypeClient"
                     >Profil du Client *</label
@@ -152,38 +125,6 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="isActif">Compte actif</label>
-                  <select
-                    class="form-control"
-                    id="isActif"
-                    th:field="*{isActif}"
-                  >
-                    <option th:value="true">Oui</option>
-                    <option th:value="false">Non</option>
-                  </select>
-                </div>
-                <div class="form-group form-group-wide">
-                  <label class="form-label" for="notes"
-                    >Notes & observations</label
-                  >
-                  <textarea
-                    class="form-control"
-                    id="notes"
-                    th:field="*{notes}"
-                    rows="4"
-                  ></textarea>
-                </div>
-              </div>
-
-              <div class="form-section-heading">
-                <span>3</span>
-                <div>
-                  <h2>Localisation et livraison</h2>
-                  <p>Précisez la zone, la localité et l'adresse exacte de livraison.</p>
-                </div>
-              </div>
-              <div class="form-grid">
-                <div class="form-group">
                   <label class="form-label" for="idZoneLivraison"
                     >Zone / Axe de livraison</label
                   >
@@ -218,6 +159,28 @@
                     id="adresse"
                     th:field="*{adresse}"
                   />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="isActif">Compte actif</label>
+                  <select
+                    class="form-control"
+                    id="isActif"
+                    th:field="*{isActif}"
+                  >
+                    <option th:value="true">Oui</option>
+                    <option th:value="false">Non</option>
+                  </select>
+                </div>
+                <div class="form-group form-group-wide">
+                  <label class="form-label" for="notes"
+                    >Notes & observations</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="notes"
+                    th:field="*{notes}"
+                    rows="4"
+                  ></textarea>
                 </div>
               </div>
               <div class="form-actions-row">

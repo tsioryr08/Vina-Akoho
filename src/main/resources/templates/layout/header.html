@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <body>
-  <header th:fragment="header(breadcrumb='Dashboard')" class="topbar">
+  <header th:fragment="header" class="topbar">
     <div class="topbar-left">
       <button class="menu-button" id="vina-menu-button" type="button">
         ☰
       </button>
-      <span class="breadcrumb" th:text="${breadcrumb}">Dashboard</span>
+      <span class="breadcrumb">Dashboard Commercial</span>
     </div>
     <div class="topbar-actions">
         <span class="role-pill" th:text="${currentUser != null ? currentUser.role.poste : ''}">RO04</span>

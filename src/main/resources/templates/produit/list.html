@@ -8,54 +8,43 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}" />
   </head>
-  <body class="vina-body page-produit-liste">
+  <body class="vina-body">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="app-main-wrapper">
-      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div th:replace="${headerTemplate} :: header"></div>
       <div id="vina-content">
         <section class="page-header theme-orange">
           <div>
+            <p class="eyebrow">ADMINISTRATION</p>
             <h1>Gestion des Produits</h1>
             <p class="muted-text">
               Vue administrative pour la configuration des prix et des
               références du catalogue.
             </p>
           </div>
-          <span class="role-badge role-orange">Produits</span>
         </section>
 
-        <section class="tab-list" role="tablist">
-          <a th:href="@{/api/produits}" class="tab-link active">Liste Produits</a>
-          <a th:href="@{/api/produits/nouveau}" class="tab-link">Nouvelle Référence</a>
-        </section>
-
+        <!-- Messages flash -->
         <div
           th:if="${success}"
-          class="alert-box success"
+          class="info-banner success"
           th:text="${success}"
         ></div>
         <div
           th:if="${error}"
-          class="alert-box danger"
+          class="info-banner error"
           th:text="${error}"
         ></div>
 
-        <section class="form-card produit-filter-card">
-          <div class="form-section-heading">
-            <span>1</span>
-            <div>
-              <h2>Recherche et filtres</h2>
-              <p>Affinez la liste des produits par mot-clé, catégorie et plage de prix.</p>
-            </div>
-          </div>
-
+        <!-- Barre de recherche et filtres -->
+        <div class="filter-bar">
           <form
             th:action="@{/api/produits/recherche}"
             method="get"
-            class="filter-form produit-filter-form"
+            class="filter-form"
           >
             <input
               type="text"
@@ -92,17 +81,17 @@
               class="filter-input"
             />
 
-            <div class="produit-filter-actions">
-              <button type="submit" class="btn btn-primary">Filtrer</button>
-              <a th:href="@{/api/produits}" class="btn btn-ghost">Réinitialiser</a>
-            </div>
+            <button type="submit" class="btn btn-filter">Filtrer</button>
+            <a th:href="@{/api/produits}" class="btn btn-reset"
+              >Réinitialiser</a
+            >
           </form>
-        </section>
+        </div>
 
-        <section class="form-card produit-table-card">
+        <div class="table-card">
           <div class="card-header">
             <div class="card-header-left">
-              <h2 class="card-title">Base de données produits</h2>
+              <h2 class="card-title">Base de données Produits</h2>
               <p class="product-count">
                 <span th:text="${produits != null ? produits.totalElements : 0}"
                   >0</span
@@ -117,12 +106,14 @@
               >
                 📥 Importer en masse
               </a>
-              <a th:href="@{/api/produits/nouveau}" class="btn btn-primary btn-small">
+              <button
+                class="btn btn-black btn-small"
+                onclick="window.location.href = '/api/produits/nouveau'"
+              >
                 + Ajouter une référence
-              </a>
+              </button>
             </div>
           </div>
-
           <div class="table-wrap">
             <table class="data-table">
               <thead>
@@ -166,26 +157,26 @@
                     <div class="action-btns">
                       <a
                         th:href="@{/api/produits/{id}(id=${produit.id})}"
-                        class="btn btn-ghost btn-small"
+                        class="btn-sm btn-view"
                         title="Voir les détails"
-                        >Voir</a
+                        >voir plus</a
                       >
                       <a
                         th:href="@{/api/produits/{id}/modifier(id=${produit.id})}"
-                        class="btn btn-primary btn-small"
+                        class="btn-sm btn-edit"
                         title="Modifier"
-                        >Modifier</a
+                        >modifier</a
                       >
                       <a
                         th:href="@{/api/produits/{id}/supprimer(id=${produit.id})}"
-                        class="btn btn-danger btn-small"
+                        class="btn-sm btn-delete"
                         title="Supprimer"
                         onclick="
                           return confirm(
                             'Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.',
                           );
                         "
-                        >Supprimer</a
+                        >🗑️</a
                       >
                     </div>
                   </td>
@@ -193,14 +184,17 @@
                 <tr th:if="${produits == null or produits.isEmpty()}">
                   <td colspan="7">
                     <div class="empty-state">
-                      <p>Aucun produit trouvé</p>
+                      <p>📦 Aucun produit trouvé</p>
                       <p>
                         Commencez par ajouter votre premier produit au
                         catalogue.
                       </p>
-                      <a th:href="@{/api/produits/nouveau}" class="btn btn-primary btn-small">
+                      <button
+                        class="btn btn-black btn-small"
+                        onclick="window.location.href = '/api/produits/nouveau'"
+                      >
                         + Ajouter une référence
-                      </a>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -224,10 +218,13 @@
               </a>
             </span>
           </div>
-        </section>
+        </div>
 
         <div id="vina-footer"></div>
       </div>
+
+      <script src="/assets/js/auth.js"></script>
+      <script src="/assets/js/app-shell.js"></script>
     </div>
   <script th:src="@{/js/script_content.js}"></script>
 </body>
