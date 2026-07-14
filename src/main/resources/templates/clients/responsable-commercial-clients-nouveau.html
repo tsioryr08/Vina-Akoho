@@ -128,10 +128,12 @@
                       th:field="*{idZoneLivraison}"
                       required
                     >
-                      <option value="ZONE001">Mahitsy Centre</option>
-                      <option value="ZONE002">Peripherie</option>
-                      <option value="ZONE003">Antananarivo Ville</option>
-                      <option value="ZONE004">Axe Ankazobe</option>
+                      <option value="">Choisir une zone</option>
+                      <option
+                        th:each="zone : ${zonesLivraison}"
+                        th:value="${zone.id}"
+                        th:text="${zone.libelle}"
+                      ></option>
                     </select>
                   </div>
                   <div class="form-group">

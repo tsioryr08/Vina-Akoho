@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
 import mg.vinaAkoho.vina_akoho.exception.produit.ProduitNotFoundException;
@@ -21,6 +22,12 @@ import mg.vinaAkoho.vina_akoho.exception.matierespremieres.UniteNotFoundExceptio
 import mg.vinaAkoho.vina_akoho.exception.matierespremieres.TypeMouvementNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ApiResponse<Object>> handleResponseStatus(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ApiResponse.error(ex.getReason() == null ? "Requête invalide" : ex.getReason()));
+    }
 
     @ExceptionHandler(StockInsuffisantException.class)
     public ResponseEntity<ApiResponse<Object>> handleStockInsuffisant(StockInsuffisantException ex) {
