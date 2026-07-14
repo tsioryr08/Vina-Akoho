@@ -35,6 +35,9 @@
           <a th:href="@{/fournisseurs/import}" class="tab-link">📥 Importer Fournisseurs</a>
         </section>
 
+        
+
+
         <div
           th:if="${successMessage}"
           class="alert-box success"
@@ -68,6 +71,41 @@
             <div class="stat-value" th:text="${totalStock} + ' kg'">0 kg</div>
             <div class="stat-trend trend-neutral">Tous articles</div>
           </article>
+        </section>
+
+           <section class="form-card" th:if="${!#lists.isEmpty(mps.?[seuilMinimum != null])}">
+          <div class="form-section-heading">
+            <span>2</span>
+            <div>
+              <h2>Couverture stock actuel vs seuil minimum</h2>
+              <p>
+                Pourcentage du stock actuel par rapport au seuil minimum d'alerte.
+                En dessous de 100%, une commande est recommandée.
+              </p>
+            </div>
+          </div>
+          <div class="coverage-grid">
+            <div
+              class="coverage-card"
+              th:each="mp : ${mps}"
+              th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}"
+            >
+              <div class="coverage-item-head">
+                <strong th:text="${mp.nom}"></strong>
+                <span
+                  class="coverage-rate"
+                  th:classappend="${mp.statut == 'SEUIL ATTEINT'} ? ' is-low' : ' is-ok'"
+                  th:text="${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? '100%+' : #numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"
+                ></span>
+              </div>
+              <div class="jauge-container">
+                <div
+                  th:class="${mp.statut == 'SEUIL ATTEINT'} ? 'jauge-fill jauge-red' : 'jauge-fill jauge-green'"
+                  th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? 100 : mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"
+                ></div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="form-card">
@@ -135,40 +173,7 @@
           </div>
         </section>
 
-        <section class="form-card" th:if="${!#lists.isEmpty(mps.?[seuilMinimum != null])}">
-          <div class="form-section-heading">
-            <span>2</span>
-            <div>
-              <h2>Couverture stock actuel vs seuil minimum</h2>
-              <p>
-                Pourcentage du stock actuel par rapport au seuil minimum d'alerte.
-                En dessous de 100%, une commande est recommandée.
-              </p>
-            </div>
-          </div>
-          <div class="coverage-grid">
-            <div
-              class="coverage-card"
-              th:each="mp : ${mps}"
-              th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}"
-            >
-              <div class="coverage-item-head">
-                <strong th:text="${mp.nom}"></strong>
-                <span
-                  class="coverage-rate"
-                  th:classappend="${mp.statut == 'SEUIL ATTEINT'} ? ' is-low' : ' is-ok'"
-                  th:text="${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? '100%+' : #numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"
-                ></span>
-              </div>
-              <div class="jauge-container">
-                <div
-                  th:class="${mp.statut == 'SEUIL ATTEINT'} ? 'jauge-fill jauge-red' : 'jauge-fill jauge-green'"
-                  th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() > 1.0 ? 100 : mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </section>
+     
       </div>
     </div>
   <script th:src="@{/js/script_content.js}"></script>

@@ -26,58 +26,46 @@
           </div>
         </section>
 
-        <section class="kpi-panel card">
+        <section class="kpi-notebook card">
           <div class="card-header">
             <h2 class="card-title">Indicateurs clés (KPI)</h2>
           </div>
-          <ul class="kpi-list">
-            <li class="kpi-item kpi-accent-blue">
-              <span class="kpi-icon">▣</span>
-              <div class="kpi-body">
-                <span class="kpi-label">Quantité actuelle produits finis</span>
-                <span class="kpi-value" th:text="${quantiteProduitsFinis != null ? #numbers.formatDecimal(quantiteProduitsFinis, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
-              </div>
-              <span class="kpi-meta" th:text="${uniteProduits != null && !uniteProduits.isBlank() ? uniteProduits : 'Unité'}">Kg en stock</span>
+          <ul class="notebook-list">
+            <li class="notebook-item notebook-accent-blue">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Quantité actuelle produits finis</span>
+              <span class="notebook-value" th:text="${quantiteProduitsFinis != null ? #numbers.formatDecimal(quantiteProduitsFinis, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
+              <span class="notebook-meta" th:text="${uniteProduits != null && !uniteProduits.isBlank() ? uniteProduits : 'Unité'}">Kg en stock</span>
             </li>
-            <li class="kpi-item kpi-accent-blue">
-              <span class="kpi-icon">▤</span>
-              <div class="kpi-body">
-                <span class="kpi-label">Quantité actuelle matières premières</span>
-                <span class="kpi-value" th:text="${quantiteMatièresPremières != null ? #numbers.formatDecimal(quantiteMatièresPremières, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
-              </div>
-              <span class="kpi-meta" th:text="${uniteMps != null && !uniteMps.isBlank() ? uniteMps : 'Unité'}">Kg en stock</span>
+            <li class="notebook-item notebook-accent-blue">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Quantité actuelle matières premières</span>
+              <span class="notebook-value" th:text="${quantiteMatièresPremières != null ? #numbers.formatDecimal(quantiteMatièresPremières, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
+              <span class="notebook-meta" th:text="${uniteMps != null && !uniteMps.isBlank() ? uniteMps : 'Unité'}">Kg en stock</span>
             </li>
-            <li class="kpi-item kpi-accent-green">
-              <span class="kpi-icon">◷</span>
-              <div class="kpi-body">
-                <span class="kpi-label">Nombre de lots produits</span>
-                <span class="kpi-value" th:text="${lotsProduits != null ? lotsProduits : 0}">0</span>
-              </div>
-              <span class="kpi-meta">Lots actifs</span>
+            <li class="notebook-item notebook-accent-green">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Nombre de lots produits</span>
+              <span class="notebook-value" th:text="${lotsProduits != null ? lotsProduits : 0}">0</span>
+              <span class="notebook-meta">Lots actifs</span>
             </li>
-            <li class="kpi-item kpi-accent-orange">
-              <span class="kpi-icon">⏳</span>
-              <div class="kpi-body">
-                <span class="kpi-label">Lots expirant bientôt</span>
-                <span class="kpi-value" th:text="${lotsExpirantBientot != null ? lotsExpirantBientot : 0}">0</span>
-              </div>
-              <span class="kpi-meta">Fenêtre : 30 j</span>
+            <li class="notebook-item notebook-accent-orange">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Lots expirant bientôt</span>
+              <span class="notebook-value" th:text="${lotsExpirantBientot != null ? lotsExpirantBientot : 0}">0</span>
+              <span class="notebook-meta">Fenêtre : 30 j</span>
             </li>
-            <li class="kpi-item kpi-accent-orange">
-              <span class="kpi-icon">⚠</span>
-              <div class="kpi-body">
-                <span class="kpi-label">Produits sous le seuil d'alerte</span>
-                <span class="kpi-value" th:text="${produitsSousSeuil != null ? produitsSousSeuil : 0}">0</span>
-              </div>
-              <span class="kpi-meta">Seuil atteint</span>
+            <li class="notebook-item notebook-accent-orange">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Produits sous le seuil d'alerte</span>
+              <span class="notebook-value" th:text="${produitsSousSeuil != null ? produitsSousSeuil : 0}">0</span>
+              <span class="notebook-meta">Seuil atteint</span>
             </li>
-            <li class="kpi-item kpi-accent-orange">
-              <span class="kpi-icon">⛟</span>
-              <div class="kpi-body">
-                <span class="kpi-label">Matières premières sous seuil minimum</span>
-                <span class="kpi-value" th:text="${mpSousSeuilMin != null ? mpSousSeuilMin : 0}">0</span>
-              </div>
-              <span class="kpi-meta">Approvisionnement requis</span>
+            <li class="notebook-item notebook-accent-orange">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Matières premières sous seuil minimum</span>
+              <span class="notebook-value" th:text="${mpSousSeuilMin != null ? mpSousSeuilMin : 0}">0</span>
+              <span class="notebook-meta">Approvisionnement requis</span>
             </li>
           </ul>
         </section>
@@ -152,6 +140,8 @@
           </article>
         </div>
 
+        <br /> 
+
         <section class="card">
           <div class="card-header">
             <div>
@@ -212,6 +202,7 @@
           </div>
         </section>
 
+        <br>
         <section class="card">
           <div class="card-header">
             <div>
@@ -259,6 +250,7 @@
           </div>
         </section>
 
+        <br>
         <section class="card">
           <div class="card-header">
             <div>
