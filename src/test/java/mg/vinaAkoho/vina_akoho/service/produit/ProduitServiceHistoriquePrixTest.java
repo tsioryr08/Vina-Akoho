@@ -41,6 +41,9 @@ class ProduitServiceHistoriquePrixTest {
     @Mock
     private HistoriquePrixProduitRepository historiquePrixProduitRepository;
 
+    @Mock
+    private PrixVenteService prixVenteService;
+
     @InjectMocks
     private ProduitService produitService;
 
@@ -96,6 +99,8 @@ class ProduitServiceHistoriquePrixTest {
         when(produitRepository.existsByNomIgnoreCaseAndIdNotAndActifTrue(any(), any())).thenReturn(false);
         when(produitRepository.save(any())).thenReturn(produit);
         when(historiquePrixProduitRepository.save(any())).thenReturn(historiquePrix);
+        when(prixVenteService.calculerPrixVente(produitId)).thenReturn(nouveauPrix);
+        when(lotProduitRepository.sommeQuantiteRestante(produitId)).thenReturn(BigDecimal.valueOf(100));
 
         // Act
         produitService.modifier(produitId, requestDTO);
@@ -128,6 +133,8 @@ class ProduitServiceHistoriquePrixTest {
         when(produitRepository.existsByRefIgnoreCaseAndIdNotAndActifTrue(any(), any())).thenReturn(false);
         when(produitRepository.existsByNomIgnoreCaseAndIdNotAndActifTrue(any(), any())).thenReturn(false);
         when(produitRepository.save(any())).thenReturn(produit);
+        when(prixVenteService.calculerPrixVente(produitId)).thenReturn(prixConstant);
+        when(lotProduitRepository.sommeQuantiteRestante(produitId)).thenReturn(prixConstant);
 
         // Act
         produitService.modifier(produitId, requestDTO);

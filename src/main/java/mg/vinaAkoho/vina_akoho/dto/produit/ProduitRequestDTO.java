@@ -30,7 +30,6 @@ public class ProduitRequestDTO {
     @Size(max = 150, message = "Le nom ne doit pas dépasser 150 caractères")
     private String nom;
 
-    @NotNull(message = "Le prix de vente est obligatoire")
     @DecimalMin(value = "0.0", message = "Le prix de vente doit être positif ou nul")
     private BigDecimal prixVente;
 

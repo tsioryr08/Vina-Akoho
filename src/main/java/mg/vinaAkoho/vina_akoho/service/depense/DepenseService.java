@@ -1,6 +1,5 @@
 package mg.vinaAkoho.vina_akoho.service.depense;
 
-import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.depense.DepenseDTO;
 import mg.vinaAkoho.vina_akoho.dto.depense.DepenseRequestDTO;
 import mg.vinaAkoho.vina_akoho.entity.depense.CategorieDepense;
@@ -9,17 +8,20 @@ import mg.vinaAkoho.vina_akoho.entity.depense.Phase;
 import mg.vinaAkoho.vina_akoho.entity.depense.StatutDepense;
 import mg.vinaAkoho.vina_akoho.exception.depense.DepenseDtoNonSupporteException;
 import mg.vinaAkoho.vina_akoho.exception.depense.DepenseNotFoundException;
+import mg.vinaAkoho.vina_akoho.repository.depense.DepenseLotRepository;
 import mg.vinaAkoho.vina_akoho.repository.depense.DepenseRepository;
+import mg.vinaAkoho.vina_akoho.service.produit.PrixVenteService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class DepenseService {
 
@@ -27,6 +29,22 @@ public class DepenseService {
     private final CategorieDepenseService categorieDepenseService;
     private final PhaseService phaseService;
     private final StatutDepenseService statutDepenseService;
+    private final PrixVenteService prixVenteService;
+    private final DepenseLotRepository depenseLotRepository;
+
+    public DepenseService(DepenseRepository depenseRepository,
+                          CategorieDepenseService categorieDepenseService,
+                          PhaseService phaseService,
+                          StatutDepenseService statutDepenseService,
+                          PrixVenteService prixVenteService,
+                          DepenseLotRepository depenseLotRepository) {
+        this.depenseRepository = depenseRepository;
+        this.categorieDepenseService = categorieDepenseService;
+        this.phaseService = phaseService;
+        this.statutDepenseService = statutDepenseService;
+        this.prixVenteService = prixVenteService;
+        this.depenseLotRepository = depenseLotRepository;
+    }
 
     public List<DepenseDTO> listerToutes() {
         return depenseRepository.findAll()
@@ -92,6 +110,7 @@ public class DepenseService {
         depense.setStatutDepense(statutDepense);
 
         Depense sauvegardee = depenseRepository.save(depense);
+        recalculerPrixVentesLiees(sauvegardee);
         return versDTO(sauvegardee);
     }
 
@@ -111,13 +130,27 @@ public class DepenseService {
         depense.setStatutDepense(statutDepense);
 
         Depense sauvegardee = depenseRepository.save(depense);
+        recalculerPrixVentesLiees(sauvegardee);
         return versDTO(sauvegardee);
     }
 
     public void supprimer(Integer id) {
         Depense depense = depenseRepository.findById(id)
                 .orElseThrow(() -> DepenseNotFoundException.parId(id));
+        recalculerPrixVentesLiees(depense);
         depenseRepository.delete(depense);
+    }
+
+    private void recalculerPrixVentesLiees(Depense depense) {
+        Set<Long> idsProduits = depenseLotRepository.findByDepenseId(depense.getId())
+                .stream()
+                .filter(dl -> dl.getLotProduit() != null && dl.getLotProduit().getProduit() != null)
+                .map(dl -> dl.getLotProduit().getProduit().getId())
+                .collect(Collectors.toSet());
+
+        for (Long idProduit : idsProduits) {
+            prixVenteService.calculerPrixVente(idProduit);
+        }
     }
 
     private <T> T convertToEntity(Object dto) {

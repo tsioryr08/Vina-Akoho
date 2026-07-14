@@ -35,6 +35,19 @@ public class ProduitService {
     private final CategorieRepository categorieRepository;
     private final LotProduitRepository lotProduitRepository;
     private final HistoriquePrixProduitRepository historiquePrixProduitRepository;
+    private final PrixVenteService prixVenteService;
+
+    public ProduitService(ProduitRepository produitRepository,
+                          CategorieRepository categorieRepository,
+                          LotProduitRepository lotProduitRepository,
+                          HistoriquePrixProduitRepository historiquePrixProduitRepository,
+                          PrixVenteService prixVenteService) {
+        this.produitRepository = produitRepository;
+        this.categorieRepository = categorieRepository;
+        this.lotProduitRepository = lotProduitRepository;
+        this.historiquePrixProduitRepository = historiquePrixProduitRepository;
+        this.prixVenteService = prixVenteService;
+    }
 
     public List<ProduitDTO> listerTous() {
         return produitRepository.findAllActifs()
@@ -103,6 +116,11 @@ public class ProduitService {
         }
 
         Produit sauvegarde = produitRepository.save(produit);
+
+        BigDecimal prixCalcule = prixVenteService.calculerPrixVente(sauvegarde.getId());
+        sauvegarde.setPrixVente(prixCalcule);
+        sauvegarde = produitRepository.save(sauvegarde);
+
         return versDTO(sauvegarde);
     }
 
@@ -121,17 +139,7 @@ public class ProduitService {
 
         Categorie categorie = recupererCategorieOuLeverException(requete.getIdCategorie());
         
-        // Enregistrer l'historique des prix si le prix a changé
         BigDecimal ancienPrix = produit.getPrixVente();
-        BigDecimal nouveauPrix = requete.getPrixVente();
-        
-        if (ancienPrix != null && nouveauPrix != null && ancienPrix.compareTo(nouveauPrix) != 0) {
-            HistoriquePrixProduit historique = new HistoriquePrixProduit();
-            historique.setProduit(produit);
-            historique.setAncienPrix(ancienPrix);
-            historique.setNouveauPrix(nouveauPrix);
-            historiquePrixProduitRepository.save(historique);
-        }
         
         appliquerRequete(produit, requete, categorie);
 
@@ -140,6 +148,19 @@ public class ProduitService {
         }
 
         Produit sauvegarde = produitRepository.save(produit);
+
+        BigDecimal nouveauPrix = prixVenteService.calculerPrixVente(sauvegarde.getId());
+        if (ancienPrix != null && ancienPrix.compareTo(nouveauPrix) != 0) {
+            HistoriquePrixProduit historique = new HistoriquePrixProduit();
+            historique.setProduit(produit);
+            historique.setAncienPrix(ancienPrix);
+            historique.setNouveauPrix(nouveauPrix);
+            historiquePrixProduitRepository.save(historique);
+        }
+
+        sauvegarde.setPrixVente(nouveauPrix);
+        sauvegarde = produitRepository.save(sauvegarde);
+
         return versDTO(sauvegarde);
     }
 
@@ -185,7 +206,6 @@ public class ProduitService {
     private void appliquerRequete(Produit produit, ProduitRequestDTO requete, Categorie categorie) {
         produit.setCategorie(categorie);
         produit.setNom(requete.getNom());
-        produit.setPrixVente(requete.getPrixVente());
         produit.setSeuilAlerte(requete.getSeuilAlerte());
         produit.setDescription(requete.getDescription());
     }
