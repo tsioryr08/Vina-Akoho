@@ -44,12 +44,46 @@
           th:text="${errorMessage}"
         ></div>
 
+      
+
         <!-- KPI -->
         <section class="stats-grid">
           <article class="stat-card">
-            <div class="stat-label">Matières en alerte</div>
-            <div class="stat-value" th:text="${#lists.size(alertes)}">0</div>
-            <div class="stat-trend trend-warning">Seuil atteint</div>
+            <div class="stat-label">Matières en alerte</div> <div class="stat-value" th:text="${#lists.size(alertes)}">0</div>
+              <div th:if="${!#lists.isEmpty(alertes)}" class="alertes-coverage-wrap">
+            <h3 class="alertes-coverage-title">Couverture Stock vs Seuil</h3>
+            <div class="coverage-grid">
+              <div
+                class="coverage-card"
+                th:each="mp : ${alertes}"
+                th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}"
+              >
+                <div class="coverage-item-head">
+                  <strong th:text="${mp.nom}"></strong>
+                  <span
+                    class="coverage-rate is-low"
+                    th:text="${#numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"
+                  ></span>
+                </div>
+                <div class="jauge-container">
+                  <div
+                    class="jauge-fill jauge-red"
+                    th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"
+                  ></div>
+                </div>
+                <p class="coverage-meta">
+                  Stock :
+                  <strong
+                    th:text="${mp.quantiteStock} + ' ' + ${mp.uniteLibelle}"
+                  ></strong>
+                  &nbsp;/&nbsp; Seuil :
+                  <strong
+                    th:text="${mp.seuilMinimum} + ' ' + ${mp.uniteLibelle}"
+                  ></strong>
+                </p>
+              </div>
+            </div>
+          </div>
           </article>
         </section>
 
@@ -107,40 +141,7 @@
             </table>
           </div>
 
-          <div th:if="${!#lists.isEmpty(alertes)}" class="alertes-coverage-wrap">
-            <h3 class="alertes-coverage-title">Couverture Stock vs Seuil</h3>
-            <div class="coverage-grid">
-              <div
-                class="coverage-card"
-                th:each="mp : ${alertes}"
-                th:if="${mp.seuilMinimum != null and mp.seuilMinimum.doubleValue() > 0}"
-              >
-                <div class="coverage-item-head">
-                  <strong th:text="${mp.nom}"></strong>
-                  <span
-                    class="coverage-rate is-low"
-                    th:text="${#numbers.formatDecimal(mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100, 1, 0) + '%'}"
-                  ></span>
-                </div>
-                <div class="jauge-container">
-                  <div
-                    class="jauge-fill jauge-red"
-                    th:style="'width: ' + ${mp.quantiteStock.doubleValue() / mp.seuilMinimum.doubleValue() * 100} + '%'"
-                  ></div>
-                </div>
-                <p class="coverage-meta">
-                  Stock :
-                  <strong
-                    th:text="${mp.quantiteStock} + ' ' + ${mp.uniteLibelle}"
-                  ></strong>
-                  &nbsp;/&nbsp; Seuil :
-                  <strong
-                    th:text="${mp.seuilMinimum} + ' ' + ${mp.uniteLibelle}"
-                  ></strong>
-                </p>
-              </div>
-            </div>
-          </div>
+        
         </section>
       </div>
     </div>

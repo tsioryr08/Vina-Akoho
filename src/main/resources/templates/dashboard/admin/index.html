@@ -36,22 +36,30 @@
           </div>
         </section>
 
-        <section class="stats-grid admin-kpi-grid">
-          <article class="stat-card">
-            <div class="stat-label">Comptes actifs</div>
-            <div class="stat-value" th:text="${totalActifs}">0</div>
-            <div class="stat-trend trend-positive">Utilisateurs connectés</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Comptes désactivés</div>
-            <div class="stat-value" th:text="${totalDesactives}">0</div>
-            <div class="stat-trend trend-warning">Accès suspendus</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Rôles disponibles</div>
-            <div class="stat-value" th:text="${totalRoles}">0</div>
-            <div class="stat-trend trend-info">Postes définis</div>
-          </article>
+        <section class="kpi-notebook card">
+          <div class="card-header">
+            <h2 class="card-title">Vue des comptes</h2>
+          </div>
+          <ul class="notebook-list">
+            <li class="notebook-item notebook-accent-green">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Comptes actifs</span>
+              <span class="notebook-value" th:text="${totalActifs}">0</span>
+              <span class="notebook-meta">Utilisateurs connectés</span>
+            </li>
+            <li class="notebook-item notebook-accent-orange">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Comptes désactivés</span>
+              <span class="notebook-value" th:text="${totalDesactives}">0</span>
+              <span class="notebook-meta">Accès suspendus</span>
+            </li>
+            <li class="notebook-item notebook-accent-blue">
+              <span class="notebook-bullet"></span>
+              <span class="notebook-label">Rôles disponibles</span>
+              <span class="notebook-value" th:text="${totalRoles}">0</span>
+              <span class="notebook-meta">Postes définis</span>
+            </li>
+          </ul>
         </section>
 
         <section class="admin-layout-grid">
