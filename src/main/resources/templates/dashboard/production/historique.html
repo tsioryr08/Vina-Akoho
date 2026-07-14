@@ -1,0 +1,157 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Historique des productions - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="vina-body page-production-history">
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="app-main-wrapper">
+      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-content">
+        <section class="page-header theme-orange">
+          <div>
+            <h1>Historique des productions</h1>
+            <p class="muted-text">
+              Vérification des fabrications enregistrées avec filtres, pagination et accès au détail.
+            </p>
+          </div>
+          <span class="role-badge role-orange">Responsable production</span>
+        </section>
+
+        <section class="tab-list" role="tablist">
+          <a th:href="@{/api/production}" class="tab-link">Tableau de bord</a>
+          <a th:href="@{/api/production/entree-produit}" class="tab-link">Entrée Produit</a>
+          <a th:href="@{/api/production/historique}" class="tab-link active">Historique des productions</a>
+        </section>
+
+        <div th:if="${success}" class="info-banner success" th:text="${success}"></div>
+
+        <section class="form-card">
+          <div class="form-section-heading">
+            <span>1</span>
+            <div>
+              <h2>Filtrer la liste</h2>
+              <p>Recherche par produit, lot ou numéro de fabrication, avec plage de dates.</p>
+            </div>
+          </div>
+
+          <form th:action="@{/api/production/historique}" method="get" class="form-grid">
+            <div class="field">
+              <label for="recherche">Recherche</label>
+              <input id="recherche" name="recherche" class="form-control" type="text"
+                     placeholder="Produit, fabrication, lot" th:value="${param.recherche}" />
+            </div>
+            <div class="field">
+              <label for="produitId">Produit</label>
+              <select id="produitId" name="produitId" class="form-control">
+                <option value="">Tous les produits</option>
+                <option th:each="produit : ${produits}"
+                        th:value="${produit.id}"
+                        th:selected="${param.produitId == produit.id.toString()}"
+                        th:text="${produit.nom}"></option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="dateDebut">Date début</label>
+              <input id="dateDebut" name="dateDebut" class="form-control" type="date" th:value="${param.dateDebut}" />
+            </div>
+            <div class="field">
+              <label for="dateFin">Date fin</label>
+              <input id="dateFin" name="dateFin" class="form-control" type="date" th:value="${param.dateFin}" />
+            </div>
+            <div class="field">
+              <label for="taille">Taille page</label>
+              <select id="taille" name="taille" class="form-control">
+                <option th:selected="${pageSize == 10}" value="10">10</option>
+                <option th:selected="${pageSize == 20}" value="20">20</option>
+                <option th:selected="${pageSize == 50}" value="50">50</option>
+              </select>
+            </div>
+            <div class="field field-actions">
+              <label class="form-label">Action</label>
+              <div class="card-actions">
+                <button class="btn btn-primary" type="submit">Filtrer</button>
+                <a class="btn btn-ghost" th:href="@{/api/production/historique}">Réinitialiser</a>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="form-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Productions enregistrées</h2>
+              <p class="card-subtitle" th:text="${totalElements} + ' fabrication(s) trouvée(s)'"></p>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Fabrication</th>
+                  <th>Produit</th>
+                  <th>Quantité</th>
+                  <th>Stock restant</th>
+                  <th>Date</th>
+                  <th>Responsable</th>
+                  <th>Détail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="production : ${productions}"
+                    th:styleappend="${highlightProductionId != null and highlightProductionId == production.idFabrication()} ? 'background: rgba(255, 179, 71, 0.14);' : ''">
+                  <td>
+                    <div><strong th:text="${'FAB-' + production.idFabrication()}"></strong></div>
+                    <small class="text-muted" th:text="${'Lot #' + production.idLotProduit()}"></small>
+                  </td>
+                  <td>
+                    <div th:text="${production.nomProduit()}"></div>
+                    <small class="text-muted"
+                           th:text="${production.datePeremption() != null ? 'Péremption : ' + #temporals.format(production.datePeremption(), 'dd/MM/yyyy') : 'Sans péremption'}"></small>
+                  </td>
+                  <td th:text="${#numbers.formatDecimal(production.quantiteProduite(), 0, 'COMMA', 2, 'POINT')} + ' unité(s)'"></td>
+                  <td th:text="${#numbers.formatDecimal(production.quantiteRestanteLot(), 0, 'COMMA', 2, 'POINT')} + ' unité(s)'"></td>
+                  <td th:text="${#temporals.format(production.dateFabrication(), 'dd/MM/yyyy HH:mm')}"></td>
+                  <td th:text="${production.employeNomComplet()}"></td>
+                  <td>
+                    <a class="btn btn-sm btn-ghost"
+                       th:href="@{/api/production/historique/{id}(id=${production.idFabrication()})}">
+                      Voir détails
+                    </a>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(productions)}">
+                  <td colspan="7" class="empty-state">Aucune production ne correspond aux filtres.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination" th:if="${totalPages > 1}">
+            <a class="btn btn-ghost"
+               th:if="${currentPage > 0}"
+               th:href="@{/api/production/historique(page=${currentPage - 1},taille=${pageSize},recherche=${param.recherche},produitId=${param.produitId},dateDebut=${param.dateDebut},dateFin=${param.dateFin},highlight=${highlightProductionId},success=${success})}">
+              Précédent
+            </a>
+            <span class="text-muted"
+                  th:text="${'Page ' + (currentPage + 1) + ' / ' + totalPages}"></span>
+            <a class="btn btn-ghost"
+               th:if="${currentPage + 1 < totalPages}"
+               th:href="@{/api/production/historique(page=${currentPage + 1},taille=${pageSize},recherche=${param.recherche},produitId=${param.produitId},dateDebut=${param.dateDebut},dateFin=${param.dateFin},highlight=${highlightProductionId},success=${success})}">
+              Suivant
+            </a>
+          </div>
+        </section>
+        <div id="vina-footer"></div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/script_content.js}"></script>
+  </body>
+</html>

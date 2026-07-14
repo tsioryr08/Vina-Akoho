@@ -1,0 +1,108 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Détail production - VINA AKOHO</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="vina-body page-production-detail">
+    <div th:replace="${sidebarTemplate} :: sidebar"></div>
+    <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
+
+    <div class="app-main-wrapper">
+      <div id="vina-header" th:replace="~{layout/header}"></div>
+      <div id="vina-content">
+        <section class="page-header theme-orange">
+          <div>
+            <h1 th:text="${'Détail fabrication FAB-' + production.idFabrication()}"></h1>
+            <p class="muted-text">Vue détaillée d'une fabrication enregistrée et de ses consommations.</p>
+          </div>
+          <span class="role-badge role-orange">Détail</span>
+        </section>
+
+        <section class="tab-list" role="tablist">
+          <a th:href="@{/api/production}" class="tab-link">Tableau de bord</a>
+          <a th:href="@{/api/production/entree-produit}" class="tab-link">Entrée Produit</a>
+          <a th:href="@{/api/production/historique}" class="tab-link active">Historique des productions</a>
+        </section>
+
+        <section class="form-card">
+          <div class="result-grid-2">
+            <div class="result-card-sim">
+              <span>Produit</span>
+              <strong th:text="${production.nomProduit()}"></strong>
+            </div>
+            <div class="result-card-sim">
+              <span>Quantité produite</span>
+              <strong th:text="${#numbers.formatDecimal(production.quantiteProduite(), 0, 'COMMA', 2, 'POINT')} + ' unité(s)'"></strong>
+            </div>
+            <div class="result-card-sim">
+              <span>Lot produit</span>
+              <strong th:text="${'#' + production.idLotProduit()}"></strong>
+            </div>
+            <div class="result-card-sim">
+              <span>Stock restant sur le lot</span>
+              <strong th:text="${#numbers.formatDecimal(production.quantiteRestanteLot(), 0, 'COMMA', 2, 'POINT')} + ' unité(s)'"></strong>
+            </div>
+            <div class="result-card-sim">
+              <span>Date de fabrication</span>
+              <strong th:text="${#temporals.format(production.dateFabrication(), 'dd/MM/yyyy HH:mm')}"></strong>
+            </div>
+            <div class="result-card-sim">
+              <span>Responsable</span>
+              <strong th:text="${production.employeNomComplet()}"></strong>
+            </div>
+          </div>
+
+          <div class="summary-card" th:if="${production.datePeremption() != null}">
+            <div>
+              <span class="summary-label">Date de péremption</span>
+              <span class="summary-value" th:text="${#temporals.format(production.datePeremption(), 'dd/MM/yyyy')}"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Matières premières consommées</h2>
+              <p class="card-subtitle">Traçabilité des lots utilisés pour cette fabrication.</p>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Lot MP</th>
+                  <th>Matière première</th>
+                  <th>Quantité consommée</th>
+                  <th>Reste du lot</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="consommation : ${production.consommations()}">
+                  <td th:text="${'Lot #' + consommation.idLotMp()}"></td>
+                  <td th:text="${consommation.nomMatierePremiere()}"></td>
+                  <td th:text="${#numbers.formatDecimal(consommation.quantiteConsommee(), 0, 'COMMA', 2, 'POINT')} + ' ' + consommation.unite()"></td>
+                  <td th:text="${#numbers.formatDecimal(consommation.quantiteRestanteLot(), 0, 'COMMA', 2, 'POINT')} + ' ' + consommation.unite()"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(production.consommations())}">
+                  <td colspan="4" class="empty-state">Aucune consommation matière première enregistrée.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-actions">
+            <a class="btn btn-ghost" th:href="@{/api/production/historique}">Retour à l'historique</a>
+          </div>
+        </section>
+        <div id="vina-footer"></div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/script_content.js}"></script>
+  </body>
+</html>
