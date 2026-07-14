@@ -8,53 +8,127 @@
     <link rel="stylesheet" th:href="@{/css/statistiques-ventes.css}" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   </head>
-  <body>
+  <body class="page-admin-dashboard">
     <div th:replace="${sidebarTemplate} :: sidebar"></div>
 
     <div class="sidebar-backdrop" id="vina-sidebar-backdrop"></div>
 
     <div class="main">
-      <div th:replace="${headerTemplate} :: header"></div>
+      <div id="vina-header" th:replace="~{layout/header}"></div>
 
       <div class="content page-stats-ventes">
-        <section class="page-header">
+        <section class="page-header theme-green">
           <div>
-            <h1>Panneau d'Administration Système & Paramètres</h1>
-            <p>
-              Gestion des utilisateurs, rôles assignés, journal d'activité et
-              validations de clôture.
+            <p class="eyebrow">ADMINISTRATION</p>
+            <h1>Panneau d'administration système</h1>
+            <p class="muted-text">
+              Vue de synthèse pour suivre les comptes utilisateurs, les rôles,
+              et l'évolution globale des activités.
             </p>
           </div>
-        </section>
-
-        <!-- EVOLUTION DES VENTES -->
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Évolution des ventes</h2>
-              <p class="card-subtitle">
-                Chiffre d'affaires journalier sur les 30 derniers jours.
-              </p>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="chart-container">
-              <canvas id="chartEvolution"></canvas>
-            </div>
+          <div class="header-actions">
+            <a class="btn btn-purple" th:href="@{/api/admin/employes/nouveau}">
+              + Nouveau compte
+            </a>
+            <a class="btn btn-ghost" th:href="@{/api/admin/employes}">
+              Voir les comptes
+            </a>
           </div>
         </section>
 
-        <section class="grid-2">
-          <div class="card">
+        <section class="stats-grid admin-kpi-grid">
+          <article class="stat-card">
+            <div class="stat-label">Comptes actifs</div>
+            <div class="stat-value" th:text="${totalActifs}">0</div>
+            <div class="stat-trend trend-positive">Utilisateurs connectés</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Comptes désactivés</div>
+            <div class="stat-value" th:text="${totalDesactives}">0</div>
+            <div class="stat-trend trend-warning">Accès suspendus</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Rôles disponibles</div>
+            <div class="stat-value" th:text="${totalRoles}">0</div>
+            <div class="stat-trend trend-info">Postes définis</div>
+          </article>
+        </section>
+
+        <section class="admin-layout-grid">
+          <div class="card admin-filter-card">
             <div class="card-header">
               <div>
-                <h2 class="card-title">Utilisateurs actifs & Rôles assignés</h2>
+                <h2 class="card-title">Filtres d'évolution</h2>
                 <p class="card-subtitle">
-                  RG01 — Suivi des comptes actifs et permissions par rôle
-                  organisationnel.
+                  Ajustez la période et la granularité de l'analyse.
                 </p>
               </div>
             </div>
+            <div class="card-body">
+              <form id="filtresEvolutionForm" class="admin-filter-grid">
+                <div class="field">
+                  <label>Date début</label>
+                  <input type="date" id="evoDateDebut" class="form-control" th:value="${dateDebutEvolution}" />
+                </div>
+                <div class="field">
+                  <label>Date fin</label>
+                  <input type="date" id="evoDateFin" class="form-control" th:value="${dateFinEvolution}" />
+                </div>
+                <div class="field">
+                  <label>Granularité</label>
+                  <select id="evoGranularite" class="form-control">
+                    <option value="jour" th:selected="${granulariteEvolution == 'jour'}">Jour</option>
+                    <option value="semaine" th:selected="${granulariteEvolution == 'semaine'}">Semaine</option>
+                    <option value="mois" th:selected="${granulariteEvolution == 'mois'}">Mois</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <section class="card admin-chart-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Évolution des ventes</h2>
+              <p class="card-subtitle" th:text="'Chiffre d\'affaires par ' + ${granulariteEvolution} + '.'"></p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-container admin-chart-frame">
+              <canvas id="chartEvolution"></canvas>
+            </div>
+          </div>
+          </section>
+
+          <div class="card admin-table-card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Utilisateurs actifs & rôles assignés</h2>
+                <p class="card-subtitle">
+                  RG01 — Suivi des comptes actifs et permissions par rôle organisationnel.
+                </p>
+              </div>
+            </div>
+
+            <div class="admin-employes-filtres" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+              <input
+                id="champRechercheAdmin"
+                type="text"
+                placeholder="Rechercher par nom, prénom ou email..."
+                style="flex:1; min-width:220px; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;"
+                oninput="chargerAvecFiltresAdmin()"
+              />
+              <select
+                id="filtreRoleAdmin"
+                style="padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;"
+                onchange="chargerAvecFiltresAdmin()"
+              >
+                <option value="">Tous les rôles</option>
+                <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.poste}"></option>
+              </select>
+            </div>
+
+            <div id="alerteAdminEmployes" class="alert-box danger" style="display:none"></div>
 
             <div class="table-wrap">
               <table class="data-table">
@@ -66,7 +140,7 @@
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="corpsTableauAdminAccueil">
                   <tr th:each="emp : ${employes}">
                     <td th:text="${emp.nom + ' ' + emp.prenom}"></td>
                     <td th:text="${emp.role.poste}"></td>
@@ -75,11 +149,11 @@
                         th:if="${emp.derniereConnexion != null}"
                         class="derniere-connexion"
                         th:attr="data-ts=${emp.derniereConnexion}"
-                      >
-                      </span>
+                      ></span>
                       <span
                         th:unless="${emp.derniereConnexion != null}"
-                        style="color: #94a3b8; font-style: italic"
+                        class="muted-text"
+                        style="font-style: italic"
                       >
                         Jamais connecté
                       </span>
@@ -87,17 +161,14 @@
                     <td>
                       <a
                         class="btn btn-ghost btn-small"
-                        th:href="@{/admin/employes/{id}/modifier(id=${emp.id})}"
+                        th:href="@{/api/admin/employes/{id}/modifier(id=${emp.id})}"
                       >
                         Modifier
                       </a>
                     </td>
                   </tr>
                   <tr th:if="${#lists.isEmpty(employes)}">
-                    <td
-                      colspan="4"
-                      style="text-align: center; padding: 24px; color: #64748b"
-                    >
+                    <td colspan="4" class="empty-table-message">
                       Aucun utilisateur actif.
                     </td>
                   </tr>
@@ -105,43 +176,19 @@
               </table>
             </div>
 
-            <div class="card-actions" style="margin-top: 16px">
-              <a class="btn btn-purple" th:href="@{/admin/employes/nouveau}"
-                >+ Créer un nouveau compte</a
-              >
-              <a class="btn btn-ghost" th:href="@{/admin/employes}"
-                >Voir tous les comptes</a
-              >
+            <div class="card-actions admin-actions-row">
+              <a class="btn btn-purple" th:href="@{/api/admin/employes/nouveau}">
+                + Créer un nouveau compte
+              </a>
+              <a class="btn btn-ghost" th:href="@{/api/admin/employes}">
+                Voir tous les comptes
+              </a>
             </div>
           </div>
         </section>
-
-        <!-- KPIs -->
-        <section class="stats-grid" style="margin-bottom: 24px">
-          <article class="stat-card">
-            <div class="stat-label">Comptes actifs</div>
-            <div class="stat-value" th:text="${totalActifs}">0</div>
-            <div class="stat-trend trend-info">Utilisateurs actifs</div>
-          </article>
-          <article class="stat-card">
-            <div class="stat-label">Comptes désactivés</div>
-            <div class="stat-value" th:text="${totalDesactives}">0</div>
-            <div class="stat-trend trend-warning">Accès suspendus</div>
-          </article>
-        </section>
       </div>
 
-      <div
-        class="app-footer"
-        style="
-          padding: 16px 24px;
-          border-top: 1px solid var(--border);
-          background: #fff;
-          color: var(--muted);
-          font-size: 12px;
-          text-align: center;
-        "
-      >
+      <div class="app-footer admin-footer">
         VINA AKOHO — Panneau d'Administration
       </div>
     </div>
@@ -164,7 +211,14 @@
       document.querySelectorAll(".derniere-connexion").forEach((el) => {
         el.textContent = tempsRelatif(el.getAttribute("data-ts"));
       });
-
+      document.getElementById("filtresEvolutionForm").addEventListener("change", function () {
+        const params = new URLSearchParams({
+          dateDebutEvolution: document.getElementById("evoDateDebut").value,
+          dateFinEvolution: document.getElementById("evoDateFin").value,
+          granulariteEvolution: document.getElementById("evoGranularite").value,
+        });
+        window.location.href = "/api/admin?" + params.toString();   // ✅ bon chemin
+      });
       // Évolution des ventes (graphique du tableau de bord admin)
       const evolutionVentes = /*[[${evolutionVentes}]]*/ [];
       if (evolutionVentes && evolutionVentes.length) {
@@ -196,6 +250,63 @@
             },
           },
         });
+      }
+    </script>
+
+    <script>
+      // Filtres — tableau "Utilisateurs actifs & rôles assignés" (dashboard admin)
+      // Reste volontairement scopé aux comptes actifs (RG01) : recherche + rôle uniquement.
+      function chargerEmployesAdmin(url) {
+        fetch(url)
+          .then((rep) => rep.json())
+          .then((json) => {
+            if (!json.success) { afficherAlerteAdminEmployes(json.message); return; }
+            renderTableauAdminEmployes(json.data);
+          })
+          .catch(() => afficherAlerteAdminEmployes("Erreur lors du chargement des employés."));
+      }
+
+      function chargerAvecFiltresAdmin() {
+        const terme = document.getElementById("champRechercheAdmin").value.trim();
+        const idRole = document.getElementById("filtreRoleAdmin").value;
+
+        if (terme.length > 0) {
+          const params = new URLSearchParams({ terme, actif: true });
+          chargerEmployesAdmin("/api/admin/employes/recherche?" + params);
+        } else if (idRole) {
+          const params = new URLSearchParams({ idRole, actif: true });
+          chargerEmployesAdmin("/api/admin/employes/par-role?" + params);
+        } else {
+          chargerEmployesAdmin("/api/admin/employes/actifs");
+        }
+      }
+
+      function renderTableauAdminEmployes(employes) {
+        const tbody = document.getElementById("corpsTableauAdminAccueil");
+        if (!employes || employes.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-table-message">Aucun utilisateur actif.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = employes.map(function (e) {
+          const dernierAcces = e.derniereConnexion
+            ? tempsRelatif(e.derniereConnexion)
+            : '<span class="muted-text" style="font-style: italic">Jamais connecté</span>';
+          return (
+            "<tr>" +
+            "<td>" + e.nom + " " + e.prenom + "</td>" +
+            "<td>" + e.role + "</td>" +
+            "<td>" + dernierAcces + "</td>" +
+            "<td><a class=\"btn btn-ghost btn-small\" href=\"/api/admin/employes/" + e.id + "/modifier\">Modifier</a></td>" +
+            "</tr>"
+          );
+        }).join("");
+      }
+
+      function afficherAlerteAdminEmployes(msg) {
+        const el = document.getElementById("alerteAdminEmployes");
+        el.textContent = msg;
+        el.style.display = "block";
+        setTimeout(function () { el.style.display = "none"; }, 4000);
       }
     </script>
   </body>
