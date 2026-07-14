@@ -37,18 +37,6 @@ public class ProduitService {
     private final HistoriquePrixProduitRepository historiquePrixProduitRepository;
     private final PrixVenteService prixVenteService;
 
-    public ProduitService(ProduitRepository produitRepository,
-                          CategorieRepository categorieRepository,
-                          LotProduitRepository lotProduitRepository,
-                          HistoriquePrixProduitRepository historiquePrixProduitRepository,
-                          PrixVenteService prixVenteService) {
-        this.produitRepository = produitRepository;
-        this.categorieRepository = categorieRepository;
-        this.lotProduitRepository = lotProduitRepository;
-        this.historiquePrixProduitRepository = historiquePrixProduitRepository;
-        this.prixVenteService = prixVenteService;
-    }
-
     public List<ProduitDTO> listerTous() {
         return produitRepository.findAllActifs()
                 .stream()
