@@ -1,10 +1,12 @@
 package mg.vinaAkoho.vina_akoho.controller.livraison;
 
 import java.util.List;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,11 +15,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonDTO;
 import mg.vinaAkoho.vina_akoho.dto.livraison.LivraisonFormDTO;
 import mg.vinaAkoho.vina_akoho.entity.livraison.livreur;
 import mg.vinaAkoho.vina_akoho.entity.livraison.statutLivraison;
@@ -87,11 +91,54 @@ public class LivraisonController {
         return new LivraisonFormDTO();
     }
 
+    // @GetMapping
+    // public String listerLivraisons(Model model) {
+    //     model.addAttribute("livraisons", livraisonService.listerToutes());
+    //     return "livraison/livraisons";
+    // }
+
     @GetMapping
-    public String listerLivraisons(Model model) {
-        model.addAttribute("livraisons", livraisonService.listerToutes());
-        return "livraison/livraisons";
+public String listerLivraisons(
+        @RequestParam(required = false) String statut,
+        @RequestParam(required = false) String zone,
+        @RequestParam(required = false) String recherche,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+        Model model) {
+
+    List<LivraisonDTO> livraisons = livraisonService.listerToutes();
+
+    if (statut != null && !statut.isBlank()) {
+        livraisons = livraisons.stream()
+                .filter(l -> statut.equalsIgnoreCase(l.getStatutLivraison()))
+                .toList();
     }
+    if (zone != null && !zone.isBlank()) {
+        livraisons = livraisons.stream()
+                .filter(l -> zone.equalsIgnoreCase(l.getZoneLivraison()))
+                .toList();
+    }
+    if (recherche != null && !recherche.isBlank()) {
+        String terme = recherche.toLowerCase();
+        livraisons = livraisons.stream()
+                .filter(l -> (l.getClientNom() + " " + l.getClientPrenom() + " " + l.getLivreurNom())
+                        .toLowerCase().contains(terme))
+                .toList();
+    }
+    if (dateDebut != null) {
+        livraisons = livraisons.stream()
+                .filter(l -> l.getDateLivraison() != null && !l.getDateLivraison().isBefore(dateDebut))
+                .toList();
+    }
+    if (dateFin != null) {
+        livraisons = livraisons.stream()
+                .filter(l -> l.getDateLivraison() != null && !l.getDateLivraison().isAfter(dateFin))
+                .toList();
+    }
+
+    model.addAttribute("livraisons", livraisons);
+    return "livraison/livraisons";
+}
 
     @GetMapping("/nouvelle")
     public String nouvelleLivraison() {
