@@ -13,6 +13,7 @@ import mg.vinaAkoho.vina_akoho.entity.clients.TypeClient;
 import mg.vinaAkoho.vina_akoho.repository.clients.ClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.clients.ServiceClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.clients.TypeClientRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.ZoneLivraisonRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +25,16 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final ServiceClientRepository serviceClientRepository;
     private final TypeClientRepository typeClientRepository;
+    private final ZoneLivraisonRepository zoneLivraisonRepository;
 
     public ClientService(ClientRepository clientRepository,
                          ServiceClientRepository serviceClientRepository,
-                         TypeClientRepository typeClientRepository) {
+                         TypeClientRepository typeClientRepository,
+                         ZoneLivraisonRepository zoneLivraisonRepository) {
         this.clientRepository = clientRepository;
         this.serviceClientRepository = serviceClientRepository;
         this.typeClientRepository = typeClientRepository;
+        this.zoneLivraisonRepository = zoneLivraisonRepository;
     }
 
     public Optional<Client> connecter(ClientConnexionDTO dto) {
@@ -81,6 +85,7 @@ public class ClientService {
 
         ServiceClient service = findService(dto.getIdService());
         TypeClient typeClient = findTypeClient(dto.getIdTypeClient());
+        verifierZoneLivraison(dto.getIdZoneLivraison());
 
         Client client = new Client();
         client.setNom(dto.getNom());
@@ -119,6 +124,7 @@ public class ClientService {
         verifierClientDejaInscrit(dto.getNumeroTelephone(), id);
         ServiceClient service = findService(dto.getIdService());
         TypeClient typeClient = findTypeClient(dto.getIdTypeClient());
+        verifierZoneLivraison(dto.getIdZoneLivraison());
 
         client.setNom(dto.getNom());
         client.setPrenom(dto.getPrenom());
@@ -171,6 +177,15 @@ public class ClientService {
 
         if (existeDeja) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ce client est deja inscrit avec ce numero telephone");
+        }
+    }
+
+    private void verifierZoneLivraison(String idZoneLivraison) {
+        if (idZoneLivraison == null || idZoneLivraison.isBlank()) {
+            return;
+        }
+        if (!zoneLivraisonRepository.existsById(idZoneLivraison)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zone de livraison introuvable");
         }
     }
 

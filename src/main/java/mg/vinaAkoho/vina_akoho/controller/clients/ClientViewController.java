@@ -24,6 +24,7 @@ import mg.vinaAkoho.vina_akoho.dto.clients.ClientRequestDTO;
 import mg.vinaAkoho.vina_akoho.dto.clients.ClientResumeDTO;
 import mg.vinaAkoho.vina_akoho.repository.clients.ServiceClientRepository;
 import mg.vinaAkoho.vina_akoho.repository.clients.TypeClientRepository;
+import mg.vinaAkoho.vina_akoho.repository.livraison.ZoneLivraisonRepository;
 import mg.vinaAkoho.vina_akoho.service.clients.ClientService;
 import mg.vinaAkoho.vina_akoho.service.ventes.VenteService;
 
@@ -35,15 +36,18 @@ public class ClientViewController {
     private final VenteService venteService;
     private final ServiceClientRepository serviceClientRepository;
     private final TypeClientRepository typeClientRepository;
+    private final ZoneLivraisonRepository zoneLivraisonRepository;
 
     public ClientViewController(ClientService clientService,
                                 VenteService venteService,
                                 ServiceClientRepository serviceClientRepository,
-                                TypeClientRepository typeClientRepository) {
+                                TypeClientRepository typeClientRepository,
+                                ZoneLivraisonRepository zoneLivraisonRepository) {
         this.clientService = clientService;
         this.venteService = venteService;
         this.serviceClientRepository = serviceClientRepository;
         this.typeClientRepository = typeClientRepository;
+        this.zoneLivraisonRepository = zoneLivraisonRepository;
     }
 
     @GetMapping(value = "/connexion", produces = MediaType.TEXT_HTML_VALUE)
@@ -193,21 +197,11 @@ public class ClientViewController {
     private void ajouterReferences(Model model) {
         model.addAttribute("services", serviceClientRepository.findAll());
         model.addAttribute("typesClient", typeClientRepository.findAll());
+        model.addAttribute("zonesLivraison", zoneLivraisonRepository.findAllByOrderByLibelleAsc());
     }
 
     private ClientRequestDTO creerClientExemple() {
         ClientRequestDTO inscription = new ClientRequestDTO();
-        inscription.setNom("Rakoto");
-        inscription.setPrenom("Jean Claude");
-        inscription.setNumeroTelephone("0341111111");
-        inscription.setAdresse("Antananarivo");
-        inscription.setIdLocalite("LOC002");
-        inscription.setIdZoneLivraison("ZONE002");
-        inscription.setNotes("Client modifie");
-        inscription.setIdService(1);
-        inscription.setIdTypeClient(2);
-        inscription.setTailleCheptel(40);
-        inscription.setIsActif(true);
         return inscription;
     }
 
