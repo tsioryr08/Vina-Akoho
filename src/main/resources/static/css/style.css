@@ -2963,6 +2963,126 @@ select {
   font-weight: 900;
 }
 
+.kpi-panel {
+  margin-bottom: 28px;
+}
+
+.kpi-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.kpi-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.kpi-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-accent-blue {
+  border-left-color: var(--primary);
+}
+
+.kpi-accent-green {
+  border-left-color: var(--secondary);
+}
+
+.kpi-accent-orange {
+  border-left-color: var(--accent);
+}
+
+.kpi-icon {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 20px;
+  line-height: 1;
+  background: rgba(92, 61, 30, 0.1);
+  color: var(--primary);
+}
+
+.kpi-accent-green .kpi-icon {
+  background: rgba(26, 71, 42, 0.1);
+  color: var(--secondary);
+}
+
+.kpi-accent-orange .kpi-icon {
+  background: rgba(239, 35, 60, 0.1);
+  color: var(--accent);
+}
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.kpi-label {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.kpi-value {
+  font-size: 26px;
+  font-weight: 950;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.kpi-meta {
+  flex: 0 0 auto;
+  align-self: center;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  background: rgba(203, 213, 224, 0.18);
+  color: var(--text-muted);
+}
+
+.kpi-accent-blue .kpi-meta {
+  background: rgba(92, 61, 30, 0.1);
+  color: var(--primary);
+}
+
+.kpi-accent-green .kpi-meta {
+  background: rgba(26, 71, 42, 0.1);
+  color: var(--secondary);
+}
+
+.kpi-accent-orange .kpi-meta {
+  background: rgba(239, 35, 60, 0.1);
+  color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .kpi-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 .text-danger {
   color: var(--accent);
   font-weight: 900;
