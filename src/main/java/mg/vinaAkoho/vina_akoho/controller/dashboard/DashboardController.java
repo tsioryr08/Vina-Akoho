@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.ventes.EvolutionVenteStatDTO;
 import mg.vinaAkoho.vina_akoho.entity.login.Employe;
 import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
+import mg.vinaAkoho.vina_akoho.repository.login.RoleRepository;
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.LotMpRepository;
 import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
 import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
@@ -34,6 +35,7 @@ public class DashboardController {
     private final LotProduitRepository lotProduitRepository;
     private final LotMpRepository lotMpRepository;
     private final EmployeRepository employeRepository;
+    private final RoleRepository roleRepository;
     private final PrevisionProductionService previsionProductionService;
     private final StatistiqueVenteService statistiqueVenteService;
 
@@ -49,6 +51,7 @@ public class DashboardController {
         model.addAttribute("employes", actifs);
         model.addAttribute("totalActifs", actifs.size());
         model.addAttribute("totalDesactives", employeRepository.findByActif(false).size());
+        model.addAttribute("roles", roleRepository.findAll());
 
         // Évolution des ventes — filtrable désormais (date + granularité),
         // 30 derniers jours / granularité jour par défaut si aucun filtre fourni.

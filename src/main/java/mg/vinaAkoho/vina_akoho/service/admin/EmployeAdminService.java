@@ -149,6 +149,7 @@ public class EmployeAdminService {
         dto.setContact(e.getContact());
         dto.setRole(e.getRole().getPoste());
         dto.setActif(e.getActif());
+        dto.setDerniereConnexion(e.getDerniereConnexion());
         dto.setCreatedAt(e.getCreatedAt());
         dto.setUpdatedAt(e.getUpdatedAt());
         return dto;

@@ -36,30 +36,22 @@
           </div>
         </section>
 
-        <section class="kpi-notebook card">
-          <div class="card-header">
-            <h2 class="card-title">Vue des comptes</h2>
-          </div>
-          <ul class="notebook-list">
-            <li class="notebook-item notebook-accent-green">
-              <span class="notebook-bullet"></span>
-              <span class="notebook-label">Comptes actifs</span>
-              <span class="notebook-value" th:text="${totalActifs}">0</span>
-              <span class="notebook-meta">Utilisateurs connectés</span>
-            </li>
-            <li class="notebook-item notebook-accent-orange">
-              <span class="notebook-bullet"></span>
-              <span class="notebook-label">Comptes désactivés</span>
-              <span class="notebook-value" th:text="${totalDesactives}">0</span>
-              <span class="notebook-meta">Accès suspendus</span>
-            </li>
-            <li class="notebook-item notebook-accent-blue">
-              <span class="notebook-bullet"></span>
-              <span class="notebook-label">Rôles disponibles</span>
-              <span class="notebook-value" th:text="${totalRoles}">0</span>
-              <span class="notebook-meta">Postes définis</span>
-            </li>
-          </ul>
+        <section class="stats-grid admin-kpi-grid">
+          <article class="stat-card">
+            <div class="stat-label">Comptes actifs</div>
+            <div class="stat-value" th:text="${totalActifs}">0</div>
+            <div class="stat-trend trend-positive">Utilisateurs connectés</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Comptes désactivés</div>
+            <div class="stat-value" th:text="${totalDesactives}">0</div>
+            <div class="stat-trend trend-warning">Accès suspendus</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Rôles disponibles</div>
+            <div class="stat-value" th:text="${totalRoles}">0</div>
+            <div class="stat-trend trend-info">Postes définis</div>
+          </article>
         </section>
 
         <section class="admin-layout-grid">
@@ -118,6 +110,26 @@
               </div>
             </div>
 
+            <div class="admin-employes-filtres" style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+              <input
+                id="champRechercheAdmin"
+                type="text"
+                placeholder="Rechercher par nom, prénom ou email..."
+                style="flex:1; min-width:220px; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;"
+                oninput="chargerAvecFiltresAdmin()"
+              />
+              <select
+                id="filtreRoleAdmin"
+                style="padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;"
+                onchange="chargerAvecFiltresAdmin()"
+              >
+                <option value="">Tous les rôles</option>
+                <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.poste}"></option>
+              </select>
+            </div>
+
+            <div id="alerteAdminEmployes" class="alert-box danger" style="display:none"></div>
+
             <div class="table-wrap">
               <table class="data-table">
                 <thead>
@@ -128,7 +140,7 @@
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="corpsTableauAdminAccueil">
                   <tr th:each="emp : ${employes}">
                     <td th:text="${emp.nom + ' ' + emp.prenom}"></td>
                     <td th:text="${emp.role.poste}"></td>
@@ -238,6 +250,63 @@
             },
           },
         });
+      }
+    </script>
+
+    <script>
+      // Filtres — tableau "Utilisateurs actifs & rôles assignés" (dashboard admin)
+      // Reste volontairement scopé aux comptes actifs (RG01) : recherche + rôle uniquement.
+      function chargerEmployesAdmin(url) {
+        fetch(url)
+          .then((rep) => rep.json())
+          .then((json) => {
+            if (!json.success) { afficherAlerteAdminEmployes(json.message); return; }
+            renderTableauAdminEmployes(json.data);
+          })
+          .catch(() => afficherAlerteAdminEmployes("Erreur lors du chargement des employés."));
+      }
+
+      function chargerAvecFiltresAdmin() {
+        const terme = document.getElementById("champRechercheAdmin").value.trim();
+        const idRole = document.getElementById("filtreRoleAdmin").value;
+
+        if (terme.length > 0) {
+          const params = new URLSearchParams({ terme, actif: true });
+          chargerEmployesAdmin("/api/admin/employes/recherche?" + params);
+        } else if (idRole) {
+          const params = new URLSearchParams({ idRole, actif: true });
+          chargerEmployesAdmin("/api/admin/employes/par-role?" + params);
+        } else {
+          chargerEmployesAdmin("/api/admin/employes/actifs");
+        }
+      }
+
+      function renderTableauAdminEmployes(employes) {
+        const tbody = document.getElementById("corpsTableauAdminAccueil");
+        if (!employes || employes.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-table-message">Aucun utilisateur actif.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = employes.map(function (e) {
+          const dernierAcces = e.derniereConnexion
+            ? tempsRelatif(e.derniereConnexion)
+            : '<span class="muted-text" style="font-style: italic">Jamais connecté</span>';
+          return (
+            "<tr>" +
+            "<td>" + e.nom + " " + e.prenom + "</td>" +
+            "<td>" + e.role + "</td>" +
+            "<td>" + dernierAcces + "</td>" +
+            "<td><a class=\"btn btn-ghost btn-small\" href=\"/api/admin/employes/" + e.id + "/modifier\">Modifier</a></td>" +
+            "</tr>"
+          );
+        }).join("");
+      }
+
+      function afficherAlerteAdminEmployes(msg) {
+        const el = document.getElementById("alerteAdminEmployes");
+        el.textContent = msg;
+        el.style.display = "block";
+        setTimeout(function () { el.style.display = "none"; }, 4000);
       }
     </script>
   </body>
