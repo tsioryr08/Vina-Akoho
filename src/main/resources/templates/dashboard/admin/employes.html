@@ -73,6 +73,29 @@
             </select>
           </div>
 
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-end;">
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <label class="form-label" for="empTriPar">Trier par</label>
+              <select id="empTriPar" class="form-control" onchange="afficherEmployes()" style="padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;">
+                <option value="nom">Nom</option>
+                <option value="email">Email</option>
+                <option value="role">Rôle</option>
+                <option value="actif">Statut</option>
+              </select>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <label class="form-label" for="empOrdreTri">Ordre</label>
+              <select id="empOrdreTri" class="form-control" onchange="afficherEmployes()" style="padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;">
+                <option value="asc">Croissant</option>
+                <option value="desc">Décroissant</option>
+              </select>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <label class="form-label" for="empTaille">Éléments par page</label>
+              <input id="empTaille" type="number" class="form-control" value="10" min="1" max="200" oninput="afficherEmployes()" style="width:120px; padding:8px 12px; border:1px solid var(--border); border-radius:6px; font-size:14px;">
+            </div>
+          </div>
+
           <!-- Tabs actifs / désactivés -->
           <div style="display:flex; gap:8px; margin-bottom:16px;">
             <button id="tabActifs" class="btn btn-primary btn-small" onclick="changerTab(true)">Actifs</button>
@@ -97,6 +120,8 @@
               </tbody>
             </table>
           </div>
+
+          <div class="pagination" id="employesPagination"></div>
         </section>
       </div>
 
@@ -126,16 +151,88 @@
     <script>
       let afficherActifs = true;
       let idEmployeSelectionne = null;
+      let tousLesEmployes = [];
+      let currentPage = 1;
 
       async function chargerEmployes(url) {
         try {
           const rep = await fetch(url);
           const json = await rep.json();
           if (!json.success) { afficherAlerte(json.message); return; }
-          renderTableau(json.data);
+          tousLesEmployes = json.data || [];
+          currentPage = 1;
+          afficherEmployes();
         } catch (e) {
           afficherAlerte("Erreur lors du chargement des employés.");
         }
+      }
+
+      function comparerEmployes(a, b) {
+        const key = document.getElementById("empTriPar").value;
+        let va, vb;
+        if (key === "actif") {
+          va = a.actif ? 1 : 0;
+          vb = b.actif ? 1 : 0;
+        } else {
+          va = (a[key] || "").toString().toLowerCase();
+          vb = (b[key] || "").toString().toLowerCase();
+        }
+        if (va < vb) return -1;
+        if (va > vb) return 1;
+        return 0;
+      }
+
+      function afficherEmployes() {
+        const liste = tousLesEmployes.slice();
+        if (document.getElementById("empOrdreTri").value === "desc") {
+          liste.sort((a, b) => -comparerEmployes(a, b));
+        } else {
+          liste.sort(comparerEmployes);
+        }
+
+        const taille = Math.max(1, parseInt(document.getElementById("empTaille").value, 10) || 10);
+        const totalPages = Math.max(1, Math.ceil(liste.length / taille));
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * taille;
+        const pageItems = liste.slice(start, start + taille);
+
+        renderTableau(pageItems);
+
+        const pagination = document.getElementById("employesPagination");
+        pagination.innerHTML = "";
+        if (totalPages <= 1) return;
+
+        const info = document.createElement("span");
+        info.className = "pagination-info";
+        info.textContent = "Page " + currentPage + " / " + totalPages + " (" + liste.length + " éléments)";
+        pagination.appendChild(info);
+
+        const nav = document.createElement("div");
+        nav.className = "pagination-controls";
+
+        const prev = document.createElement("button");
+        prev.className = "btn btn-sm btn-outline";
+        prev.textContent = "← Précédent";
+        prev.disabled = currentPage === 1;
+        prev.addEventListener("click", () => { if (currentPage > 1) { currentPage--; afficherEmployes(); } });
+        nav.appendChild(prev);
+
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.className = i === currentPage ? "btn btn-sm btn-primary active" : "btn btn-sm btn-ghost";
+          btn.textContent = i;
+          btn.addEventListener("click", () => { currentPage = i; afficherEmployes(); });
+          nav.appendChild(btn);
+        }
+
+        const next = document.createElement("button");
+        next.className = "btn btn-sm btn-outline";
+        next.textContent = "Suivant →";
+        next.disabled = currentPage === totalPages;
+        next.addEventListener("click", () => { if (currentPage < totalPages) { currentPage++; afficherEmployes(); } });
+        nav.appendChild(next);
+
+        pagination.appendChild(nav);
       }
 
       function chargerAvecFiltres() {

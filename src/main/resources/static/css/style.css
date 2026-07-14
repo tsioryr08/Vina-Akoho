@@ -2069,9 +2069,22 @@ select {
 .pagination {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 16px;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-right: auto;
+}
+
+.pagination-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .pagination .btn.active {
@@ -5489,10 +5502,13 @@ select {
   }
 
   .page-produit-liste .produit-filter-form {
-    display: grid;
-    grid-template-columns: minmax(220px, 1.6fr) minmax(180px, 1.1fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) auto;
-    gap: 12px;
-    align-items: end;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .page-produit-liste .produit-filter-form .form-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 
   .page-produit-liste .produit-filter-actions {
@@ -5513,26 +5529,12 @@ select {
     padding: 32px 20px;
   }
 
-  @media (max-width: 1024px) {
-    .page-produit-liste .produit-filter-form {
-      grid-template-columns: repeat(2, minmax(180px, 1fr));
-    }
-
-    .page-produit-liste .produit-filter-actions {
-      grid-column: 1 / -1;
-    }
-  }
-
   @media (max-width: 768px) {
-    .page-produit-liste .produit-filter-form {
-      grid-template-columns: 1fr;
-    }
-
-    .page-produit-liste .produit-filter-actions {
+    .page-produit-liste .produit-filter-form .form-actions {
       flex-direction: column;
     }
 
-    .page-produit-liste .produit-filter-actions .btn {
+    .page-produit-liste .produit-filter-form .form-actions .btn {
       width: 100%;
     }
 
@@ -7537,6 +7539,28 @@ select {
 
 .page-client-list .clients-list-filters .form-group {
   margin-bottom: 0;
+}
+
+.page-client-list .clients-list-sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.page-client-list .clients-list-sort .form-group {
+  margin-bottom: 0;
+  min-width: 160px;
+}
+
+.page-client-list .clients-list-sort .form-actions {
+  margin-top: 0;
+  margin-left: auto;
+  padding-top: 0;
+  border-top: none;
 }
 
 .page-client-edit .form-card {
