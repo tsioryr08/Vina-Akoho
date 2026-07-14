@@ -9,6 +9,7 @@ import java.math.RoundingMode;
 
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,10 +19,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
+import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
 import mg.vinaAkoho.vina_akoho.dto.ventes.LigneVenteDTO;
+import mg.vinaAkoho.vina_akoho.dto.ventes.PanierResumeDTO;
 import mg.vinaAkoho.vina_akoho.dto.ventes.RechercheVenteDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -892,6 +896,49 @@ public class VenteController {
         return "ventes/responsable-commercial-ventes-nouvelles";
     }
 
+    @PostMapping("/panier/ajouter-ajax")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<PanierResumeDTO>> ajouterAuPanierAjax(@Valid @ModelAttribute("panierForm") PanierFormDTO form,
+                                                                            BindingResult bindingResult,
+                                                                            HttpSession session) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("Quantité ou produit invalide."));
+        }
+
+        Produit produit = produitRepository.findById(form.getIdProduit()).orElse(null);
+        if (produit == null) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("Produit introuvable."));
+        }
+
+        List<PanierItemDTO> panier = panier(session);
+        PanierItemDTO item = panier.stream()
+                .filter(i -> i.getIdProduit().equals(produit.getId()))
+                .findFirst()
+                .orElse(null);
+
+        if (item != null) {
+            item.setQuantite(item.getQuantite().add(form.getQuantite()));
+            item.setMontant(item.getPrixUnitaire().multiply(item.getQuantite()));
+        } else {
+            BigDecimal montant = produit.getPrixVente().multiply(form.getQuantite());
+            String unite = produit.getUnite() != null ? produit.getUnite().getLibelle() : "";
+            panier.add(PanierItemDTO.builder()
+                    .idProduit(produit.getId())
+                    .nomProduit(produit.getNom())
+                    .quantite(form.getQuantite())
+                    .prixUnitaire(produit.getPrixVente())
+                    .montant(montant)
+                    .unite(unite)
+                    .build());
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(
+                "Produit ajouté au panier.",
+                construirePanierResume(session, "Produit ajouté au panier.")));
+    }
+
     @PostMapping("/panier/ajouter")
     public String ajouterAuPanier(@Valid @ModelAttribute("panierForm") PanierFormDTO form,
                                   BindingResult bindingResult,
@@ -934,6 +981,17 @@ public class VenteController {
 
         redirectAttributes.addFlashAttribute("success", "Produit ajouté au panier.");
         return "redirect:/api/ventes/nouvelle";
+    }
+
+    @PostMapping("/panier/{idProduit}/supprimer-ajax")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<PanierResumeDTO>> supprimerDuPanierAjax(@PathVariable Long idProduit,
+                                                                              HttpSession session) {
+        List<PanierItemDTO> panier = panier(session);
+        panier.removeIf(item -> item.getIdProduit().equals(idProduit));
+        return ResponseEntity.ok(ApiResponse.success(
+                "Produit retiré du panier.",
+                construirePanierResume(session, "Produit retiré du panier.")));
     }
 
     @PostMapping("/panier/{idProduit}/supprimer")
@@ -1012,6 +1070,14 @@ public class VenteController {
             redirectAttributes.addFlashAttribute("error", "Impossible d'annuler la commande : " + e.getMessage());
         }
         return "redirect:/api/ventes/" + id;
+    }
+
+    private PanierResumeDTO construirePanierResume(HttpSession session, String message) {
+        List<PanierItemDTO> items = new ArrayList<>(panier(session));
+        BigDecimal total = items.stream()
+                .map(PanierItemDTO::getMontant)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new PanierResumeDTO(items, total, message);
     }
 
     @GetMapping("/{id}/facture")
