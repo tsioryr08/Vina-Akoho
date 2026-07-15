@@ -148,11 +148,15 @@
     </div>
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
- <script th:src="@{/js/script_content.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
+    <script th:src="@{/js/auth.js}"></script>
+    <script th:src="@{/js/app-shell.js}"></script>
     <script>
       (function () {
+        const form = document.querySelector(".ventes-filter-form");
         const tbody = document.querySelector("#vina-content .table-wrap tbody");
-        if (!tbody) return;
+        if (!form || !tbody) return;
+
         const rows = Array.from(tbody.querySelectorAll("tr"));
         const triPar = document.getElementById("recTriPar");
         const ordreTri = document.getElementById("recOrdreTri");

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record EntreeProduitResponseDTO(
+        Integer idFabrication,
         Long idLotProduit,
         String nomProduit,
         BigDecimal quantiteProduite,

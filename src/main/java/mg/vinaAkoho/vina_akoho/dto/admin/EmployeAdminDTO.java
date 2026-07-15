@@ -11,6 +11,7 @@ public class EmployeAdminDTO {
     private String contact;
     private String role;
     private Boolean actif;
+    private LocalDateTime derniereConnexion;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -28,6 +29,8 @@ public class EmployeAdminDTO {
     public void setRole(String role) { this.role = role; }
     public Boolean getActif() { return actif; }
     public void setActif(Boolean actif) { this.actif = actif; }
+    public LocalDateTime getDerniereConnexion() { return derniereConnexion; }
+    public void setDerniereConnexion(LocalDateTime derniereConnexion) { this.derniereConnexion = derniereConnexion; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }

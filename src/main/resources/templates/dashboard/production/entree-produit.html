@@ -29,6 +29,7 @@
         <section class="tab-list" role="tablist">
           <a th:href="@{/api/production}" class="tab-link">Tableau de bord</a>
           <a th:href="@{/api/production/entree-produit}" class="tab-link active">Entrée Produit</a>
+          <a th:href="@{/api/production/historique}" class="tab-link">Historique des productions</a>
         </section>
 
         <section id="formSection" class="form-card production-entree-card production-entree-form-card">
@@ -126,7 +127,7 @@
               <button type="button" class="btn btn-primary" id="nouvelleProductionBtn">
                 Nouvelle production
               </button>
-              <a th:href="@{/api/production}" class="btn btn-ghost">Retour au dashboard</a>
+              <a th:href="@{/api/production/historique}" class="btn btn-ghost">Voir l'historique</a>
             </div>
           </div>
         </section>
@@ -134,12 +135,13 @@
       </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
       const form = document.getElementById("formEntreeProduit");
       const formSection = document.getElementById("formSection");
       const resultSection = document.getElementById("resultSection");
       const errorBanner = document.getElementById("errorBanner");
       const submitBtn = document.getElementById("submitBtn");
+      const currentEmployeId = /*[[${session.idEmploye}]]*/ null;
 
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -147,12 +149,11 @@
         submitBtn.disabled = true;
         submitBtn.textContent = "Validation en cours...";
 
-        const idEmploye = 3; // TODO: remplacer par l'employé connecté (session)
         const payload = {
           idProduit: document.getElementById("produitSelect").value,
           quantiteAProduire: document.getElementById("quantite").value,
           datePeremption: document.getElementById("datePeremption").value || null,
-          idEmploye: idEmploye
+          idEmploye: currentEmployeId
         };
 
         try {
@@ -165,6 +166,12 @@
 
           if (data.success) {
             afficherResultat(data.data);
+            const redirectUrl = new URL("/api/production/historique", window.location.origin);
+            redirectUrl.searchParams.set("highlight", data.data.idFabrication);
+            redirectUrl.searchParams.set("success", "Production enregistrée avec succès.");
+            setTimeout(() => {
+              window.location.href = redirectUrl.toString();
+            }, 1200);
           } else {
             errorBanner.textContent = "Erreur : " + data.message;
             errorBanner.classList.add("is-visible");

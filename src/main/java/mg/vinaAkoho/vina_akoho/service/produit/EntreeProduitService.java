@@ -78,6 +78,10 @@ public class EntreeProduitService {
 
     @Transactional
     public EntreeProduitResponseDTO produire(EntreeProduitRequestDTO dto) {
+        if (dto.datePeremption() != null && dto.datePeremption().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(
+                    "La date de péremption ne peut pas être antérieure à la date de fabrication.");
+        }
 
         // --- 0. Chargement des références ---
         Produit produit = produitRepository.findByIdAndActifTrue(dto.idProduit())
@@ -159,6 +163,7 @@ public class EntreeProduitService {
         mouvementStockProduitRepository.save(mvtProduit);
 
         return new EntreeProduitResponseDTO(
+                fabrication.getId(),
                 lotProduit.getId(),
                 produit.getNom(),
                 quantiteAProduire,

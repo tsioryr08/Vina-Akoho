@@ -2,9 +2,11 @@ package mg.vinaAkoho.vina_akoho.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import mg.vinaAkoho.vina_akoho.dto.ApiResponse;
 import mg.vinaAkoho.vina_akoho.exception.produit.ProduitNotFoundException;
@@ -21,6 +23,12 @@ import mg.vinaAkoho.vina_akoho.exception.matierespremieres.UniteNotFoundExceptio
 import mg.vinaAkoho.vina_akoho.exception.matierespremieres.TypeMouvementNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ApiResponse<Object>> handleResponseStatus(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ApiResponse.error(ex.getReason() == null ? "Requête invalide" : ex.getReason()));
+    }
 
     @ExceptionHandler(StockInsuffisantException.class)
     public ResponseEntity<ApiResponse<Object>> handleStockInsuffisant(StockInsuffisantException ex) {
@@ -49,6 +57,33 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .map(e -> e.getDefaultMessage())
                 .orElse("Données invalides");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(message));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String message = "Opération refusée par la base de données.";
+        Throwable cause = ex.getMostSpecificCause();
+        if (cause != null && cause.getMessage() != null) {
+            String causeMessage = cause.getMessage();
+            if (causeMessage.contains("chk_lot_produit_peremption")) {
+                message = "La date de péremption doit être supérieure ou égale à la date de fabrication.";
+            } else if (causeMessage.contains("fabrication_quantite_produite_check")) {
+                message = "La quantité produite doit être strictement positive.";
+            } else if (causeMessage.contains("uq_fabrication_lot_mp")) {
+                message = "Un même lot de matière première ne peut pas être enregistré deux fois dans une fabrication.";
+            }
+        }
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(message));

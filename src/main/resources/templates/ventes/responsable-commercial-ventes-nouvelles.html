@@ -42,6 +42,7 @@
           class="info-banner error"
           th:text="${error}"
         ></div>
+        <div id="panierFeedback" class="info-banner" style="display: none"></div>
 
         <section class="vente-workspace">
           <div class="vente-workspace-main">
@@ -58,6 +59,7 @@
               </div>
 
               <form
+                id="panierFormAjax"
                 th:action="@{/api/ventes/panier/ajouter}"
                 th:object="${panierForm}"
                 method="post"
@@ -123,7 +125,7 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="panierTableBody">
                     <tr th:each="item : ${panier}">
                       <td th:text="${item.nomProduit}"></td>
                       <td
@@ -136,14 +138,13 @@
                         th:text="${#numbers.formatDecimal(item.montant, 0, 'COMMA', 2, 'POINT')}"
                       ></td>
                       <td>
-                        <form
-                          th:action="@{/ventes/panier/{idProduit}/supprimer(idProduit=${item.idProduit})}"
-                          method="post"
+                        <button
+                          class="btn btn-red btn-small js-remove-panier-item"
+                          type="button"
+                          th:attr="data-produit-id=${item.idProduit}"
                         >
-                          <button class="btn btn-red btn-small" type="submit">
-                            X
-                          </button>
-                        </form>
+                          X
+                        </button>
                       </td>
                     </tr>
                     <tr th:if="${panier != null and !panier.isEmpty()}">
@@ -386,6 +387,15 @@
                 </script>
 
                 <div class="summary-card vente-summary-card">
+
+                  <div>
+                    <span class="summary-label">Sous-total</span>
+                    <span id="panierTotalValue"
+                      class="summary-value"
+                      th:text="${#numbers.formatDecimal(panierTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
+                    ></span>
+                  </div>
+
                   <div class="card-actions vente-summary-actions">
                     <button
                       class="btn btn-ghost"
@@ -455,5 +465,109 @@
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
     <script th:src="@{/js/script_content.js}"></script>
+    <script>
+      function formatNumber(value) {
+        return new Intl.NumberFormat("fr-FR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(Number(value || 0));
+      }
+
+      function showPanierFeedback(message, type) {
+        const banner = document.getElementById("panierFeedback");
+        banner.textContent = message;
+        banner.className = "info-banner " + (type === "error" ? "error" : "success");
+        banner.style.display = "block";
+      }
+
+      function renderPanier(items, total) {
+        const tbody = document.getElementById("panierTableBody");
+        const totalNode = document.getElementById("panierTotalValue");
+
+        if (!items || items.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="empty-state">Aucun produit dans le panier.</td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = items.map((item) => {
+            const unite = item.unite && item.unite.trim() !== "" ? item.unite : "kg";
+            return `
+              <tr>
+                <td>${item.nomProduit}</td>
+                <td>${item.quantite} ${unite}</td>
+                <td>${formatNumber(item.prixUnitaire)} / ${unite}</td>
+                <td>${formatNumber(item.montant)}</td>
+                <td>
+                  <button
+                    class="btn btn-red btn-small js-remove-panier-item"
+                    type="button"
+                    data-produit-id="${item.idProduit}">
+                    X
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join("");
+        }
+
+        totalNode.textContent = formatNumber(total) + " Ar";
+      }
+
+      async function callPanierEndpoint(url, formData) {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+          },
+          body: new URLSearchParams(formData)
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Une erreur est survenue.");
+        }
+        return data.data;
+      }
+
+      document.getElementById("panierFormAjax").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const submitButton = this.querySelector("button[type='submit']");
+        submitButton.disabled = true;
+
+        try {
+          const data = await callPanierEndpoint("/api/ventes/panier/ajouter-ajax", new FormData(this));
+          renderPanier(data.items, data.total);
+          showPanierFeedback(data.message, "success");
+          this.reset();
+        } catch (error) {
+          showPanierFeedback(error.message, "error");
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      document.getElementById("panierTableBody").addEventListener("click", async function (event) {
+        const button = event.target.closest(".js-remove-panier-item");
+        if (!button) {
+          return;
+        }
+
+        button.disabled = true;
+        try {
+          const data = await callPanierEndpoint(
+            "/api/ventes/panier/" + button.dataset.produitId + "/supprimer-ajax",
+            new FormData()
+          );
+          renderPanier(data.items, data.total);
+          showPanierFeedback(data.message, "success");
+        } catch (error) {
+          button.disabled = false;
+          showPanierFeedback(error.message, "error");
+        }
+      });
+    </script>
   </body>
 </html>
