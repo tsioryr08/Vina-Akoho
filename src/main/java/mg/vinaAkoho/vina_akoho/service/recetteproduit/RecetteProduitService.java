@@ -2,7 +2,6 @@ package mg.vinaAkoho.vina_akoho.service.recetteproduit;
 
 import jakarta.transaction.Transactional;
 import mg.vinaAkoho.vina_akoho.dto.recetteproduit.CreateRecetteProduitDTO;
-import mg.vinaAkoho.vina_akoho.dto.recetteproduit.LigneRecetteProduitDTO;
 import mg.vinaAkoho.vina_akoho.dto.recetteproduit.RecetteProduitDTO;
 import mg.vinaAkoho.vina_akoho.entity.recetteproduit.RecetteProduit;
 import mg.vinaAkoho.vina_akoho.entity.matierespremieres.MatierePremiere;
@@ -11,7 +10,6 @@ import mg.vinaAkoho.vina_akoho.repository.recetteproduit.RecetteProduitRepositor
 import mg.vinaAkoho.vina_akoho.repository.matierespremieres.MatierePremiereRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,18 +30,15 @@ public class RecetteProduitService {
     // Créer une recette pour une catégorie
     @Transactional
     public List<RecetteProduitDTO> creerRecette(CreateRecetteProduitDTO dto) {
-        // Désactiver l'ancienne recette si elle existe
+        // Supprimer l'ancienne recette si elle existe pour éviter les conflits de version
         List<RecetteProduit> anciennesLignes = recetteProduitRepository
                 .findByIdCategorieAndIsActiveTrue(dto.getIdCategorie());
 
         int nouvelleVersion = 1;
         if (!anciennesLignes.isEmpty()) {
             nouvelleVersion = anciennesLignes.get(0).getVersion() + 1;
-            anciennesLignes.forEach(l -> {
-                l.setIsActive(false);
-                l.setDateFin(LocalDateTime.now());
-            });
-            recetteProduitRepository.saveAll(anciennesLignes);
+            recetteProduitRepository.deleteAll(anciennesLignes);
+            recetteProduitRepository.flush(); // Force l'exécution de la suppression avant l'insertion
         }
 
         final int version = nouvelleVersion;
