@@ -11,8 +11,9 @@ import mg.vinaAkoho.vina_akoho.service.produit.CategorieService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -37,31 +39,18 @@ public class ProduitController {
 
     @GetMapping
     public String listerTous(
-            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long idCategorie,
+            @RequestParam(required = false) BigDecimal prixMin,
+            @RequestParam(required = false) BigDecimal prixMax,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false) Integer taille,
+            @RequestParam(required = false) String triPar,
+            @RequestParam(required = false, defaultValue = "desc") String ordreTri,
             Model model) {
-
-        List<ProduitDTO> produitsList = produitService.listerTous();
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), produitsList.size());
-
-        Page<ProduitDTO> produits;
-        if (start <= produitsList.size()) {
-            produits = new PageImpl<>(
-                    produitsList.subList(start, end),
-                    pageable,
-                    produitsList.size()
-            );
-        } else {
-            produits = new PageImpl<>(List.of(), pageable, produitsList.size());
-        }
-
-        model.addAttribute("produits", produits);
-        model.addAttribute("totalElements", produits.getTotalElements());
-        model.addAttribute("totalPages", produits.getTotalPages());
-        model.addAttribute("currentPage", produits.getNumber());
-
-        return "produit/list";
+        // La liste initiale et la recherche partagent la même pagination/base de données
+        // pour que les liens de pagination restent cohérents.
+        return rechercher(q, idCategorie, prixMin, prixMax, page, taille, triPar, ordreTri, model);
     }
 
     @GetMapping("/recherche")
@@ -70,9 +59,13 @@ public class ProduitController {
             @RequestParam(required = false) Long idCategorie,
             @RequestParam(required = false) BigDecimal prixMin,
             @RequestParam(required = false) BigDecimal prixMax,
-            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false) Integer taille,
+            @RequestParam(required = false) String triPar,
+            @RequestParam(required = false, defaultValue = "desc") String ordreTri,
             Model model) {
 
+        Pageable pageable = buildPageable(page, taille, triPar, ordreTri);
         Page<ProduitDTO> resultats = produitService.rechercher(
                 q, idCategorie, prixMin, prixMax, pageable);
 
@@ -84,8 +77,40 @@ public class ProduitController {
         model.addAttribute("idCategorie", idCategorie);
         model.addAttribute("prixMin", prixMin);
         model.addAttribute("prixMax", prixMax);
+        model.addAttribute("taille", taille);
+        model.addAttribute("triPar", triPar);
+        model.addAttribute("ordreTri", ordreTri);
 
         return "produit/list";
+    }
+
+    private Pageable buildPageable(int page, Integer taille, String triPar, String ordreTri) {
+        int size = (taille != null && taille > 0 && taille <= 200) ? taille : 20;
+        Sort sort = Sort.unsorted();
+        if (triPar != null && !triPar.isBlank()) {
+            Sort.Direction direction = "asc".equalsIgnoreCase(ordreTri) ? Sort.Direction.ASC : Sort.Direction.DESC;
+            sort = Sort.by(direction, triPar);
+        }
+        return PageRequest.of(Math.max(0, page), size, sort);
+    }
+
+    private List<ProduitDTO> trierProduits(List<ProduitDTO> liste, String triPar, String ordreTri) {
+        Comparator<ProduitDTO> comparator;
+        switch (triPar) {
+            case "prixVente" -> comparator = Comparator.comparing(
+                    ProduitDTO::getPrixVente, Comparator.nullsLast(BigDecimal::compareTo));
+            case "ref" -> comparator = Comparator.comparing(
+                    ProduitDTO::getRef, Comparator.nullsLast(String::compareTo));
+            case "margePourcentage" -> comparator = Comparator.comparing(
+                    p -> p.getMargePourcentage() != null ? p.getMargePourcentage() : BigDecimal.ZERO);
+            default -> comparator = Comparator.comparing(
+                    ProduitDTO::getNom, Comparator.nullsLast(String::compareTo));
+        }
+        if (!"asc".equalsIgnoreCase(ordreTri)) {
+            comparator = comparator.reversed();
+        }
+        liste.sort(comparator);
+        return liste;
     }
 
     @GetMapping("/{id}")

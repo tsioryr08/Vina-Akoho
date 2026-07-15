@@ -9,8 +9,9 @@ import mg.vinaAkoho.vina_akoho.exception.produit.CategorieEnUtilisationException
 import mg.vinaAkoho.vina_akoho.exception.produit.CategorieNotFoundException;
 import mg.vinaAkoho.vina_akoho.service.produit.CategorieService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,8 +28,13 @@ public class CategorieController {
     @GetMapping
     public String listerToutes(
             @RequestParam(required = false) String search,
-            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false) Integer taille,
+            @RequestParam(required = false) String triPar,
+            @RequestParam(required = false, defaultValue = "desc") String ordreTri,
             Model model) {
+
+        Pageable pageable = buildPageable(page, taille, triPar, ordreTri);
 
         Page<CategorieDTO> categories;
 
@@ -43,8 +49,21 @@ public class CategorieController {
         model.addAttribute("totalPages", categories.getTotalPages());
         model.addAttribute("currentPage", categories.getNumber());
         model.addAttribute("search", search);
+        model.addAttribute("taille", taille);
+        model.addAttribute("triPar", triPar);
+        model.addAttribute("ordreTri", ordreTri);
 
         return "categorie/list";
+    }
+
+    private Pageable buildPageable(int page, Integer taille, String triPar, String ordreTri) {
+        int size = (taille != null && taille > 0 && taille <= 200) ? taille : 20;
+        Sort sort = Sort.unsorted();
+        if (triPar != null && !triPar.isBlank()) {
+            Sort.Direction direction = "asc".equalsIgnoreCase(ordreTri) ? Sort.Direction.ASC : Sort.Direction.DESC;
+            sort = Sort.by(direction, triPar);
+        }
+        return PageRequest.of(Math.max(0, page), size, sort);
     }
 
     @GetMapping("/{id}")

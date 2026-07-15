@@ -41,14 +41,38 @@
             </div>
           </div>
 
-          <form th:action="@{/api/categories}" method="get" class="form-row mb-4">
-            <div class="form-group flex-1" style="min-width: 200px;">
-              <input type="text" name="search" th:value="${search != null ? search : ''}"
-                     placeholder="🔍 Rechercher une catégorie..." class="form-control">
+          <form th:action="@{/api/categories}" method="get" class="ventes-filter-form">
+            <div class="form-row">
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <input type="text" name="search" th:value="${search != null ? search : ''}"
+                       placeholder="🔍 Rechercher une catégorie..." class="form-control">
+              </div>
             </div>
-            <div class="form-actions" style="gap: 8px;">
-              <button type="submit" class="btn btn-primary">Filtrer</button>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="triPar">Trier par</label>
+                <select id="triPar" name="triPar" class="form-control">
+                  <option value="libelle" th:selected="${triPar == 'libelle'}">Libellé</option>
+                  <option value="pourcentageProteine" th:selected="${triPar == 'pourcentageProteine'}">Protéines</option>
+                  <option value="margePourcentage" th:selected="${triPar == 'margePourcentage'}">Marge</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ordreTri">Ordre</label>
+                <select id="ordreTri" name="ordreTri" class="form-control">
+                  <option value="desc" th:selected="${ordreTri == 'desc'}">Décroissant</option>
+                  <option value="asc" th:selected="${ordreTri == 'asc'}">Croissant</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="taille">Éléments par page</label>
+                <input id="taille" type="number" name="taille" class="form-control"
+                       th:value="${taille}" min="1" max="200" placeholder="20">
+              </div>
+            </div>
+            <div class="form-actions">
               <a th:href="@{/api/categories}" class="btn btn-outline">Réinitialiser</a>
+              <button type="submit" class="btn btn-primary">Appliquer les filtres</button>
             </div>
           </form>
 
@@ -118,14 +142,35 @@
             </div>
 
             <!-- Pagination -->
-            <div th:if="${categories != null and categories.totalPages > 1}" class="flex gap-2 mt-6 justify-center flex-wrap">
+            <div
+              th:if="${categories != null and categories.totalPages > 1}"
+              class="pagination"
+            >
+              <span
+                class="pagination-info"
+                th:text="'Page ' + (${categories.number} + 1) + ' / ' + ${categories.totalPages} + ' (' + ${categories.totalElements} + ' éléments)'"
+              ></span>
+              <div class="pagination-controls">
+                <a
+                  th:if="${!categories.first}"
+                  th:href="@{/api/categories(page=${categories.number - 1}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, search=${search != null ? search : ''})}"
+                  class="btn btn-sm btn-outline"
+                  >← Précédent</a
+                >
                 <span th:each="i : ${#numbers.sequence(0, categories.totalPages - 1)}">
-                    <a th:href="@{/api/categories(page=${i}, size=20, search=${search != null ? search : ''})}"
-                       th:text="${i + 1}"
-                       th:class="${i == categories.number} ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline'"
-                       style="text-decoration: none;">
-                    </a>
+                  <a
+                    th:href="@{/api/categories(page=${i}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, search=${search != null ? search : ''})}"
+                    th:text="${i + 1}"
+                    th:class="${i == categories.number} ? 'btn btn-sm btn-primary active' : 'btn btn-sm btn-outline'"
+                  ></a>
                 </span>
+                <a
+                  th:if="${!categories.last}"
+                  th:href="@{/api/categories(page=${categories.number + 1}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, search=${search != null ? search : ''})}"
+                  class="btn btn-sm btn-outline"
+                  >Suivant →</a
+                >
+              </div>
             </div>
         </section>
 

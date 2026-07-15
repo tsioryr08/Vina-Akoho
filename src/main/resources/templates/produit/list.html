@@ -55,46 +55,93 @@
           <form
             th:action="@{/api/produits/recherche}"
             method="get"
-            class="filter-form produit-filter-form"
+            class="produit-filter-form"
           >
-            <input
-              type="text"
-              name="q"
-              th:value="${q != null ? q : ''}"
-              placeholder="Rechercher un produit..."
-              class="search-input"
-            />
+            <div class="form-row">
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <input
+                  type="text"
+                  name="q"
+                  th:value="${q != null ? q : ''}"
+                  placeholder="Rechercher un produit..."
+                  class="search-input"
+                />
+              </div>
+            </div>
 
-            <select name="idCategorie" class="filter-select">
-              <option value="">Toutes les catégories</option>
-              <option
-                th:each="cat : ${categories}"
-                th:value="${cat.id}"
-                th:text="${cat.libelle}"
-                th:selected="${idCategorie != null and idCategorie == cat.id}"
-              ></option>
-            </select>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="idCategorie">Catégorie</label>
+                <select id="idCategorie" name="idCategorie" class="filter-select">
+                  <option value="">Toutes les catégories</option>
+                  <option
+                    th:each="cat : ${categories}"
+                    th:value="${cat.id}"
+                    th:text="${cat.libelle}"
+                    th:selected="${idCategorie != null and idCategorie == cat.id}"
+                  ></option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prixMin">Prix min</label>
+                <input
+                  type="number"
+                  id="prixMin"
+                  name="prixMin"
+                  th:value="${prixMin != null ? prixMin : ''}"
+                  placeholder="Prix min"
+                  step="0.01"
+                  class="filter-input"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="prixMax">Prix max</label>
+                <input
+                  type="number"
+                  id="prixMax"
+                  name="prixMax"
+                  th:value="${prixMax != null ? prixMax : ''}"
+                  placeholder="Prix max"
+                  step="0.01"
+                  class="filter-input"
+                />
+              </div>
+            </div>
 
-            <input
-              type="number"
-              name="prixMin"
-              th:value="${prixMin != null ? prixMin : ''}"
-              placeholder="Prix min"
-              step="0.01"
-              class="filter-input"
-            />
-            <input
-              type="number"
-              name="prixMax"
-              th:value="${prixMax != null ? prixMax : ''}"
-              placeholder="Prix max"
-              step="0.01"
-              class="filter-input"
-            />
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="triPar">Trier par</label>
+                <select id="triPar" name="triPar" class="form-control">
+                  <option value="nom" th:selected="${triPar == 'nom'}">Désignation</option>
+                  <option value="prixVente" th:selected="${triPar == 'prixVente'}">Prix</option>
+                  <option value="ref" th:selected="${triPar == 'ref'}">Référence</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ordreTri">Ordre</label>
+                <select id="ordreTri" name="ordreTri" class="form-control">
+                  <option value="desc" th:selected="${ordreTri == 'desc'}">Décroissant</option>
+                  <option value="asc" th:selected="${ordreTri == 'asc'}">Croissant</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="taille">Éléments par page</label>
+                <input
+                  id="taille"
+                  type="number"
+                  name="taille"
+                  class="form-control"
+                  th:value="${taille}"
+                  min="1"
+                  max="200"
+                  placeholder="20"
+                />
+              </div>
+            </div>
 
-            <div class="produit-filter-actions">
-              <button type="submit" class="btn btn-primary">Filtrer</button>
-              <a th:href="@{/api/produits}" class="btn btn-ghost">Réinitialiser</a>
+            <div class="form-actions">
+              <a th:href="@{/api/produits}" class="btn btn-outline">Réinitialiser</a>
+              <button type="submit" class="btn btn-primary">Appliquer les filtres</button>
             </div>
           </form>
         </section>
@@ -217,7 +264,7 @@
               th:each="i : ${#numbers.sequence(0, produits.totalPages - 1)}"
             >
               <a
-                th:href="@{/api/produits/recherche(page=${i}, size=20, q=${q != null ? q : ''}, idCategorie=${idCategorie != null ? idCategorie : ''}, prixMin=${prixMin != null ? prixMin : ''}, prixMax=${prixMax != null ? prixMax : ''})}"
+                th:href="@{/api/produits/recherche(page=${i}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, q=${q != null ? q : ''}, idCategorie=${idCategorie != null ? idCategorie : ''}, prixMin=${prixMin != null ? prixMin : ''}, prixMax=${prixMax != null ? prixMax : ''})}"
                 th:text="${i + 1}"
                 th:class="${i == produits.number} ? 'active' : ''"
               >

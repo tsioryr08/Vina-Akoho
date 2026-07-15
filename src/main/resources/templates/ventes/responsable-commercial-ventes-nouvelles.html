@@ -147,6 +147,11 @@
                         </button>
                       </td>
                     </tr>
+                    <tr th:if="${panier != null and !panier.isEmpty()}">
+                      <td colspan="3" class="text-right cart-total-label">Sous-total</td>
+                      <td class="cart-total-value" th:text="${#numbers.formatDecimal(panierTotal, 0, 'COMMA', 2, 'POINT') + ' Ar'}">0 Ar</td>
+                      <td></td>
+                    </tr>
                     <tr th:if="${panier == null or #lists.isEmpty(panier)}">
                       <td colspan="5" class="empty-state">
                         Aucun produit dans le panier.
@@ -247,6 +252,12 @@
                   </div>
                 </div>
 
+                <div id="livraisonResume" class="livraison-resume" style="display: none;">
+                  <span class="livraison-resume-label">Livraison configurée</span>
+                  <span class="livraison-resume-zone" id="resumeZone"></span>
+                  <button type="button" class="btn btn-sm btn-ghost" onclick="openLivraisonModal()">Modifier</button>
+                </div>
+
                 <div id="livraisonFields" class="form-grid vente-delivery-grid">
                   <div class="field field-full compact-field">
                     <label for="idZoneLivraison">Zone de livraison</label>
@@ -308,6 +319,36 @@
                   </div>
                 </div>
                 <script>
+                  function openLivraisonModal() {
+                    document.getElementById("livraisonModal").classList.add("active");
+                  }
+
+                  function closeLivraisonModal() {
+                    document.getElementById("livraisonModal").classList.remove("active");
+                  }
+
+                  function confirmerLivraison() {
+                    var zone = document.getElementById("modalZone");
+                    var adresse = document.getElementById("modalAdresse");
+                    var contact = document.getElementById("modalContact");
+                    var date = document.getElementById("modalDate");
+                    var commentaire = document.getElementById("modalCommentaire");
+
+                    document.getElementById("idZoneLivraison").value = zone.value;
+                    document.getElementById("adresseLivraison").value = adresse.value;
+                    document.getElementById("contactLivraison").value = contact.value;
+                    document.getElementById("dateLivraisonSouhaitee").value = date.value;
+                    document.getElementById("commentaireLivraison").value = commentaire.value;
+
+                    var zoneText = zone.options[zone.selectedIndex] ? zone.options[zone.selectedIndex].text : "";
+                    var resume = document.getElementById("livraisonResume");
+                    var resumeZone = document.getElementById("resumeZone");
+                    resumeZone.textContent = zoneText ? "— " + zoneText : "";
+                    resume.style.display = "flex";
+
+                    closeLivraisonModal();
+                  }
+
                   function toggleLivraisonFields() {
                     var checkbox = document.getElementById("livraisonRequise");
                     var fields = document.getElementById("livraisonFields");
@@ -316,24 +357,37 @@
                     var contact = document.getElementById("contactLivraison");
                     var dateLivraison = document.getElementById("dateLivraisonSouhaitee");
                     var commentaire = document.getElementById("commentaireLivraison");
-                    fields.style.display = checkbox.checked ? "grid" : "none";
-                    zone.required = checkbox.checked;
-                    adresse.required = checkbox.checked;
-                    contact.required = checkbox.checked;
-                    dateLivraison.required = checkbox.checked;
-                    commentaire.required = false;
-                    if (!checkbox.checked) {
+
+                    if (checkbox.checked) {
+                      openLivraisonModal();
+                    } else {
+                      closeLivraisonModal();
+                      fields.style.display = "none";
                       zone.value = "";
                       adresse.value = "";
                       contact.value = "";
                       dateLivraison.value = "";
                       commentaire.value = "";
+                      document.getElementById("modalZone").value = "";
+                      document.getElementById("modalAdresse").value = "";
+                      document.getElementById("modalContact").value = "";
+                      document.getElementById("modalDate").value = "";
+                      document.getElementById("modalCommentaire").value = "";
+                      document.getElementById("livraisonResume").style.display = "none";
                     }
+
+                    zone.required = checkbox.checked;
+                    adresse.required = checkbox.checked;
+                    contact.required = checkbox.checked;
+                    dateLivraison.required = checkbox.checked;
+                    commentaire.required = false;
                   }
+
                   document.addEventListener("DOMContentLoaded", toggleLivraisonFields);
                 </script>
 
                 <div class="summary-card vente-summary-card">
+
                   <div>
                     <span class="summary-label">Sous-total</span>
                     <span id="panierTotalValue"
@@ -341,6 +395,7 @@
                       th:text="${#numbers.formatDecimal(panierTotal, 0, 'COMMA', 2, 'POINT')} + ' Ar'"
                     ></span>
                   </div>
+
                   <div class="card-actions vente-summary-actions">
                     <button
                       class="btn btn-ghost"
@@ -358,6 +413,7 @@
                     </button>
                   </div>
                 </div>
+                </div>
               </form>
             </section>
           </aside>
@@ -365,6 +421,47 @@
         <div id="vina-footer" th:replace="~{layout/footer}"></div>
       </div>
     </div>
+
+    <div id="livraisonModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Informations de livraison</h3>
+          <button type="button" class="modal-close" onclick="closeLivraisonModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="field field-full compact-field">
+              <label for="modalZone">Zone de livraison</label>
+              <select id="modalZone" class="form-control">
+                <option value="" disabled selected>Choisir une zone</option>
+                <option th:each="zone : ${zonesLivraisonDisponibles}" th:value="${zone.id}" th:text="${zone.libelle}"></option>
+              </select>
+            </div>
+            <div class="field field-full compact-field">
+              <label for="modalAdresse">Adresse de livraison</label>
+              <input id="modalAdresse" class="form-control" type="text" placeholder="Adresse de livraison" />
+            </div>
+            <div class="field compact-field">
+              <label for="modalContact">Contact sur place</label>
+              <input id="modalContact" class="form-control" type="text" placeholder="Numéro de téléphone" />
+            </div>
+            <div class="field compact-field">
+              <label for="modalDate">Date de livraison souhaitée</label>
+              <input id="modalDate" class="form-control" type="date" />
+            </div>
+            <div class="field field-full compact-field">
+              <label for="modalCommentaire">Commentaire / instructions</label>
+              <textarea id="modalCommentaire" class="form-control" rows="2" placeholder="Instructions particulières pour le livreur (optionnel)"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeLivraisonModal()">Annuler</button>
+          <button type="button" class="btn btn-primary" onclick="confirmerLivraison()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+
     <script th:src="@{/js/auth.js}"></script>
     <script th:src="@{/js/app-shell.js}"></script>
     <script th:src="@{/js/script_content.js}"></script>
