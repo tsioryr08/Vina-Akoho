@@ -55,7 +55,6 @@
                   <option value="libelle" th:selected="${triPar == 'libelle'}">Libellé</option>
                   <option value="pourcentageProteine" th:selected="${triPar == 'pourcentageProteine'}">Protéines</option>
                   <option value="margePourcentage" th:selected="${triPar == 'margePourcentage'}">Marge</option>
-                  <option value="nombreProduits" th:selected="${triPar == 'nombreProduits'}">Nombre de produits</option>
                 </select>
               </div>
               <div class="form-group">
@@ -143,14 +142,35 @@
             </div>
 
             <!-- Pagination -->
-            <div th:if="${categories != null and categories.totalPages > 1}" class="flex gap-2 mt-6 justify-center flex-wrap">
+            <div
+              th:if="${categories != null and categories.totalPages > 1}"
+              class="pagination"
+            >
+              <span
+                class="pagination-info"
+                th:text="'Page ' + (${categories.number} + 1) + ' / ' + ${categories.totalPages} + ' (' + ${categories.totalElements} + ' éléments)'"
+              ></span>
+              <div class="pagination-controls">
+                <a
+                  th:if="${!categories.first}"
+                  th:href="@{/api/categories(page=${categories.number - 1}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, search=${search != null ? search : ''})}"
+                  class="btn btn-sm btn-outline"
+                  >← Précédent</a
+                >
                 <span th:each="i : ${#numbers.sequence(0, categories.totalPages - 1)}">
-                    <a th:href="@{/api/categories(page=${i}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, search=${search != null ? search : ''})}"
-                       th:text="${i + 1}"
-                       th:class="${i == categories.number} ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline'"
-                       style="text-decoration: none;">
-                    </a>
+                  <a
+                    th:href="@{/api/categories(page=${i}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, search=${search != null ? search : ''})}"
+                    th:text="${i + 1}"
+                    th:class="${i == categories.number} ? 'btn btn-sm btn-primary active' : 'btn btn-sm btn-outline'"
+                  ></a>
                 </span>
+                <a
+                  th:if="${!categories.last}"
+                  th:href="@{/api/categories(page=${categories.number + 1}, taille=${taille != null ? taille : 20}, triPar=${triPar}, ordreTri=${ordreTri}, search=${search != null ? search : ''})}"
+                  class="btn btn-sm btn-outline"
+                  >Suivant →</a
+                >
+              </div>
             </div>
         </section>
 

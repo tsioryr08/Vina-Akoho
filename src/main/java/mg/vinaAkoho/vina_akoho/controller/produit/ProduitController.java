@@ -38,42 +38,18 @@ public class ProduitController {
 
     @GetMapping
     public String listerTous(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Long idCategorie,
+            @RequestParam(required = false) BigDecimal prixMin,
+            @RequestParam(required = false) BigDecimal prixMax,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false) Integer taille,
             @RequestParam(required = false) String triPar,
             @RequestParam(required = false, defaultValue = "desc") String ordreTri,
             Model model) {
-
-        List<ProduitDTO> produitsList = produitService.listerTous();
-
-        if (triPar != null && !triPar.isBlank()) {
-            produitsList = trierProduits(produitsList, triPar, ordreTri);
-        }
-
-        int size = (taille != null && taille > 0 && taille <= 200) ? taille : 20;
-        int start = Math.max(0, page) * size;
-        int end = Math.min(start + size, produitsList.size());
-
-        Page<ProduitDTO> produits;
-        if (start <= produitsList.size()) {
-            produits = new PageImpl<>(
-                    produitsList.subList(start, end),
-                    PageRequest.of(Math.max(0, page), size),
-                    produitsList.size()
-            );
-        } else {
-            produits = new PageImpl<>(List.of(), PageRequest.of(Math.max(0, page), size), produitsList.size());
-        }
-
-        model.addAttribute("produits", produits);
-        model.addAttribute("totalElements", produits.getTotalElements());
-        model.addAttribute("totalPages", produits.getTotalPages());
-        model.addAttribute("currentPage", produits.getNumber());
-        model.addAttribute("taille", size);
-        model.addAttribute("triPar", triPar);
-        model.addAttribute("ordreTri", ordreTri);
-
-        return "produit/list";
+        // La liste initiale et la recherche partagent la même pagination/base de données
+        // pour que les liens de pagination restent cohérents.
+        return rechercher(q, idCategorie, prixMin, prixMax, page, taille, triPar, ordreTri, model);
     }
 
     @GetMapping("/recherche")
