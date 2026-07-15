@@ -221,5 +221,42 @@
     <script th:src="@{/static/js/auth.js}"></script>
     <script th:src="@{/static/js/app-shell.js}"></script>
   <script th:src="@{/js/script_content.js}"></script>
-</body>
+    <script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', function(event) {
+    let isValid = true;
+    const requiredFields = form.querySelectorAll('[required]');
+
+    // 1. Validation des champs requis
+    requiredFields.forEach(field => {
+    if (!field.value.trim()) {
+    field.style.borderColor = 'red';
+    isValid = false;
+    } else {
+    field.style.borderColor = ''; // reset
+    }
+    });
+
+    // 2. Validation spécifique du téléphone (format simple Malgache)
+    const tel = document.getElementById('numeroTelephone');
+    const telRegex = /^(03[2-489])\s?(\d{2})\s?(\d{3})\s?(\d{2})$/;
+
+    if (tel.value && !telRegex.test(tel.value.replace(/\s/g, ''))) {
+    alert("Format de téléphone invalide. Veuillez utiliser le format : 03X XX XXX XX");
+    tel.style.borderColor = 'red';
+    isValid = false;
+    }
+
+    if (!isValid) {
+    event.preventDefault(); // Empêche l'envoi si invalide
+    alert("Veuillez remplir correctement tous les champs obligatoires.");
+    }
+    });
+    });
+    </script>
+
+  </body>
 </html>
