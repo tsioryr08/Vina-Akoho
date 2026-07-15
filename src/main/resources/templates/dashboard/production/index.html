@@ -26,7 +26,7 @@
           </div>
         </section>
 
-        <section class="kpi-notebook card">
+        <section class="kpi-notebook card" id="production-kpi-section">
           <div class="card-header">
             <h2 class="card-title">Indicateurs clés (KPI)</h2>
           </div>
@@ -34,37 +34,37 @@
             <li class="notebook-item notebook-accent-blue">
               <span class="notebook-bullet"></span>
               <span class="notebook-label">Quantité actuelle produits finis</span>
-              <span class="notebook-value" th:text="${quantiteProduitsFinis != null ? #numbers.formatDecimal(quantiteProduitsFinis, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
-              <span class="notebook-meta" th:text="${uniteProduits != null && !uniteProduits.isBlank() ? uniteProduits : 'Unité'}">Kg en stock</span>
+              <span class="notebook-value" id="kpi-produits-finis" th:text="${quantiteProduitsFinis != null ? #numbers.formatDecimal(quantiteProduitsFinis, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
+              <span class="notebook-meta" id="kpi-unite-produits" th:text="${uniteProduits != null && !uniteProduits.isBlank() ? uniteProduits : 'Unité'}">Kg en stock</span>
             </li>
             <li class="notebook-item notebook-accent-blue">
               <span class="notebook-bullet"></span>
               <span class="notebook-label">Quantité actuelle matières premières</span>
-              <span class="notebook-value" th:text="${quantiteMatièresPremières != null ? #numbers.formatDecimal(quantiteMatièresPremières, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
-              <span class="notebook-meta" th:text="${uniteMps != null && !uniteMps.isBlank() ? uniteMps : 'Unité'}">Kg en stock</span>
+              <span class="notebook-value" id="kpi-mp" th:text="${quantiteMatièresPremières != null ? #numbers.formatDecimal(quantiteMatièresPremières, 0, 'COMMA', 0, 'POINT') : 0}">0</span>
+              <span class="notebook-meta" id="kpi-unite-mp" th:text="${uniteMps != null && !uniteMps.isBlank() ? uniteMps : 'Unité'}">Kg en stock</span>
             </li>
             <li class="notebook-item notebook-accent-green">
               <span class="notebook-bullet"></span>
               <span class="notebook-label">Nombre de lots produits</span>
-              <span class="notebook-value" th:text="${lotsProduits != null ? lotsProduits : 0}">0</span>
+              <span class="notebook-value" id="kpi-lots-produits" th:text="${lotsProduits != null ? lotsProduits : 0}">0</span>
               <span class="notebook-meta">Lots actifs</span>
             </li>
             <li class="notebook-item notebook-accent-orange">
               <span class="notebook-bullet"></span>
               <span class="notebook-label">Lots expirant bientôt</span>
-              <span class="notebook-value" th:text="${lotsExpirantBientot != null ? lotsExpirantBientot : 0}">0</span>
+              <span class="notebook-value" id="kpi-lots-expirants" th:text="${lotsExpirantBientot != null ? lotsExpirantBientot : 0}">0</span>
               <span class="notebook-meta">Fenêtre : 30 j</span>
             </li>
             <li class="notebook-item notebook-accent-orange">
               <span class="notebook-bullet"></span>
               <span class="notebook-label">Produits sous le seuil d'alerte</span>
-              <span class="notebook-value" th:text="${produitsSousSeuil != null ? produitsSousSeuil : 0}">0</span>
+              <span class="notebook-value" id="kpi-produits-seuil" th:text="${produitsSousSeuil != null ? produitsSousSeuil : 0}">0</span>
               <span class="notebook-meta">Seuil atteint</span>
             </li>
             <li class="notebook-item notebook-accent-orange">
               <span class="notebook-bullet"></span>
               <span class="notebook-label">Matières premières sous seuil minimum</span>
-              <span class="notebook-value" th:text="${mpSousSeuilMin != null ? mpSousSeuilMin : 0}">0</span>
+              <span class="notebook-value" id="kpi-mp-seuil" th:text="${mpSousSeuilMin != null ? mpSousSeuilMin : 0}">0</span>
               <span class="notebook-meta">Approvisionnement requis</span>
             </li>
           </ul>
@@ -82,7 +82,7 @@
               </div>
             </div>
             <div class="card-body">
-              <form method="get" th:action="@{/api/production}" class="form-grid">
+              <form id="production-filter-form" method="get" th:action="@{/api/production/data}" class="form-grid">
                 <div class="field">
                   <label for="joursAnalyse">Historique analysé</label>
                   <select id="joursAnalyse" name="joursAnalyse" class="form-control">
@@ -142,11 +142,11 @@
 
         <br /> 
 
-        <section class="card">
+        <section class="card" id="production-prevision-produits-card">
           <div class="card-header">
             <div>
               <h2 class="card-title">Prévision de production</h2>
-              <p class="card-subtitle">
+              <p class="card-subtitle" id="production-prevision-produits-subtitle">
                 <span th:text="${'Résultat sur ' + joursAnalyse + ' jours : moyenne journalière = ventes ÷ '
                       + joursAnalyse + ', objectif = moyenne × ' + joursCouverture
                       + ', à produire = max(objectif − stock, 0).'}">
@@ -169,7 +169,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="prevision-production-tbody">
                 <tr th:each="p : ${previsionsProduction}">
                   <td>
                     <strong th:text="${p.produitNom}">Produit</strong><br />
@@ -203,7 +203,7 @@
         </section>
 
         <br>
-        <section class="card">
+        <section class="card" id="production-prevision-mp-card">
           <div class="card-header">
             <div>
               <h2 class="card-title">Prévision des matières premières</h2>
@@ -226,7 +226,7 @@
                   <th>Statut</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="prevision-mp-tbody">
                 <tr th:each="mp : ${previsionsMp}">
                   <td><strong th:text="${mp.nom}">Matière</strong><br /><small th:text="${mp.code}">Code</small></td>
                   <td th:text="${mp.fournisseur}">Fournisseur</td>
@@ -306,6 +306,22 @@
       <div class="app-footer">VINA AKOHO — Tableau de Bord Production</div>
     </div>
 
-    <script src="/assets/js/script_content.js"></script>
+    <script th:src="@{/js/ajax-filters.js}"></script>
+    <script th:src="@{/js/dashboard-filters.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('production-filter-form');
+        if (!form) return;
+
+        VinaAjaxFilters.setup(form, {
+          onSuccess: function (data) {
+            if (data && typeof data === 'object' && data.joursAnalyse !== undefined) {
+              VinaDashboardFilters.renderProductionDashboard(data);
+            }
+          }
+        });
+      });
+    </script>
   </body>
 </html>

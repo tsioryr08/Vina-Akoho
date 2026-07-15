@@ -1,27 +1,34 @@
 package mg.vinaAkoho.vina_akoho.controller.dashboard;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.RequiredArgsConstructor;
 import mg.vinaAkoho.vina_akoho.dto.ventes.EvolutionVenteStatDTO;
+import mg.vinaAkoho.vina_akoho.dto.produit.ProduitDTO;
+import mg.vinaAkoho.vina_akoho.dto.dashboard.StockDashboardDataDTO;
 import mg.vinaAkoho.vina_akoho.entity.login.Employe;
-import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
-import mg.vinaAkoho.vina_akoho.repository.login.RoleRepository;
-import mg.vinaAkoho.vina_akoho.repository.matierespremieres.LotMpRepository;
-import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
-import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
-import mg.vinaAkoho.vina_akoho.service.produit.ProduitService;
 import mg.vinaAkoho.vina_akoho.service.ventes.RecetteVenteService;
 import mg.vinaAkoho.vina_akoho.service.ventes.StatistiqueVenteService;
+import mg.vinaAkoho.vina_akoho.service.produit.ProduitService;
+import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
 import mg.vinaAkoho.vina_akoho.service.prevision.PrevisionProductionService;
-import org.springframework.web.bind.annotation.RequestParam;
+import mg.vinaAkoho.vina_akoho.repository.produit.LotProduitRepository;
+import mg.vinaAkoho.vina_akoho.repository.matierespremieres.LotMpRepository;
+import mg.vinaAkoho.vina_akoho.repository.login.EmployeRepository;
+import mg.vinaAkoho.vina_akoho.repository.login.RoleRepository;
 
 
 @Controller
@@ -157,6 +164,15 @@ public class DashboardController {
         model.addAttribute("alertesMp", matierePremiereService.listerAlertes());
         model.addAttribute("produits", produitService.listerTous());
         return "dashboard/stock/index";
+    }
+
+    @GetMapping(value = "/stock/data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public StockDashboardDataDTO stockData() {
+        return new StockDashboardDataDTO(
+                matierePremiereService.listerAlertes(),
+                produitService.listerTous()
+        );
     }
 
     @GetMapping("/commercial")

@@ -26,6 +26,65 @@
           </div>
         </section>
 
+        <section class="form-card">
+          <div class="form-section-heading">
+            <span>1</span>
+            <div>
+              <h2>Recherche et filtres</h2>
+              <p>Filtrez les produits par mot-clé ou statut d'alerte.</p>
+            </div>
+          </div>
+          <form id="stock-filter-form" th:action="@{/api/stock/data}" method="get" class="form-grid">
+            <div class="field">
+              <label for="recherche">Recherche</label>
+              <input id="recherche" name="recherche" class="form-control" type="text"
+                     placeholder="Nom, référence..." th:value="${param.recherche}" />
+            </div>
+            <div class="field">
+              <label for="statut">Statut</label>
+              <select id="statut" name="statut" class="form-control">
+                <option value="TOUS" th:selected="${param.statut == null or param.statut == 'TOUS' or param.statut.isBlank()}">Tous</option>
+                <option value="SEUIL ATTEINT" th:selected="${param.statut == 'SEUIL ATTEINT'}">Seuil atteint</option>
+                <option value="Stock Correct" th:selected="${param.statut == 'Stock Correct'}">Stock correct</option>
+              </select>
+            </div>
+            <div class="field field-actions">
+              <label class="form-label">Action</label>
+              <div class="card-actions">
+                <button class="btn btn-primary" type="submit">Filtrer</button>
+                <a class="btn btn-ghost" th:href="@{/api/stock}">Réinitialiser</a>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="grid-2">
+          <div class="card" style="margin-bottom: 0">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Seuils Critiques Minimums</h2>
+                <p class="card-subtitle">
+                  Alertes sur les matières premières sous seuil.
+                </p>
+              </div>
+            </div>
+
+            <div class="alertes-scroll-panel" id="stock-alertes-panel" th:if="${!#lists.isEmpty(alertesMp)}">
+              <div th:each="mp : ${alertesMp}"
+                   th:class="${mp.quantiteStock.signum() == 0} ? 'alert-box danger' : 'alert-box warning'">
+                <span th:class="${mp.quantiteStock.signum() == 0} ? 'alert-label critical' : 'alert-label attention'"
+                      th:text="${mp.quantiteStock.signum() == 0} ? 'CRITIQUE' : 'ATTENTION'}">CRITIQUE</span>
+                <span th:text="${mp.nom + ' (' + mp.fournisseurNom + ') : Reste ' + mp.quantiteStock + ' ' + mp.uniteLibelle + ' (Seuil alerte : ' + mp.seuilMinimum + ' ' + mp.uniteLibelle + ').'}">
+                  Matière première : Reste X (Seuil alerte : Y).
+                </span>
+              </div>
+            </div>
+            <p id="stock-empty-hint" th:if="${#lists.isEmpty(alertesMp)}" class="stock-empty-hint">
+              ✓ Aucune matière première sous le seuil d'alerte.
+            </p>
+          </div>
+        </section>
+
         <section class="grid-2">
           <div class="card" style="margin-bottom: 0">
             <div class="card-header">
@@ -76,7 +135,7 @@
                   <th>Statut Alerte</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="stock-produits-tbody">
                 <tr th:each="p : ${produits}">
                   <td th:text="${p.nom}">Vina Démarrage</td>
                   <td th:text="${p.ref}">REF-001</td>
@@ -102,6 +161,22 @@
       </div>
     </div>
 
-    <script src="/assets/js/script_content.js"></script>
+    <script th:src="@{/js/ajax-filters.js}"></script>
+    <script th:src="@{/js/dashboard-filters.js}"></script>
+    <script th:src="@{/js/script_content.js}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('stock-filter-form');
+        if (!form) return;
+
+        VinaAjaxFilters.setup(form, {
+          onSuccess: function (data) {
+            if (data && typeof data === 'object') {
+              VinaDashboardFilters.renderStockDashboard(data);
+            }
+          }
+        });
+      });
+    </script>
   </body>
 </html>

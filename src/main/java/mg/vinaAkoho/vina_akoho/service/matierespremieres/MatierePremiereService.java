@@ -89,6 +89,28 @@ public class MatierePremiereService {
         return matierePremiereRepository.findAll().stream().map(this::versListDTO).toList();
     }
 
+    public List<MatierePremiereListDTO> listerAvecFiltres(String recherche, Integer idFournisseur, String statut) {
+        List<MatierePremiere> sources = matierePremiereRepository.findAll();
+        return sources.stream()
+                .map(this::versListDTO)
+                .filter(dto -> {
+                    if (recherche == null || recherche.isBlank()) {
+                        return true;
+                    }
+                    String terme = recherche.trim().toLowerCase();
+                    boolean matchNom = dto.nom() != null && dto.nom().toLowerCase().contains(terme);
+                    boolean matchFournisseur = dto.fournisseurNom() != null && dto.fournisseurNom().toLowerCase().contains(terme);
+                    return matchNom || matchFournisseur;
+                })
+                .filter(dto -> {
+                    if (statut == null || statut.isBlank() || "TOUS".equals(statut)) {
+                        return true;
+                    }
+                    return statut.equalsIgnoreCase(dto.statut());
+                })
+                .toList();
+    }
+
     public List<MatierePremiereListDTO> listerAlertes() {
         return lister().stream().filter(mp -> STATUT_ALERTE.equals(mp.statut())).toList();
     }

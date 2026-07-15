@@ -35,6 +35,48 @@
           <a th:href="@{/fournisseurs/import}" class="tab-link">📥 Importer Fournisseurs</a>
         </section>
 
+        <section class="form-card">
+          <div class="form-section-heading">
+            <span>1</span>
+            <div>
+              <h2>Recherche et filtres</h2>
+              <p>Affinez la liste par mot-clé, fournisseur ou statut.</p>
+            </div>
+          </div>
+          <form id="matiere-filter-form" th:action="@{/api/matieres-premieres/data}" method="get" class="form-grid">
+            <div class="field">
+              <label for="recherche">Recherche</label>
+              <input id="recherche" name="recherche" class="form-control" type="text"
+                     placeholder="Nom, fournisseur..." th:value="${param.recherche}" />
+            </div>
+            <div class="field">
+              <label for="idFournisseur">Fournisseur</label>
+              <select id="idFournisseur" name="idFournisseur" class="form-control">
+                <option value="">Tous les fournisseurs</option>
+                <option th:each="f : ${fournisseurs}"
+                        th:value="${f.id}"
+                        th:selected="${param.idFournisseur != null and param.idFournisseur == f.id.toString()}"
+                        th:text="${f.nom}"></option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="statut">Statut</label>
+              <select id="statut" name="statut" class="form-control">
+                <option value="TOUS" th:selected="${param.statut == null or param.statut == 'TOUS' or param.statut.isBlank()}">Tous</option>
+                <option value="SEUIL ATTEINT" th:selected="${param.statut == 'SEUIL ATTEINT'}">Seuil atteint</option>
+                <option value="Stock Correct" th:selected="${param.statut == 'Stock Correct'}">Stock correct</option>
+              </select>
+            </div>
+            <div class="field field-actions">
+              <label class="form-label">Action</label>
+              <div class="card-actions">
+                <button class="btn btn-primary" type="submit">Filtrer</button>
+                <a class="btn btn-ghost" th:href="@{/api/matieres-premieres}">Réinitialiser</a>
+              </div>
+            </div>
+          </form>
+        </section>
+
         
 
 
@@ -53,13 +95,14 @@
         <section class="stats-grid">
           <article class="stat-card">
             <div class="stat-label">Total articles</div>
-            <div class="stat-value" th:text="${#lists.size(mps)}">0</div>
+            <div class="stat-value" id="matiere-total-articles" th:text="${#lists.size(mps)}">0</div>
             <div class="stat-trend trend-info">Fiches actives</div>
           </article>
           <article class="stat-card">
             <div class="stat-label">Matières à Seuil</div>
             <div
               class="stat-value"
+              id="matiere-mp-seuil"
               th:text="${#lists.size(mps.?[statut == 'SEUIL ATTEINT'])}"
             >
               0
@@ -68,7 +111,7 @@
           </article>
           <article class="stat-card">
             <div class="stat-label">Stock Global</div>
-            <div class="stat-value" th:text="${totalStock} + ' kg'">0 kg</div>
+            <div class="stat-value" id="matiere-total-stock" th:text="${totalStock} + ' kg'">0 kg</div>
             <div class="stat-trend trend-neutral">Tous articles</div>
           </article>
         </section>
@@ -129,7 +172,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="matiere-tbody">
                 <tr th:each="mp : ${mps}">
                   <td><strong th:text="${mp.nom}"></strong></td>
                   <td th:text="${mp.fournisseurNom}"></td>
@@ -176,6 +219,22 @@
      
       </div>
     </div>
+  <script th:src="@{/js/ajax-filters.js}"></script>
+  <script th:src="@{/js/dashboard-filters.js}"></script>
   <script th:src="@{/js/script_content.js}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('matiere-filter-form');
+      if (!form) return;
+
+      VinaAjaxFilters.setup(form, {
+        onSuccess: function (data) {
+          if (data && typeof data === 'object') {
+            VinaDashboardFilters.renderMatiereListe(data);
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>

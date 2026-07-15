@@ -3,10 +3,15 @@ package mg.vinaAkoho.vina_akoho.controller.matierespremieres;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.EntreeStockDTO;
+import mg.vinaAkoho.vina_akoho.dto.matierespremieres.FicheDetailDTO;
+import mg.vinaAkoho.vina_akoho.dto.matierespremieres.FournisseurDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.MatierePremiereListDTO;
+import mg.vinaAkoho.vina_akoho.dto.matierespremieres.MatierePremiereListeDataDTO;
 import mg.vinaAkoho.vina_akoho.dto.matierespremieres.MatierePremiereRequestDTO;
+import mg.vinaAkoho.vina_akoho.dto.matierespremieres.UniteDTO;
 import mg.vinaAkoho.vina_akoho.service.matierespremieres.MatierePremiereService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -30,11 +36,30 @@ public class MatierePremiereViewController {
     public String liste(Model model) {
         var mps = service.lister();
         model.addAttribute("mps", mps);
+        model.addAttribute("fournisseurs", service.listerFournisseurs());
         BigDecimal totalStock = mps.stream()
                 .map(MatierePremiereListDTO::quantiteStock)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         model.addAttribute("totalStock", totalStock);
         return "matieres-premieres/liste";
+    }
+
+    @GetMapping(value = "/data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public MatierePremiereListeDataDTO listeData(
+            @RequestParam(required = false) String recherche,
+            @RequestParam(required = false) Integer idFournisseur,
+            @RequestParam(required = false) String statut) {
+
+        var mps = service.listerAvecFiltres(recherche, idFournisseur, statut);
+        BigDecimal totalStock = mps.stream()
+                .map(MatierePremiereListDTO::quantiteStock)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        long matieresSeuil = mps.stream()
+                .filter(mp -> "SEUIL ATTEINT".equalsIgnoreCase(mp.statut()))
+                .count();
+
+        return new MatierePremiereListeDataDTO(mps, totalStock, mps.size(), matieresSeuil);
     }
 
     @GetMapping("/alertes")
