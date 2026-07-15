@@ -50,10 +50,10 @@
                             <td th:text="${liv.statutLivraison}">En préparation</td>
                             <td th:text="${liv.dateLivraison}">2026-01-01</td>
                             <td>
-                                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
-                                    <a class="link-action" th:href="@{'/api/livraisons/' + ${liv.id}}">Détail</a>
-                                    <form th:action="@{/api/livraisons/{id}/statut(id=${liv.id})}" method="post" style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin:0;">
-                                        <select name="nouveauStatut" class="form-control" style="min-width: 180px;" required th:disabled="${#strings.equalsIgnoreCase(liv.statutLivraison, 'Livrée') or #strings.equalsIgnoreCase(liv.statutLivraison, 'Livree')}">
+                                <div class="livraison-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" th:onclick="|window.location.href='/api/livraisons/${liv.id}'|">Détail</button>
+                                    <form th:action="@{/api/livraisons/{id}/statut(id=${liv.id})}" method="post" class="livraison-statut-form">
+                                        <select name="nouveauStatut" class="form-control" required th:disabled="${#strings.equalsIgnoreCase(liv.statutLivraison, 'Livrée') or #strings.equalsIgnoreCase(liv.statutLivraison, 'Livree')}">
                                             <option value="" disabled th:selected="${liv.statutLivraison == null}">Changer le statut</option>
                                             <option th:each="statut : ${statutsDisponibles}"
                                                     th:value="${statut.libelle}"
